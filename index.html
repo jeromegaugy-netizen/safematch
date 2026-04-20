@@ -38,14 +38,52 @@
     --text:    #f5e6d8;
     --muted:   #8a6555;
   }
-  body.dark-mode .screen { background: var(--bg); }
+  body.dark-mode .screen { background: var(--bg); color: var(--text); }
   body.dark-mode #s-splash, body.dark-mode #s-pwd { background: linear-gradient(160deg, #1a0f08 0%, #0f0a05 100%); }
   body.dark-mode #s-app, body.dark-mode #s-consent, body.dark-mode #s-verify, body.dark-mode #s-pay { background: var(--bg); }
+
+  /* Fix dark mode — tous les textes sans couleur explicite */
+  body.dark-mode span:not([style*="color"]),
+  body.dark-mode p:not([style*="color"]),
+  body.dark-mode h1:not([style*="color"]),
+  body.dark-mode h2:not([style*="color"]),
+  body.dark-mode h3:not([style*="color"]),
+  body.dark-mode h4:not([style*="color"]),
+  body.dark-mode label:not([style*="color"]),
+  body.dark-mode div:not([style*="color"]) { color: var(--text); }
+
+  /* Exceptions — garder les couleurs sémantiques */
+  body.dark-mode [style*="color:var(--muted)"],
+  body.dark-mode [style*="color:var(--teal)"],
+  body.dark-mode [style*="color:var(--accent)"],
+  body.dark-mode [style*="color:var(--gold)"],
+  body.dark-mode [style*="color:white"],
+  body.dark-mode [style*="color:#ff"],
+  body.dark-mode [style*="color:#00"] { color: inherit; }
+
+  /* Nav dark */
+  body.dark-mode #nav { background: rgba(15,10,8,0.96); border-color: var(--border); }
+
+  /* Match overlay dark */
+  body.dark-mode #match-overlay { background: rgba(15,10,5,.97); }
+
   /* Transition douce */
   *, *::before, *::after { transition: background-color .3s ease, border-color .3s ease, color .2s ease; }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; color: inherit; }
   html { height: 100%; height: -webkit-fill-available; }
-  body { height: 100%; height: -webkit-fill-available; font-family: 'DM Sans', sans-serif; overflow: hidden; }
+  body { height: 100%; height: -webkit-fill-available; font-family: 'DM Sans', sans-serif; overflow: hidden; color: var(--text); }
+
+  /* Tous les textes héritent de var(--text) — fix dark mode global */
+  .screen, .screen * { color: inherit; }
+  .screen { color: var(--text); }
+
+  /* Headings */
+  .screen h1, .screen h2, .screen h3, .screen h4 { color: var(--text); }
+
+  /* Inputs et textarea héritent aussi */
+  input, textarea, select, button { font-family: 'DM Sans', sans-serif; }
+  input, textarea { color: var(--text); background: var(--card); }
+  input::placeholder, textarea::placeholder { color: var(--muted); }
 
   /* ── RESPONSIVE : mobile = plein écran, desktop = simulateur téléphone ── */
   @media (max-width: 480px) {
@@ -1170,17 +1208,17 @@
         <div style="display:flex;flex-direction:column;gap:10px;">
           <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card2);border-radius:12px;border:1px solid #00e5b030;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.15 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.06 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
-            <span id="prof-v1" style="flex:1;font-size:13px;font-weight:500;">Téléphone vérifié</span>
+            <span id="prof-v1" style="flex:1;font-size:13px;font-weight:500;color:var(--text);">Téléphone vérifié</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
           </div>
           <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card2);border-radius:12px;border:1px solid #00e5b030;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/><path d="M14 9h4M8 17h10"/></svg>
-            <span id="prof-v2" style="flex:1;font-size:13px;font-weight:500;">Pièce d'identité confirmée</span>
+            <span id="prof-v2" style="flex:1;font-size:13px;font-weight:500;color:var(--text);">Pièce d'identité confirmée</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
           </div>
           <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card2);border-radius:12px;border:1px solid #00e5b030;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-            <span id="prof-v3" style="flex:1;font-size:13px;font-weight:500;">Selfie vidéo validé</span>
+            <span id="prof-v3" style="flex:1;font-size:13px;font-weight:500;color:var(--text);">Selfie vidéo validé</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
           </div>
         </div>
@@ -2929,7 +2967,7 @@ function renderConvList(){
       <div style="flex:1;min-width:0;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
           <div style="display:flex;align-items:center;gap:6px;">
-            <span style="font-weight:700;font-size:15px;${isBlocked ? 'color:var(--muted);' : ''}">${c.name}</span>
+            <span style="font-weight:700;font-size:15px;${isBlocked ? 'color:var(--muted);' : 'color:var(--text);'}">${c.name}</span>
             ${isBlocked ? '<span style="font-size:10px;font-weight:700;color:#ff6b6b;background:#ff6b6b18;border:1px solid #ff6b6b33;border-radius:6px;padding:1px 7px;">Bloqué</span>' : ''}
           </div>
           <span style="font-size:12px;color:var(--muted);">${c.time}</span>
