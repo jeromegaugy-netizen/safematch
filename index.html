@@ -1136,12 +1136,7 @@
       <div id="chat-messages" style="flex:1;overflow-y:auto;padding:8px 16px 4px;display:flex;flex-direction:column;gap:10px;min-height:0;"></div>
       <!-- Input bar — toujours visible en bas -->
       <div style="flex-shrink:0;padding:10px 16px 12px;border-top:1px solid var(--border);background:var(--bg);">
-        <div id="chat-loc-btn-wrap">
-          <button id="msg-loc-btn" onclick="openLocationModal()" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;font-size:12px;font-weight:600;margin-bottom:10px;">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            📍 Rencontre sécurisée
-          </button>
-        </div>
+        <div id="chat-loc-btn-wrap" style="display:none;"></div>
         <!-- SafeGuard quick suggestions -->
         <div id="sg-suggestions" style="display:none;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
           <button onclick="sendSuggestion(this)" style="padding:5px 12px;border-radius:16px;border:1px solid #00e5b033;background:#00e5b010;color:var(--teal);font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Comment fonctionne la vérification ?</button>
@@ -1546,10 +1541,10 @@
     <!-- Tabs -->
     <div style="display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid var(--border);flex-shrink:0;">
       <button id="likes-tab-liked" onclick="showLikesTab('liked')" style="flex:1;padding:10px;background:none;border:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;color:var(--accent);cursor:pointer;border-bottom:2px solid var(--accent);margin-bottom:-2px;">
-        ❤️ Mes likes
+        <span id="likes-tab-liked-lbl">❤️ Mes likes</span>
       </button>
       <button id="likes-tab-match" onclick="showLikesTab('match')" style="flex:1;padding:10px;background:none;border:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;">
-        💘 Mes matchs
+        <span id="likes-tab-match-lbl">💘 Mes matchs</span>
       </button>
     </div>
     <!-- Contenu scrollable -->
@@ -1645,6 +1640,10 @@
     </div>
     <div style="flex:1;overflow-y:auto;padding-bottom:8px;">
 
+      <!-- Genre recherché -->
+      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Je recherche</p>
+      <div id="filter-gender-btns" style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;"></div>
+
       <!-- Distance -->
       <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Distance maximale</p>
       <div id="filter-dist-btns" style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;"></div>
@@ -1660,7 +1659,7 @@
           <input type="number" id="age-min" value="18" min="18" max="99" style="width:100%;" oninput="enforceAgeMin(this)" onchange="enforceAgeMin(this)"/></div>
         <div style="display:flex;align-items:flex-end;padding-bottom:12px;color:var(--muted);font-weight:700;">→</div>
         <div style="flex:1;"><label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">À</label>
-          <input type="number" id="age-max" value="55" min="18" max="99" style="width:100%;" oninput="enforceAgeMax(this)" onchange="enforceAgeMax(this)"/></div>
+          <input type="number" id="age-max" value="99" min="18" max="99" style="width:100%;" oninput="enforceAgeMax(this)" onchange="enforceAgeMax(this)"/></div>
       </div>
 
       <!-- Centres d'intérêt -->
@@ -2488,11 +2487,13 @@ function closePhotoViewer() {
 }
 
 let myLikedProfiles = [];
+let newLikesCount = 0; // Compteur de nouveaux likes non vus
 let likesTabActive = 'liked';
 
 function recordLike(profileId) {
   if (!myLikedProfiles.includes(profileId)) {
     myLikedProfiles.push(profileId);
+    newLikesCount++; // Nouveau like non vu
     updateLikesBadge();
   }
 }
@@ -2500,12 +2501,15 @@ function recordLike(profileId) {
 function updateLikesBadge() {
   const badge = document.getElementById('nav-likes-badge');
   if (!badge) return;
-  const n = myLikedProfiles.length;
+  const n = newLikesCount;
   badge.style.display = n > 0 ? 'flex' : 'none';
   badge.textContent = n > 9 ? '9+' : n;
 }
 
 function openLikesPanel() {
+  // On efface le badge mais on garde l'historique
+  newLikesCount = 0;
+  updateLikesBadge();
   showLikesTab(likesTabActive);
   document.getElementById('likes-modal').classList.add('open');
 }
@@ -2571,10 +2575,32 @@ let visitors = [];
 let visitorsRead = false;
 
 function buildFiltersModal() {
+  // Boutons genre
+  const genderEl = document.getElementById('filter-gender-btns');
+  if (genderEl) {
+    if (!genderEl.children.length) {
+    const genders = [
+      { val: 'Tous',        label: '👥 Tout le monde' },
+      { val: 'Femme',       label: '👩 Femmes' },
+      { val: 'Homme',       label: '👨 Hommes' },
+      { val: 'Non-binaire', label: '🌈 Non-binaire' },
+    ];
+    genders.forEach(g => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-gender-btn';
+      btn.dataset.gender = g.val;
+      btn.textContent = g.label;
+      btn.onclick = function() { selectGenderFilter(g.val, this); };
+      const sel = g.val === activeFilters.gender;
+      btn.style.cssText = `padding:8px 16px;border-radius:20px;border:1.5px solid ${sel?'var(--accent)':'var(--border)'};background:${sel?'#ff3d6e18':'var(--card2)'};color:${sel?'var(--accent)':'var(--muted)'};font-size:13px;font-weight:${sel?'700':'600'};cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;`;
+      genderEl.appendChild(btn);
+    });
+    } // end if !children.length
+  }
   // Boutons distance
   const distEl = document.getElementById('filter-dist-btns');
   if (distEl && !distEl.children.length) {
-    const distances = [5, 10, 20, 50, 100];
+    const distances = [10, 20, 50, 100, 250];
     distances.forEach(d => {
       const btn = document.createElement('button');
       btn.className = 'filter-dist-btn';
@@ -3828,10 +3854,10 @@ function stopLocation(){
 // ════════════════════════════════════════════════════════════
 function renderSafetyMenu(){
   const items=[
-    { icon:'<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>', c:'var(--gold)',   l:'Signaler un profil',       sub:'Signaler un comportement suspect' },
-    { icon:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',               c:'#ff6b6b',    l:'Blocages',                sub:'Gérer les profils bloqués' },
-    { icon:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',    c:'var(--teal)', l:'Mes données personnelles', sub:'RGPD · Accès · Suppression' },
-    { icon:'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',   c:'var(--muted)',l:incognitoMode ? '👻 Mode discret (actif)' : 'Mode discret', sub:incognitoMode ? 'Tu es invisible dans la recherche' : 'Invisible dans la recherche' },
+    { icon:'<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>', c:'var(--gold)',   l:t('prof_s1'), sub:t('prof_s1_sub') },
+    { icon:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',               c:'#ff6b6b',    l:t('prof_s2'), sub:t('prof_s2_sub') },
+    { icon:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',    c:'var(--teal)', l:t('prof_s3'), sub:t('prof_s3_sub') },
+    { icon:'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',   c:'var(--muted)',l:incognitoMode ? t('prof_s4_on') : t('prof_s4'), sub:incognitoMode ? t('prof_s4_sub_on') : t('prof_s4_sub') },
   ];
   document.getElementById('safety-menu').innerHTML = items.map((it,i) => `
     <button onclick="safetyAction(${i})" style="width:100%;display:flex;align-items:center;gap:12px;padding:14px 0;background:none;border:none;${i?'border-top:1px solid var(--border);':''}color:var(--text);cursor:pointer;text-align:left;transition:opacity .15s;" onmouseenter="this.style.opacity='.7'" onmouseleave="this.style.opacity='1'">
@@ -3854,9 +3880,64 @@ function safetyAction(idx) {
 }
 
 // ════════════════════════════════════════════════════════════
-// 🔍 FILTRES AVANCÉS
+// 📍 DISTANCE PAR VILLE — coordonnées GPS réelles
 // ════════════════════════════════════════════════════════════
-const activeFilters = { distance: 20, ageMin: 18, ageMax: 55, interests: [], minMatch: 0 };
+const CITY_COORDS = {
+  'Paris':      [48.85, 2.35],  'Lyon':       [45.75, 4.83],  'Marseille':  [43.30, 5.37],
+  'Toulouse':   [43.60, 1.44],  'Nice':       [43.71, 7.26],  'Nantes':     [47.22,-1.55],
+  'Bordeaux':   [44.84,-0.58],  'Strasbourg': [48.57, 7.75],  'Lille':      [50.63, 3.07],
+  'Rennes':     [48.11,-1.68],  'Reims':      [49.25, 4.03],  'Grenoble':   [45.19, 5.72],
+  'Dijon':      [47.32, 5.04],  'Angers':     [47.47,-0.55],  'Nîmes':      [43.84, 4.36],
+  'Clermont-Ferrand':[45.78, 3.09], 'Toulon': [43.12, 5.93],  'Le Havre':   [49.49, 0.11],
+  'Amiens':     [49.89, 2.30],  'Caen':       [49.18,-0.37],  'Besançon':   [47.24, 6.02],
+  'Brest':      [48.39,-4.49],  'Limoges':    [45.83, 1.26],  'Tours':      [47.39, 0.69],
+  'Metz':       [49.12, 6.18],  'Pau':        [43.30,-0.37],  'Rouen':      [49.44, 1.10],
+  'Annecy':     [45.90, 6.12],  'Montpellier':[43.61, 3.88],  'Perpignan':  [42.70, 2.90],
+  'Nancy':      [48.69, 6.18],  'Avignon':    [43.95, 4.81],  'Poitiers':   [46.58, 0.34],
+  'Versailles': [48.80, 2.13],  'Orléans':    [47.90, 1.91],  'Mulhouse':   [47.75, 7.34],
+  'Saint-Étienne':[45.44, 4.39],'Troyes':    [48.30, 4.08],  'Valenciennes':[50.36, 3.52],
+  'Chambéry':   [45.57, 5.92],  'Albertville':[45.68, 6.39], 'Thonon-les-Bains':[46.37, 6.48],
+};
+
+function estimateDistance(city1, city2) {
+  if (!city1 || !city2) return 9999;
+  const normalize = c => c.trim().split(/[\s,\-\/]/)[0];
+  const c1 = normalize(city1);
+  const c2 = normalize(city2);
+  if (c1.toLowerCase() === c2.toLowerCase()) return 0;
+
+  // Cherche les coordonnées (recherche partielle)
+  const findCoords = name => {
+    const exact = CITY_COORDS[name];
+    if (exact) return exact;
+    const key = Object.keys(CITY_COORDS).find(k => k.toLowerCase().startsWith(name.toLowerCase()));
+    return key ? CITY_COORDS[key] : null;
+  };
+
+  const coord1 = findCoords(c1);
+  const coord2 = findCoords(c2);
+
+  if (!coord1 || !coord2) return 300; // ville inconnue → distance neutre
+
+  // Formule haversine simplifiée
+  const R = 6371;
+  const dLat = (coord2[0] - coord1[0]) * Math.PI / 180;
+  const dLon = (coord2[1] - coord1[1]) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(coord1[0]*Math.PI/180) * Math.cos(coord2[0]*Math.PI/180) * Math.sin(dLon/2)**2;
+  return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+}
+const activeFilters = { gender: 'Tous', distance: 999, ageMin: 18, ageMax: 99, interests: [], minMatch: 0 };
+
+function selectGenderFilter(val, btn) {
+  activeFilters.gender = val;
+  document.querySelectorAll('.filter-gender-btn').forEach(b => {
+    const sel = b.dataset.gender === val;
+    b.style.borderColor = sel ? 'var(--accent)' : 'var(--border)';
+    b.style.background  = sel ? '#ff3d6e18' : 'var(--card2)';
+    b.style.color       = sel ? 'var(--accent)' : 'var(--muted)';
+    b.style.fontWeight  = sel ? '700' : '600';
+  });
+}
 
 function selectDistance(val, btn) {
   activeFilters.distance = val;
@@ -3894,25 +3975,22 @@ function toggleFilterInterest(tag, btn) {
 }
 
 function resetFilters() {
-  activeFilters.distance  = 20;
+  activeFilters.gender    = 'Tous';
+  activeFilters.distance  = 999;
   activeFilters.ageMin    = 18;
-  activeFilters.ageMax    = 55;
+  activeFilters.ageMax    = 99;
   activeFilters.interests = [];
   activeFilters.minMatch  = 0;
-  // Vide et reconstruit les boutons dynamiques
-  const distEl  = document.getElementById('filter-dist-btns');
-  const tagsEl  = document.getElementById('filter-interests');
-  const matchEl = document.getElementById('filter-match-btns');
-  if (distEl)  distEl.innerHTML  = '';
-  if (tagsEl)  tagsEl.innerHTML  = '';
-  if (matchEl) matchEl.innerHTML = '';
+  // Vide et reconstruit tous les boutons dynamiques
+  ['filter-gender-btns','filter-dist-btns','filter-interests','filter-match-btns'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = '';
+  });
   buildFiltersModal();
-  // Reset inputs âge
   const ageMin = document.getElementById('age-min');
   const ageMax = document.getElementById('age-max');
   if (ageMin) ageMin.value = 18;
   if (ageMax) ageMax.value = 55;
-  // Retire badge actif
   const dot = document.getElementById('filter-active-dot');
   if (dot) dot.style.display = 'none';
   const filterBtn = document.getElementById('filter-icon-btn');
@@ -3931,8 +4009,8 @@ function applyFilters() {
   renderCard();
 
   // Badge actif si filtres non-défaut
-  const hasActive = activeFilters.distance !== 20 || activeFilters.ageMin !== 18 ||
-    activeFilters.ageMax !== 55 || activeFilters.interests.length > 0 || activeFilters.minMatch > 0;
+  const hasActive = activeFilters.distance !== 999 || activeFilters.ageMin !== 18 ||
+    activeFilters.ageMax !== 99 || activeFilters.interests.length > 0 || activeFilters.minMatch > 0 || activeFilters.gender !== 'Tous';
   const dot = document.getElementById('filter-active-dot');
   if (dot) dot.style.display = hasActive ? 'block' : 'none';
   const filterBtn = document.getElementById('filter-icon-btn');
@@ -3950,11 +4028,23 @@ function applyFilters() {
 // Override getFilteredProfiles pour prendre en compte les filtres avancés
 function getFilteredProfiles() {
   return PROFILES.filter(p => {
+    // Filtre genre nav (boutons Tous/Femmes/Hommes/Non-binaire)
     if (currentFilter === 'Femmes'      && p.gender !== 'Femme')       return false;
     if (currentFilter === 'Hommes'      && p.gender !== 'Homme')       return false;
     if (currentFilter === 'Non-binaire' && p.gender !== 'Non-binaire') return false;
-    if (p.age < activeFilters.ageMin || p.age > activeFilters.ageMax) return false;
+    // Filtre genre avancé (modale filtres)
+    if (activeFilters.gender === 'Femme'       && p.gender !== 'Femme')       return false;
+    if (activeFilters.gender === 'Homme'       && p.gender !== 'Homme')       return false;
+    if (activeFilters.gender === 'Non-binaire' && p.gender !== 'Non-binaire') return false;
+    // Filtre distance basé sur la ville du profil utilisateur
+    if (activeFilters.distance !== 999) {
+      const userCity = MY_PROFILE.city || 'Paris';
+      const dist = estimateDistance(userCity, p.city);
+      if (dist > activeFilters.distance) return false;
+    }
+    // Filtre compatibilité
     if (p.match < activeFilters.minMatch) return false;
+    // Filtre centres d'intérêt
     if (activeFilters.interests.length > 0) {
       const hasCommon = activeFilters.interests.some(t => (p.tags||[]).includes(t));
       if (!hasCommon) return false;
@@ -4100,14 +4190,6 @@ function flashInvalid(inp) {
     inp.style.borderColor = '';
     inp.style.boxShadow = '';
   }, 800);
-}
-
-function applyFilters() {
-  const minInp = document.getElementById('age-min');
-  const maxInp = document.getElementById('age-max');
-  if (minInp && parseInt(minInp.value) < 18) { minInp.value = 18; flashInvalid(minInp); return; }
-  if (maxInp && parseInt(maxInp.value) < 18) { maxInp.value = 18; flashInvalid(maxInp); return; }
-  closeFilters();
 }
 
 // ════════════════════════════════════════════════════════════
@@ -4873,11 +4955,23 @@ const T = {
   prof_v2:         { fr:'Pièce d\'identité confirmée', en:'ID confirmed', es:'Documento confirmado', it:'Documento confermato', de:'Ausweis bestätigt' },
   prof_v3:         { fr:'Selfie vidéo validé', en:'Video selfie validated', es:'Selfie validado', it:'Selfie validato', de:'Video-Selfie validiert' },
   prof_safety:     { fr:'Sécurité & Confidentialité', en:'Safety & Privacy', es:'Seguridad y Privacidad', it:'Sicurezza e Privacy', de:'Sicherheit & Datenschutz' },
-  prof_s1:         { fr:'Signaler un profil', en:'Report a profile',  es:'Reportar un perfil', it:'Segnala un profilo', de:'Profil melden' },
-  prof_s2:         { fr:'Blocage d\'utilisateurs', en:'Block users',  es:'Bloquear usuarios', it:'Blocca utenti',     de:'Nutzer blockieren' },
-  prof_s3:         { fr:'Mes données personnelles', en:'My personal data', es:'Mis datos personales', it:'I miei dati personali', de:'Meine persönlichen Daten' },
-  prof_s4:         { fr:'Mode discret',       en:'Incognito mode',    es:'Modo discreto',     it:'Modalità discreta', de:'Diskreter Modus' },
-  prof_logout:     { fr:'Se déconnecter',     en:'Log out',           es:'Cerrar sesión',     it:'Disconnetti',       de:'Abmelden' },
+  prof_s1:         { fr:'Signaler un profil',       en:'Report a profile',        es:'Reportar un perfil',           it:'Segnala un profilo',         de:'Profil melden' },
+  prof_s1_sub:     { fr:'Signaler un comportement suspect', en:'Report suspicious behaviour', es:'Reportar comportamiento sospechoso', it:'Segnala comportamento sospetto', de:'Verdächtiges Verhalten melden' },
+  prof_s2:         { fr:'Blocages',                 en:'Blocked profiles',        es:'Bloqueos',                     it:'Blocchi',                    de:'Blockierungen' },
+  prof_s2_sub:     { fr:'Gérer les profils bloqués', en:'Manage blocked profiles', es:'Gestionar perfiles bloqueados', it:'Gestisci profili bloccati',  de:'Blockierte Profile verwalten' },
+  prof_s3:         { fr:'Mes données personnelles', en:'My personal data',        es:'Mis datos personales',         it:'I miei dati personali',      de:'Meine persönlichen Daten' },
+  prof_s3_sub:     { fr:'RGPD · Accès · Suppression', en:'GDPR · Access · Deletion', es:'RGPD · Acceso · Eliminación', it:'GDPR · Accesso · Eliminazione', de:'DSGVO · Zugang · Löschung' },
+  prof_s4:         { fr:'Mode discret',             en:'Incognito mode',          es:'Modo discreto',                it:'Modalità discreta',          de:'Diskreter Modus' },
+  prof_s4_sub:     { fr:'Invisible dans la recherche', en:'Invisible in search',  es:'Invisible en la búsqueda',     it:'Invisibile nella ricerca',   de:'Unsichtbar in der Suche' },
+  prof_s4_on:      { fr:'👻 Mode discret (actif)',  en:'👻 Incognito (active)',   es:'👻 Modo discreto (activo)',    it:'👻 Modalità discreta (attiva)', de:'👻 Diskreter Modus (aktiv)' },
+  prof_s4_sub_on:  { fr:'Tu es invisible dans la recherche', en:'You are invisible in search', es:'Eres invisible en la búsqueda', it:'Sei invisibile nella ricerca', de:'Du bist unsichtbar in der Suche' },
+  likes_tab1:      { fr:'❤️ Mes likes',             en:'❤️ My likes',             es:'❤️ Mis likes',                it:'❤️ I miei like',             de:'❤️ Meine Likes' },
+  likes_tab2:      { fr:'💘 Mes matchs',            en:'💘 My matches',           es:'💘 Mis matchs',               it:'💘 I miei match',            de:'💘 Meine Matches' },
+  likes_empty:     { fr:'Aucun like pour l\'instant', en:'No likes yet',          es:'Sin likes por ahora',          it:'Nessun like per ora',        de:'Noch keine Likes' },
+  likes_empty_sub: { fr:'Swipe à droite ou clique ❤️ dans Découvrir !', en:'Swipe right or tap ❤️ in Discover!', es:'¡Desliza a la derecha o toca ❤️ en Descubrir!', it:'Scorri a destra o tocca ❤️ in Scopri!', de:'Wische rechts oder tippe ❤️ in Entdecken!' },
+  matches_empty:   { fr:'Pas encore de match',      en:'No matches yet',          es:'Aún sin matchs',               it:'Nessun match ancora',        de:'Noch keine Matches' },
+  matches_empty_sub: { fr:'Continue à liker, les matchs arrivent vite !', en:'Keep liking, matches come fast!', es:'¡Sigue dando likes!', it:'Continua a mettere like!', de:'Weiter liken!' },
+  prof_logout:     { fr:'Se déconnecter',           en:'Log out',                 es:'Cerrar sesión',                it:'Disconnetti',                de:'Abmelden' },
 
   // ── MATCH ───────────────────────────────────────────────
   match_title:     { fr:'C\'est un Match !',  en:'It\'s a Match!',    es:'¡Es un Match!',     it:'È un Match!',       de:'Es ist ein Match!' },
@@ -5036,7 +5130,10 @@ function applyTranslations() {
   st('prof-v2',          'prof_v2');
   st('prof-v3',          'prof_v3');
   st('prof-safety',      'prof_safety');
-  st('prof-logout',      'prof_logout');
+  st('likes-tab-liked-lbl', 'likes_tab1');
+  st('likes-tab-match-lbl', 'likes_tab2');
+  // Refresh les menus dynamiques avec les nouvelles traductions
+  if (document.getElementById('safety-menu')) renderSafetyMenu();
 
   // ── MATCH
   st('match-title',      'match_title');
