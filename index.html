@@ -992,7 +992,7 @@
       <div id="profile-card-wrap" style="position:relative;margin-bottom:20px;min-height:480px;">
         <div id="profile-card" class="profile-card" style="background:var(--card);border:1px solid var(--border);">
           <!-- Avatar area -->
-          <div id="card-avatar" style="height:300px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;font-size:110px;">
+          <div id="card-avatar" style="height:180px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;font-size:80px;">
             🌸
             <!-- Match badge -->
             <div style="position:absolute;top:14px;right:14px;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);border-radius:20px;padding:6px 14px;display:flex;align-items:center;gap:6px;">
@@ -1634,11 +1634,7 @@
 
       <!-- Distance -->
       <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Distance maximale</p>
-      <div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;">
-        ${[5,10,20,50,100].map((d,i) => `
-        <button onclick="selectDistance(${d},this)" data-dist="${d}" class="filter-dist-btn" style="padding:8px 16px;border-radius:20px;border:1.5px solid ${i===2?'var(--accent)':'var(--border)'};background:${i===2?'#ff3d6e18':'var(--card2)'};color:${i===2?'var(--accent)':'var(--muted)'};font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;">${d} km</button>`).join('')}
-        <button onclick="selectDistance(999,this)" data-dist="999" class="filter-dist-btn" style="padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--card2);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;">Partout 🌍</button>
-      </div>
+      <div id="filter-dist-btns" style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;"></div>
 
       <!-- Âge -->
       <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Tranche d'âge</p>
@@ -1647,31 +1643,22 @@
         <span style="font-size:11px;color:var(--accent);font-weight:700;">Minimum légal 18 ans — non modifiable</span>
       </div>
       <div style="display:flex;gap:12px;margin-bottom:24px;">
-        <div style="flex:1;">
-          <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">De</label>
-          <input type="number" id="age-min" value="18" min="18" max="99" style="width:100%;" oninput="enforceAgeMin(this)" onchange="enforceAgeMin(this)"/>
-        </div>
+        <div style="flex:1;"><label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">De</label>
+          <input type="number" id="age-min" value="18" min="18" max="99" style="width:100%;" oninput="enforceAgeMin(this)" onchange="enforceAgeMin(this)"/></div>
         <div style="display:flex;align-items:flex-end;padding-bottom:12px;color:var(--muted);font-weight:700;">→</div>
-        <div style="flex:1;">
-          <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">À</label>
-          <input type="number" id="age-max" value="55" min="18" max="99" style="width:100%;" oninput="enforceAgeMax(this)" onchange="enforceAgeMax(this)"/>
-        </div>
+        <div style="flex:1;"><label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">À</label>
+          <input type="number" id="age-max" value="55" min="18" max="99" style="width:100%;" oninput="enforceAgeMax(this)" onchange="enforceAgeMax(this)"/></div>
       </div>
 
-      <!-- Centres d'intérêt communs -->
+      <!-- Centres d'intérêt -->
       <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Centres d'intérêt communs</p>
       <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Affiche en priorité les profils qui partagent tes passions</p>
-      <div id="filter-interests" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;">
-        ${['Yoga','Voyage','Lecture','Cuisine','Danse','Cinéma','Sport','Nature','Musique','Photo','Randonnée','Vélo','Art','Surf','Gaming','Jazz','Ski','Tennis','Tech','BD'].map(tag => `
-        <button onclick="toggleFilterInterest('${tag}',this)" data-tag="${tag}" style="padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card2);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;">#${tag}</button>`).join('')}
-      </div>
+      <div id="filter-interests" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;"></div>
 
-      <!-- Score de compatibilité minimum -->
+      <!-- Compatibilité -->
       <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Compatibilité minimum</p>
-      <div style="display:flex;gap:8px;margin-bottom:28px;">
-        ${[[0,'Tous'],[60,'60%+'],[75,'75%+'],[90,'90%+ 🔥']].map(([val,lbl],i) => `
-        <button onclick="selectMinMatch(${val},this)" data-match="${val}" class="filter-match-btn" style="flex:1;padding:8px 6px;border-radius:14px;border:1.5px solid ${i===0?'var(--accent)':'var(--border)'};background:${i===0?'#ff3d6e18':'var(--card2)'};color:${i===0?'var(--accent)':'var(--muted)'};font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;">${lbl}</button>`).join('')}
-      </div>
+      <div id="filter-match-btns" style="display:flex;gap:8px;margin-bottom:28px;"></div>
+
 
     </div>
     <div style="flex-shrink:0;padding:12px 0 24px;border-top:1px solid var(--border);margin-top:8px;">
@@ -2383,14 +2370,14 @@ function toggleDarkMode() {
 
 // Restaure la préférence au chargement
 function initDarkMode() {
+  // Force mode clair au démarrage
+  document.body.classList.remove('dark-mode');
+  isDarkMode = false;
+  // Réactive le dark uniquement si l'utilisateur l'a explicitement choisi
   try {
     const saved = localStorage.getItem('sm_dark');
-    // On n'active le dark que si l'utilisateur l'a explicitement choisi avant
-    // 'null' = première connexion → mode clair par défaut
     if (saved === '1') toggleDarkMode();
-  } catch(e) {
-    // Si localStorage indisponible → mode clair par défaut, rien à faire
-  }
+  } catch(e) {}
 }
 
 // Photos de démo par catégorie (Unsplash — libres de droits)
@@ -2571,7 +2558,65 @@ function showLikesTab(tab) {
 let visitors = [];
 let visitorsRead = false;
 
-function openFilters(){ document.getElementById('filters-modal').classList.add('open'); }
+function buildFiltersModal() {
+  // Boutons distance
+  const distEl = document.getElementById('filter-dist-btns');
+  if (distEl && !distEl.children.length) {
+    const distances = [5, 10, 20, 50, 100];
+    distances.forEach(d => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-dist-btn';
+      btn.dataset.dist = d;
+      btn.textContent = d + ' km';
+      btn.onclick = function() { selectDistance(d, this); };
+      const sel = d === activeFilters.distance;
+      btn.style.cssText = `padding:8px 16px;border-radius:20px;border:1.5px solid ${sel?'var(--accent)':'var(--border)'};background:${sel?'#ff3d6e18':'var(--card2)'};color:${sel?'var(--accent)':'var(--muted)'};font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;`;
+      distEl.appendChild(btn);
+    });
+    const btnAll = document.createElement('button');
+    btnAll.className = 'filter-dist-btn';
+    btnAll.dataset.dist = 999;
+    btnAll.textContent = 'Partout 🌍';
+    btnAll.onclick = function() { selectDistance(999, this); };
+    const selAll = activeFilters.distance === 999;
+    btnAll.style.cssText = `padding:8px 16px;border-radius:20px;border:1.5px solid ${selAll?'var(--accent)':'var(--border)'};background:${selAll?'#ff3d6e18':'var(--card2)'};color:${selAll?'var(--accent)':'var(--muted)'};font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;`;
+    distEl.appendChild(btnAll);
+  }
+
+  // Tags intérêts
+  const tagsEl = document.getElementById('filter-interests');
+  if (tagsEl && !tagsEl.children.length) {
+    ['Yoga','Voyage','Lecture','Cuisine','Danse','Cinéma','Sport','Nature','Musique','Photo','Randonnée','Vélo','Art','Surf','Gaming','Jazz','Ski','Tennis','Tech','BD'].forEach(tag => {
+      const btn = document.createElement('button');
+      btn.dataset.tag = tag;
+      btn.textContent = '#' + tag;
+      btn.onclick = function() { toggleFilterInterest(tag, this); };
+      const sel = activeFilters.interests.includes(tag);
+      btn.style.cssText = `padding:6px 14px;border-radius:20px;border:1.5px solid ${sel?'var(--accent)':'var(--border)'};background:${sel?'#ff3d6e18':'var(--card2)'};color:${sel?'var(--accent)':'var(--muted)'};font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;`;
+      tagsEl.appendChild(btn);
+    });
+  }
+
+  // Boutons compatibilité
+  const matchEl = document.getElementById('filter-match-btns');
+  if (matchEl && !matchEl.children.length) {
+    [[0,'Tous'],[60,'60%+'],[75,'75%+'],[90,'90%+ 🔥']].forEach(([val, lbl]) => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-match-btn';
+      btn.dataset.match = val;
+      btn.textContent = lbl;
+      btn.onclick = function() { selectMinMatch(val, this); };
+      const sel = val === activeFilters.minMatch;
+      btn.style.cssText = `flex:1;padding:8px 6px;border-radius:14px;border:1.5px solid ${sel?'var(--accent)':'var(--border)'};background:${sel?'#ff3d6e18':'var(--card2)'};color:${sel?'var(--accent)':'var(--muted)'};font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;`;
+      matchEl.appendChild(btn);
+    });
+  }
+}
+
+function openFilters() {
+  buildFiltersModal();
+  document.getElementById('filters-modal').classList.add('open');
+}
 function closeFilters(){ document.getElementById('filters-modal').classList.remove('open'); }
 
 function initVisitors() {
@@ -3761,36 +3806,29 @@ function toggleFilterInterest(tag, btn) {
 }
 
 function resetFilters() {
-  activeFilters.distance = 20;
-  activeFilters.ageMin   = 18;
-  activeFilters.ageMax   = 55;
+  activeFilters.distance  = 20;
+  activeFilters.ageMin    = 18;
+  activeFilters.ageMax    = 55;
   activeFilters.interests = [];
   activeFilters.minMatch  = 0;
-  // Reset UI
-  document.querySelectorAll('.filter-dist-btn').forEach(b => {
-    const sel = parseInt(b.dataset.dist) === 20;
-    b.style.borderColor = sel ? 'var(--accent)' : 'var(--border)';
-    b.style.background  = sel ? '#ff3d6e18' : 'var(--card2)';
-    b.style.color       = sel ? 'var(--accent)' : 'var(--muted)';
-  });
-  document.querySelectorAll('.filter-match-btn').forEach((b,i) => {
-    const sel = i === 0;
-    b.style.borderColor = sel ? 'var(--accent)' : 'var(--border)';
-    b.style.background  = sel ? '#ff3d6e18' : 'var(--card2)';
-    b.style.color       = sel ? 'var(--accent)' : 'var(--muted)';
-  });
-  document.querySelectorAll('#filter-interests button').forEach(b => {
-    b.style.borderColor = 'var(--border)';
-    b.style.background  = 'var(--card2)';
-    b.style.color       = 'var(--muted)';
-  });
+  // Vide et reconstruit les boutons dynamiques
+  const distEl  = document.getElementById('filter-dist-btns');
+  const tagsEl  = document.getElementById('filter-interests');
+  const matchEl = document.getElementById('filter-match-btns');
+  if (distEl)  distEl.innerHTML  = '';
+  if (tagsEl)  tagsEl.innerHTML  = '';
+  if (matchEl) matchEl.innerHTML = '';
+  buildFiltersModal();
+  // Reset inputs âge
   const ageMin = document.getElementById('age-min');
   const ageMax = document.getElementById('age-max');
   if (ageMin) ageMin.value = 18;
   if (ageMax) ageMax.value = 55;
-  // Retire le badge actif sur le bouton filtres
+  // Retire badge actif
   const dot = document.getElementById('filter-active-dot');
   if (dot) dot.style.display = 'none';
+  const filterBtn = document.getElementById('filter-icon-btn');
+  if (filterBtn) filterBtn.style.borderColor = 'var(--border)';
 }
 
 function applyFilters() {
@@ -4196,8 +4234,6 @@ function showDarkModeTooltip() {
 function launchApp() {
   goto('s-app');
   initApp();
-  // Tooltip animé 1s après l'entrée dans l'app
-  setTimeout(showDarkModeTooltip, 1200);
 }
 
 function renderObStep() {
