@@ -1085,7 +1085,7 @@
       </div>
     </div>
     <!-- Chat view (hidden by default) -->
-    <div id="chat-view" style="display:none;max-width:430px;margin:0 auto;height:calc(100vh - 80px);flex-direction:column;">
+    <div id="chat-view" style="display:none;max-width:430px;margin:0 auto;height:calc(100vh - 140px);max-height:calc(100vh - 140px);flex-direction:column;overflow:hidden;">
       <!-- Chat header -->
       <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--bg);">
         <button onclick="closeChat()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:20px;padding:4px;flex-shrink:0;">←</button>
@@ -1133,9 +1133,9 @@
         <span style="font-size:11px;color:var(--teal);font-weight:600;">Messages chiffrés de bout en bout</span>
       </div>
       <!-- Messages -->
-      <div id="chat-messages" style="flex:1;overflow-y:auto;padding:8px 16px;display:flex;flex-direction:column;gap:10px;"></div>
-      <!-- Input bar -->
-      <div style="padding:10px 16px;border-top:1px solid var(--border);background:var(--bg);">
+      <div id="chat-messages" style="flex:1;overflow-y:auto;padding:8px 16px 4px;display:flex;flex-direction:column;gap:10px;min-height:0;"></div>
+      <!-- Input bar — toujours visible en bas -->
+      <div style="flex-shrink:0;padding:10px 16px 12px;border-top:1px solid var(--border);background:var(--bg);">
         <div id="chat-loc-btn-wrap">
           <button id="msg-loc-btn" onclick="openLocationModal()" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;font-size:12px;font-weight:600;margin-bottom:10px;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -4828,6 +4828,8 @@ const T = {
   // ── APP NAV ─────────────────────────────────────────────
   nav_discover:    { fr:'Découvrir',          en:'Discover',          es:'Descubrir',         it:'Scopri',            de:'Entdecken' },
   nav_messages:    { fr:'Messages',           en:'Messages',          es:'Mensajes',          it:'Messaggi',          de:'Nachrichten' },
+  nav_likes:       { fr:'Likes',              en:'Likes',             es:'Likes',             it:'Like',              de:'Likes' },
+  nav_notif:       { fr:'Notifs',             en:'Notifs',            es:'Notifs',            it:'Notifiche',         de:'Benachr.' },
   nav_profile:     { fr:'Profil',             en:'Profile',           es:'Perfil',            it:'Profilo',           de:'Profil' },
 
   // ── DISCOVER ────────────────────────────────────────────
@@ -4997,6 +4999,8 @@ function applyTranslations() {
   // ── NAV
   st('nav-discover-lbl', 'nav_discover');
   st('nav-messages-lbl', 'nav_messages');
+  st('nav-likes-lbl',    'nav_likes');
+  st('nav-notif-lbl',    'nav_notif');
   st('nav-profile-lbl',  'nav_profile');
 
   // ── DISCOVER
