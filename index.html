@@ -27,63 +27,57 @@
     --glow:    0 0 40px #ff3d6e20;
     --r: 20px;
   }
+  :root {
+    --bg:      #fef6ef;
+    --card:    #ffffff;
+    --card2:   #fff3ea;
+    --border:  #faddca;
+    --accent:  #ff3d6e;
+    --accent2: #ff6b35;
+    --teal:    #00a884;
+    --gold:    #e6920a;
+    --text:    #2d1b14;
+    --muted:   #9a6a55;
+    --grad:    linear-gradient(135deg, #ff3d6e, #ff6b35);
+    --grad-teal: linear-gradient(135deg, #00a884, #00b4d8);
+    --glow:    0 8px 32px #ff3d6e30;
+    --r: 20px;
+  }
   /* ── MODE SOMBRE ── */
   body.dark-mode {
     --bg:      #0f0a08;
-    --card:    #1a1008;
-    --card2:   #221508;
+    --card:    #1e120a;
+    --card2:   #261808;
     --border:  #3a2515;
     --teal:    #00c896;
     --gold:    #ffb347;
-    --text:    #f5e6d8;
-    --muted:   #8a6555;
+    --text:    #f0ddd0;
+    --muted:   #907060;
+    --glow:    0 8px 32px #ff3d6e40;
   }
   body.dark-mode .screen { background: var(--bg); color: var(--text); }
   body.dark-mode #s-splash, body.dark-mode #s-pwd { background: linear-gradient(160deg, #1a0f08 0%, #0f0a05 100%); }
   body.dark-mode #s-app, body.dark-mode #s-consent, body.dark-mode #s-verify, body.dark-mode #s-pay { background: var(--bg); }
+  body.dark-mode #nav { background: rgba(15,10,8,0.97) !important; border-color: var(--border); }
+  body.dark-mode #match-overlay { background: rgba(10,6,3,.97) !important; }
+  body.dark-mode input, body.dark-mode textarea { background: var(--card2) !important; color: var(--text) !important; border-color: var(--border) !important; }
+  body.dark-mode .card, body.dark-mode .plan-card, body.dark-mode .modal { background: var(--card); color: var(--text); border-color: var(--border); }
 
-  /* Fix dark mode — tous les textes sans couleur explicite */
-  body.dark-mode span:not([style*="color"]),
-  body.dark-mode p:not([style*="color"]),
-  body.dark-mode h1:not([style*="color"]),
-  body.dark-mode h2:not([style*="color"]),
-  body.dark-mode h3:not([style*="color"]),
-  body.dark-mode h4:not([style*="color"]),
-  body.dark-mode label:not([style*="color"]),
-  body.dark-mode div:not([style*="color"]) { color: var(--text); }
-
-  /* Exceptions — garder les couleurs sémantiques */
-  body.dark-mode [style*="color:var(--muted)"],
-  body.dark-mode [style*="color:var(--teal)"],
-  body.dark-mode [style*="color:var(--accent)"],
-  body.dark-mode [style*="color:var(--gold)"],
-  body.dark-mode [style*="color:white"],
-  body.dark-mode [style*="color:#ff"],
-  body.dark-mode [style*="color:#00"] { color: inherit; }
-
-  /* Nav dark */
-  body.dark-mode #nav { background: rgba(15,10,8,0.96); border-color: var(--border); }
-
-  /* Match overlay dark */
-  body.dark-mode #match-overlay { background: rgba(15,10,5,.97); }
-
-  /* Transition douce */
-  *, *::before, *::after { transition: background-color .3s ease, border-color .3s ease, color .2s ease; }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; color: inherit; }
+  /* ── GLOBAL BASE ── */
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html { height: 100%; height: -webkit-fill-available; }
   body { height: 100%; height: -webkit-fill-available; font-family: 'DM Sans', sans-serif; overflow: hidden; color: var(--text); }
-
-  /* Tous les textes héritent de var(--text) — fix dark mode global */
-  .screen, .screen * { color: inherit; }
   .screen { color: var(--text); }
-
-  /* Headings */
-  .screen h1, .screen h2, .screen h3, .screen h4 { color: var(--text); }
-
-  /* Inputs et textarea héritent aussi */
   input, textarea, select, button { font-family: 'DM Sans', sans-serif; }
   input, textarea { color: var(--text); background: var(--card); }
   input::placeholder, textarea::placeholder { color: var(--muted); }
+  /* NE PAS forcer color:inherit sur span — ça casse les titres gradient avec -webkit-text-fill-color */
+  p, h1, h2, h3, h4, label { color: var(--text); }
+
+  /* Transition douce */
+  .screen *, #nav, .modal, .card, input, textarea {
+    transition: background-color .25s ease, border-color .25s ease, color .2s ease;
+  }
 
   /* ── RESPONSIVE : mobile = plein écran, desktop = simulateur téléphone ── */
   @media (max-width: 480px) {
@@ -388,7 +382,7 @@
       <div class="float" style="width:96px;height:96px;border-radius:28px;background:var(--grad);display:flex;align-items:center;justify-content:center;margin:0 auto 28px;box-shadow:var(--glow),0 0 0 1px #ff3d6e44;">
         <svg width="50" height="50" viewBox="0 0 24 24" fill="white"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       </div>
-      <h1 style="font-family:'Syne',sans-serif;font-size:52px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-2px;line-height:1;margin-bottom:8px;">SafeMatch</h1>
+      <h1 style="font-family:'Syne',sans-serif;font-size:clamp(32px,10vw,48px);font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px;line-height:1;margin-bottom:8px;white-space:nowrap;overflow:hidden;width:100%;text-align:center;">SafeMatch</h1>
       <p id="splash-tagline" style="color:var(--teal);font-weight:600;font-size:16px;margin-bottom:6px;">Rencontres 100% vérifiées</p>
       <p id="splash-desc" style="color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:48px;">Chaque profil est authentifié par pièce d'identité,<br>selfie vidéo et numéro de téléphone.</p>
 
@@ -929,6 +923,34 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
+     SCREEN ONBOARDING — post-paiement
+═══════════════════════════════════════════════════════════ -->
+<div class="screen hidden" id="s-onboarding">
+  <div style="max-width:430px;width:100%;margin:0 auto;padding:0;height:100%;display:flex;flex-direction:column;">
+
+    <!-- Barre de progression -->
+    <div style="padding:20px 24px 0;flex-shrink:0;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span id="ob-step-lbl" style="font-size:12px;font-weight:700;color:var(--muted);">Étape 1 sur 3</span>
+        <button onclick="skipOnboarding()" style="background:none;border:none;font-size:13px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;">Passer →</button>
+      </div>
+      <div style="height:4px;background:var(--border);border-radius:4px;overflow:hidden;">
+        <div id="ob-progress-bar" style="height:100%;width:33%;background:var(--grad);border-radius:4px;transition:width .4s ease;"></div>
+      </div>
+    </div>
+
+    <!-- Contenu scrollable -->
+    <div id="ob-content" style="flex:1;overflow-y:auto;padding:24px 24px 100px;"></div>
+
+    <!-- Bouton bas fixe -->
+    <div style="position:absolute;bottom:0;left:0;right:0;padding:16px 24px 32px;background:linear-gradient(transparent,var(--bg) 40%);max-width:430px;margin:0 auto;">
+      <button id="ob-next-btn" onclick="obNext()" class="btn btn-primary" style="width:100%;font-size:16px;"></button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
      SCREEN 3 — APP (tabs: discover / messages / profile)
 ═══════════════════════════════════════════════════════════ -->
 <div class="screen hidden" id="s-app">
@@ -941,8 +963,19 @@
           <p id="disc-sub" style="color:var(--muted);font-size:13px;">Profils vérifiés près de toi</p>
         </div>
         <div style="display:flex;gap:8px;">
-          <button style="width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;" onclick="openFilters()">
+          <!-- Boost -->
+          <button id="boost-btn" onclick="openBoostModal()" style="position:relative;width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#ffb34718,#ff8c0018);border:1px solid #ffb34744;display:flex;align-items:center;justify-content:center;cursor:pointer;" title="Booster mon profil">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </button>
+          <!-- Notifs -->
+          <button onclick="openVisitorsPanel()" style="position:relative;width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;" title="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <div id="disc-notif-badge" style="display:none;position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);"></div>
+          </button>
+          <!-- Filtres -->
+          <button id="filter-icon-btn" onclick="openFilters()" style="position:relative;width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;" title="Filtres">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+            <div id="filter-active-dot" style="display:none;position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);"></div>
           </button>
         </div>
       </div>
@@ -1174,7 +1207,10 @@
           <div style="display:flex;justify-content:space-between;align-items:flex-start;">
             <div>
               <h3 id="prof-name" style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:2px;color:var(--text);">Moi</h3>
-              <p id="prof-age-city" style="color:var(--muted);font-size:13px;margin-bottom:4px;">Paris, France</p>
+              <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <p id="prof-age-city" style="color:var(--muted);font-size:13px;margin:0;">Paris, France</p>
+              </div>
               <p id="prof-bio-preview" style="color:var(--muted);font-size:12px;font-style:italic;line-height:1.5;">Ta bio apparaît ici…</p>
             </div>
             <span id="prof-verified" class="verified" style="padding:5px 12px;font-size:12px;flex-shrink:0;">🛡️ Vérifié</span>
@@ -1552,6 +1588,18 @@
   <p style="color:rgba(255,255,255,.5);font-size:12px;margin-top:14px;">Appuie pour fermer</p>
 </div>
 
+<!-- ═══ BOOST MODAL ═══ -->
+<div class="modal-bg" id="boost-modal">
+  <div class="modal" style="max-height:80vh;display:flex;flex-direction:column;padding:28px 24px 0;">
+    <div class="modal-handle" style="margin-top:-16px;"></div>
+    <div id="boost-modal-content" style="flex:1;overflow-y:auto;padding-bottom:8px;"></div>
+    <div style="flex-shrink:0;padding:12px 0 24px;border-top:1px solid var(--border);margin-top:8px;">
+      <button id="boost-action-btn" class="btn btn-primary" style="width:100%;font-size:15px;background:linear-gradient(135deg,#ffb347,#ff8c00);box-shadow:0 8px 24px #ffb34744;" onclick="activateBoost()">⚡ Booster maintenant — Gratuit</button>
+      <button class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="document.getElementById('boost-modal').classList.remove('open')">Plus tard</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══ STAT MODAL ═══ -->
 <div class="modal-bg" id="stat-modal">
   <div class="modal" style="max-height:80vh;display:flex;flex-direction:column;padding:28px 24px 0;">
@@ -1576,47 +1624,59 @@
 
 <!-- ═══ FILTERS MODAL ═══ -->
 <div class="modal-bg" id="filters-modal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <h3 id="filter-title" style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:20px;color:var(--text);">Filtres de recherche</h3>
-    <p id="filter-dist-lbl" style="font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Distance max</p>
-    <div style="display:flex;gap:8px;margin-bottom:20px;">
-      <button class="btn btn-ghost" style="flex:1;padding:10px;" onclick="closeFilters()">5 km</button>
-      <button class="btn" style="flex:1;padding:10px;background:#ff3d6e18;border:1.5px solid var(--accent);color:var(--accent);" onclick="closeFilters()">20 km</button>
-      <button class="btn btn-ghost" style="flex:1;padding:10px;" onclick="closeFilters()">50 km</button>
-      <button class="btn btn-ghost" style="flex:1;padding:10px;" onclick="closeFilters()">+ 50 km</button>
+  <div class="modal" style="max-height:90vh;display:flex;flex-direction:column;padding:28px 24px 0;">
+    <div class="modal-handle" style="margin-top:-16px;"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-shrink:0;">
+      <h3 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;">Filtres de recherche</h3>
+      <button onclick="resetFilters()" style="background:none;border:none;font-size:13px;color:var(--accent);font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">Réinitialiser</button>
     </div>
-    <p id="filter-age-lbl" style="font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Tranche d'âge</p>
+    <div style="flex:1;overflow-y:auto;padding-bottom:8px;">
 
-    <!-- Age protection notice -->
-    <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#ff3d6e12;border:1px solid #ff3d6e33;border-radius:12px;margin-bottom:12px;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      <span style="font-size:11px;color:var(--accent);font-weight:700;">Minimum légal : 18 ans — non modifiable</span>
-    </div>
+      <!-- Distance -->
+      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Distance maximale</p>
+      <div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;">
+        ${[5,10,20,50,100].map((d,i) => `
+        <button onclick="selectDistance(${d},this)" data-dist="${d}" class="filter-dist-btn" style="padding:8px 16px;border-radius:20px;border:1.5px solid ${i===2?'var(--accent)':'var(--border)'};background:${i===2?'#ff3d6e18':'var(--card2)'};color:${i===2?'var(--accent)':'var(--muted)'};font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;">${d} km</button>`).join('')}
+        <button onclick="selectDistance(999,this)" data-dist="999" class="filter-dist-btn" style="padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--card2);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;">Partout 🌍</button>
+      </div>
 
-    <div style="display:flex;gap:12px;margin-bottom:24px;">
-      <div style="flex:1;">
-        <label id="filter-min-lbl" style="font-size:12px;color:var(--muted);">Min</label>
-        <div style="position:relative;margin-top:6px;">
-          <input type="number" id="age-min" value="18" min="18" max="99"
-            style="width:100%;padding-right:36px;"
-            oninput="enforceAgeMin(this)"
-            onchange="enforceAgeMin(this)"/>
-          <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          </div>
+      <!-- Âge -->
+      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Tranche d'âge</p>
+      <div style="padding:12px 14px;background:#ff3d6e0a;border-radius:12px;border:1px solid #ff3d6e22;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span style="font-size:11px;color:var(--accent);font-weight:700;">Minimum légal 18 ans — non modifiable</span>
+      </div>
+      <div style="display:flex;gap:12px;margin-bottom:24px;">
+        <div style="flex:1;">
+          <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">De</label>
+          <input type="number" id="age-min" value="18" min="18" max="99" style="width:100%;" oninput="enforceAgeMin(this)" onchange="enforceAgeMin(this)"/>
         </div>
-        <p style="font-size:10px;color:var(--teal);margin-top:4px;font-weight:600;">🔒 Minimum légal 18 ans</p>
+        <div style="display:flex;align-items:flex-end;padding-bottom:12px;color:var(--muted);font-weight:700;">→</div>
+        <div style="flex:1;">
+          <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">À</label>
+          <input type="number" id="age-max" value="55" min="18" max="99" style="width:100%;" oninput="enforceAgeMax(this)" onchange="enforceAgeMax(this)"/>
+        </div>
       </div>
-      <div style="flex:1;">
-        <label id="filter-max-lbl" style="font-size:12px;color:var(--muted);">Max</label>
-        <input type="number" id="age-max" value="55" min="18" max="99"
-          style="margin-top:6px;"
-          oninput="enforceAgeMax(this)"
-          onchange="enforceAgeMax(this)"/>
+
+      <!-- Centres d'intérêt communs -->
+      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Centres d'intérêt communs</p>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Affiche en priorité les profils qui partagent tes passions</p>
+      <div id="filter-interests" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;">
+        ${['Yoga','Voyage','Lecture','Cuisine','Danse','Cinéma','Sport','Nature','Musique','Photo','Randonnée','Vélo','Art','Surf','Gaming','Jazz','Ski','Tennis','Tech','BD'].map(tag => `
+        <button onclick="toggleFilterInterest('${tag}',this)" data-tag="${tag}" style="padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card2);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;">#${tag}</button>`).join('')}
       </div>
+
+      <!-- Score de compatibilité minimum -->
+      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Compatibilité minimum</p>
+      <div style="display:flex;gap:8px;margin-bottom:28px;">
+        ${[[0,'Tous'],[60,'60%+'],[75,'75%+'],[90,'90%+ 🔥']].map(([val,lbl],i) => `
+        <button onclick="selectMinMatch(${val},this)" data-match="${val}" class="filter-match-btn" style="flex:1;padding:8px 6px;border-radius:14px;border:1.5px solid ${i===0?'var(--accent)':'var(--border)'};background:${i===0?'#ff3d6e18':'var(--card2)'};color:${i===0?'var(--accent)':'var(--muted)'};font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;">${lbl}</button>`).join('')}
+      </div>
+
     </div>
-    <button id="filter-apply-btn" class="btn btn-primary" style="width:100%;" onclick="applyFilters()">Appliquer les filtres</button>
+    <div style="flex-shrink:0;padding:12px 0 24px;border-top:1px solid var(--border);margin-top:8px;">
+      <button id="filter-apply-btn" class="btn btn-primary" style="width:100%;font-size:15px;" onclick="applyFilters()">Appliquer les filtres</button>
+    </div>
   </div>
 </div>
 
@@ -2318,14 +2378,19 @@ function toggleDarkMode() {
   if (btn) btn.style.borderColor = isDarkMode ? 'var(--gold)' : 'var(--border)';
 
   try { localStorage.setItem('sm_dark', isDarkMode ? '1' : '0'); } catch(e) {}
+  // '1' = dark choisi, '0' = clair choisi, null = jamais ouvert (→ clair par défaut)
 }
 
 // Restaure la préférence au chargement
 function initDarkMode() {
   try {
     const saved = localStorage.getItem('sm_dark');
+    // On n'active le dark que si l'utilisateur l'a explicitement choisi avant
+    // 'null' = première connexion → mode clair par défaut
     if (saved === '1') toggleDarkMode();
-  } catch(e) {}
+  } catch(e) {
+    // Si localStorage indisponible → mode clair par défaut, rien à faire
+  }
 }
 
 // Photos de démo par catégorie (Unsplash — libres de droits)
@@ -2506,19 +2571,24 @@ function showLikesTab(tab) {
 let visitors = [];
 let visitorsRead = false;
 
+function openFilters(){ document.getElementById('filters-modal').classList.add('open'); }
+function closeFilters(){ document.getElementById('filters-modal').classList.remove('open'); }
+
 function initVisitors() {
-  // Pioche 4-7 profils aléatoires comme visiteurs
   const pool = [...PROFILES].sort(() => Math.random() - 0.5).slice(0, Math.floor(4 + Math.random() * 4));
   const times = ['Il y a 2 min','Il y a 12 min','Il y a 1h','Il y a 3h','Il y a 5h','Hier','Il y a 2j'];
   visitors = pool.map((p, i) => ({ ...p, visitedAt: times[i % times.length], seen: false }));
   updateBellBadge();
+  updateDiscNotifBadge();
 
-  // Simule une nouvelle visite après 30 secondes
   setTimeout(() => {
     const newVisitor = PROFILES[Math.floor(Math.random() * PROFILES.length)];
     visitors.unshift({ ...newVisitor, visitedAt: 'À l\'instant', seen: false });
     visitorsRead = false;
     updateBellBadge();
+    updateDiscNotifBadge();
+    // Notification push simulée
+    showPushNotif('👀 Quelqu\'un a visité ton profil !', 'Clique pour voir qui c\'est');
   }, 30000);
 }
 
@@ -3651,10 +3721,233 @@ function safetyAction(idx) {
 }
 
 // ════════════════════════════════════════════════════════════
-// FILTERS
+// 🔍 FILTRES AVANCÉS
 // ════════════════════════════════════════════════════════════
-function openFilters(){ document.getElementById('filters-modal').classList.add('open'); }
-function closeFilters(){ document.getElementById('filters-modal').classList.remove('open'); }
+const activeFilters = { distance: 20, ageMin: 18, ageMax: 55, interests: [], minMatch: 0 };
+
+function selectDistance(val, btn) {
+  activeFilters.distance = val;
+  document.querySelectorAll('.filter-dist-btn').forEach(b => {
+    const sel = parseInt(b.dataset.dist) === val;
+    b.style.borderColor = sel ? 'var(--accent)' : 'var(--border)';
+    b.style.background  = sel ? '#ff3d6e18' : 'var(--card2)';
+    b.style.color       = sel ? 'var(--accent)' : 'var(--muted)';
+  });
+}
+
+function selectMinMatch(val, btn) {
+  activeFilters.minMatch = val;
+  document.querySelectorAll('.filter-match-btn').forEach(b => {
+    const sel = parseInt(b.dataset.match) === val;
+    b.style.borderColor = sel ? 'var(--accent)' : 'var(--border)';
+    b.style.background  = sel ? '#ff3d6e18' : 'var(--card2)';
+    b.style.color       = sel ? 'var(--accent)' : 'var(--muted)';
+  });
+}
+
+function toggleFilterInterest(tag, btn) {
+  const idx = activeFilters.interests.indexOf(tag);
+  if (idx > -1) {
+    activeFilters.interests.splice(idx, 1);
+    btn.style.borderColor = 'var(--border)';
+    btn.style.background  = 'var(--card2)';
+    btn.style.color       = 'var(--muted)';
+  } else {
+    activeFilters.interests.push(tag);
+    btn.style.borderColor = 'var(--accent)';
+    btn.style.background  = '#ff3d6e18';
+    btn.style.color       = 'var(--accent)';
+  }
+}
+
+function resetFilters() {
+  activeFilters.distance = 20;
+  activeFilters.ageMin   = 18;
+  activeFilters.ageMax   = 55;
+  activeFilters.interests = [];
+  activeFilters.minMatch  = 0;
+  // Reset UI
+  document.querySelectorAll('.filter-dist-btn').forEach(b => {
+    const sel = parseInt(b.dataset.dist) === 20;
+    b.style.borderColor = sel ? 'var(--accent)' : 'var(--border)';
+    b.style.background  = sel ? '#ff3d6e18' : 'var(--card2)';
+    b.style.color       = sel ? 'var(--accent)' : 'var(--muted)';
+  });
+  document.querySelectorAll('.filter-match-btn').forEach((b,i) => {
+    const sel = i === 0;
+    b.style.borderColor = sel ? 'var(--accent)' : 'var(--border)';
+    b.style.background  = sel ? '#ff3d6e18' : 'var(--card2)';
+    b.style.color       = sel ? 'var(--accent)' : 'var(--muted)';
+  });
+  document.querySelectorAll('#filter-interests button').forEach(b => {
+    b.style.borderColor = 'var(--border)';
+    b.style.background  = 'var(--card2)';
+    b.style.color       = 'var(--muted)';
+  });
+  const ageMin = document.getElementById('age-min');
+  const ageMax = document.getElementById('age-max');
+  if (ageMin) ageMin.value = 18;
+  if (ageMax) ageMax.value = 55;
+  // Retire le badge actif sur le bouton filtres
+  const dot = document.getElementById('filter-active-dot');
+  if (dot) dot.style.display = 'none';
+}
+
+function applyFilters() {
+  // Récupère les valeurs des inputs âge
+  const ageMin = document.getElementById('age-min');
+  const ageMax = document.getElementById('age-max');
+  if (ageMin) activeFilters.ageMin = parseInt(ageMin.value) || 18;
+  if (ageMax) activeFilters.ageMax = parseInt(ageMax.value) || 99;
+
+  closeFilters();
+  filteredIdx = 0;
+  renderCard();
+
+  // Badge actif si filtres non-défaut
+  const hasActive = activeFilters.distance !== 20 || activeFilters.ageMin !== 18 ||
+    activeFilters.ageMax !== 55 || activeFilters.interests.length > 0 || activeFilters.minMatch > 0;
+  const dot = document.getElementById('filter-active-dot');
+  if (dot) dot.style.display = hasActive ? 'block' : 'none';
+  const filterBtn = document.getElementById('filter-icon-btn');
+  if (filterBtn) filterBtn.style.borderColor = hasActive ? 'var(--accent)' : 'var(--border)';
+
+  // Toast confirmation
+  const total = getFilteredProfiles().length;
+  const toast = document.createElement('div');
+  toast.textContent = `✓ ${total} profil${total > 1 ? 's' : ''} correspondent à tes critères`;
+  toast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--teal);color:white;padding:10px 20px;border-radius:22px;font-size:13px;font-weight:700;z-index:9999;white-space:nowrap;box-shadow:0 4px 20px #00b89433;';
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2500);
+}
+
+// Override getFilteredProfiles pour prendre en compte les filtres avancés
+function getFilteredProfiles() {
+  return PROFILES.filter(p => {
+    if (currentFilter === 'Femmes'      && p.gender !== 'Femme')       return false;
+    if (currentFilter === 'Hommes'      && p.gender !== 'Homme')       return false;
+    if (currentFilter === 'Non-binaire' && p.gender !== 'Non-binaire') return false;
+    if (p.age < activeFilters.ageMin || p.age > activeFilters.ageMax) return false;
+    if (p.match < activeFilters.minMatch) return false;
+    if (activeFilters.interests.length > 0) {
+      const hasCommon = activeFilters.interests.some(t => (p.tags||[]).includes(t));
+      if (!hasCommon) return false;
+    }
+    return true;
+  });
+}
+
+// ════════════════════════════════════════════════════════════
+// ⚡ BOOST DE PROFIL
+// ════════════════════════════════════════════════════════════
+let boostActive = false;
+let boostTimer  = null;
+let boostSecondsLeft = 0;
+
+function openBoostModal() {
+  const content = document.getElementById('boost-modal-content');
+  const btn     = document.getElementById('boost-action-btn');
+  if (!content) return;
+
+  if (boostActive) {
+    const mins = Math.floor(boostSecondsLeft / 60);
+    const secs = boostSecondsLeft % 60;
+    content.innerHTML = `
+      <div style="text-align:center;padding:16px 0 20px;">
+        <div style="font-size:56px;margin-bottom:14px;animation:pulse 1.5s ease-in-out infinite;">⚡</div>
+        <h3 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:6px;">Boost en cours !</h3>
+        <p style="color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:20px;">Ton profil est mis en avant pour les utilisateurs près de toi.</p>
+        <div style="padding:20px;background:linear-gradient(135deg,#ffb34718,#ff8c0010);border-radius:16px;border:1.5px solid #ffb34744;">
+          <p style="font-size:36px;font-weight:800;color:var(--gold);font-family:'Syne',sans-serif;">${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}</p>
+          <p style="font-size:13px;color:var(--muted);">Temps restant</p>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-top:16px;line-height:1.6;">💡 Profite-en pour liker des profils — tu auras plus de chances de matcher !</p>
+      </div>`;
+    if (btn) { btn.textContent = '⚡ Boost actif'; btn.style.opacity = '.5'; btn.style.cursor = 'not-allowed'; btn.onclick = null; }
+  } else {
+    content.innerHTML = `
+      <div style="text-align:center;padding:16px 0 20px;">
+        <div style="font-size:56px;margin-bottom:14px;">⚡</div>
+        <h3 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:8px;">Boost ton profil</h3>
+        <p style="color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:24px;">Passe en tête des résultats pendant <strong style="color:var(--text);">30 minutes</strong> et multiplie ta visibilité.</p>
+      </div>
+      ${[['👁️','Visibilité x5','Ton profil apparaît en premier dans Découvrir'],['❤️','+3x de likes','Les utilisateurs actifs te voient en priorité'],['💘','Matchs plus rapides','Booste tes chances de matcher aujourd\'hui']].map(([ic,title,desc]) => `
+      <div style="display:flex;align-items:center;gap:14px;padding:12px;background:var(--card2);border-radius:12px;border:1px solid var(--border);margin-bottom:10px;">
+        <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#ffb34720,#ff8c0010);border:1px solid #ffb34744;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">${ic}</div>
+        <div>
+          <p style="margin:0;font-size:14px;font-weight:700;">${title}</p>
+          <p style="margin:2px 0 0;font-size:12px;color:var(--muted);">${desc}</p>
+        </div>
+      </div>`).join('')}
+      <div style="padding:12px;background:#00b89410;border-radius:12px;border:1px solid #00b89430;margin-top:6px;text-align:center;">
+        <p style="font-size:13px;color:var(--teal);font-weight:700;">🎁 1 Boost gratuit disponible aujourd'hui !</p>
+      </div>`;
+    if (btn) { btn.textContent = '⚡ Booster maintenant — Gratuit'; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; btn.onclick = activateBoost; }
+  }
+  document.getElementById('boost-modal').classList.add('open');
+}
+
+function activateBoost() {
+  boostActive       = true;
+  boostSecondsLeft  = 30 * 60; // 30 minutes
+  document.getElementById('boost-modal').classList.remove('open');
+
+  // Badge sur le bouton boost
+  const boostBtn = document.getElementById('boost-btn');
+  if (boostBtn) {
+    boostBtn.style.background   = 'linear-gradient(135deg,#ffb347,#ff8c00)';
+    boostBtn.style.borderColor  = 'var(--gold)';
+    boostBtn.querySelector('svg').style.stroke = 'white';
+  }
+
+  // Toast
+  const toast = document.createElement('div');
+  toast.textContent = '⚡ Boost activé — 30 min de visibilité maximale !';
+  toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#ffb347,#ff8c00);color:white;padding:12px 24px;border-radius:22px;font-size:13px;font-weight:700;z-index:9999;white-space:nowrap;box-shadow:0 4px 20px #ffb34766;animation:fadeUp .3s ease;';
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+
+  // Décompte
+  boostTimer = setInterval(() => {
+    boostSecondsLeft--;
+    if (boostSecondsLeft <= 0) {
+      clearInterval(boostTimer);
+      boostActive = false;
+      if (boostBtn) {
+        boostBtn.style.background  = 'linear-gradient(135deg,#ffb34718,#ff8c0018)';
+        boostBtn.style.borderColor = '#ffb34744';
+        boostBtn.querySelector('svg').style.stroke = 'var(--gold)';
+      }
+    }
+  }, 1000);
+}
+
+// ════════════════════════════════════════════════════════════
+// 🔔 NOTIFICATIONS — badge sur la cloche Découvrir
+// ════════════════════════════════════════════════════════════
+function showPushNotif(title, body) {
+  const notif = document.createElement('div');
+  notif.onclick = () => { notif.remove(); openVisitorsPanel(); };
+  notif.innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="width:40px;height:40px;border-radius:12px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🛡️</div>
+      <div style="flex:1;min-width:0;">
+        <p style="margin:0;font-size:13px;font-weight:700;">${title}</p>
+        <p style="margin:2px 0 0;font-size:11px;color:var(--muted);">${body}</p>
+      </div>
+      <button onclick="event.stopPropagation();this.parentElement.parentElement.remove();" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:0 4px;">×</button>
+    </div>`;
+  notif.style.cssText = 'position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px 16px;min-width:280px;max-width:340px;z-index:9999;cursor:pointer;box-shadow:0 8px 32px rgba(0,0,0,.15);animation:fadeUp .4s ease;';
+  document.body.appendChild(notif);
+  setTimeout(() => { if (notif.parentElement) notif.remove(); }, 5000);
+}
+
+function updateDiscNotifBadge() {
+  const badge = document.getElementById('disc-notif-badge');
+  if (!badge) return;
+  const hasNew = visitors.some(v => !v.seen);
+  badge.style.display = hasNew ? 'block' : 'none';
+}
 
 function enforceAgeMin(inp) {
   let v = parseInt(inp.value) || 18;
@@ -3790,8 +4083,374 @@ function launchConfetti() {
 
 function enterApp() {
   document.getElementById('pay-success').style.display = 'none';
+  startOnboarding();
+}
+
+// ════════════════════════════════════════════════════════════
+// 🎯 ONBOARDING POST-INSCRIPTION
+// ════════════════════════════════════════════════════════════
+let obStep = 0;
+const OB_STEPS = 4;
+
+const OB_TAGS_LIST = ['Yoga','Voyage','Lecture','Cuisine','Danse','Cinéma','Sport','Nature','Musique','Photo','Randonnée','Vélo','Art','Surf','Gaming','Théâtre','Jazz','Ski','Tennis','Tech'];
+const OB_SEARCH_TYPES = [['💑','Une relation sérieuse'],['💫','Voir ce qui se passe'],['💬','Rencontres amicales'],['❤️','Quelque chose de passionné']];
+
+function startOnboarding() {
+  obStep = 0;
+  goto('s-onboarding');
+  renderObStep();
+}
+
+function skipOnboarding() {
+  // Sauvegarde ce qui a été rempli
+  saveObData();
+  launchApp();
+}
+
+function obNext() {
+  // Sauvegarde l'étape courante avant de passer
+  saveObStep();
+  obStep++;
+  if (obStep >= OB_STEPS) {
+    saveObData();
+    launchApp();
+  } else {
+    renderObStep();
+  }
+}
+
+function saveObStep() {
+  if (obStep === 0) {
+    // Profil de base
+    const name = document.getElementById('ob-name');
+    const age  = document.getElementById('ob-age');
+    const city = document.getElementById('ob-city');
+    const bio  = document.getElementById('ob-bio');
+    if (name && name.value.trim()) MY_PROFILE.name = name.value.trim();
+    if (age  && age.value)         MY_PROFILE.age  = parseInt(age.value);
+    if (city && city.value.trim()) MY_PROFILE.city = city.value.trim();
+    if (bio  && bio.value.trim())  MY_PROFILE.bio  = bio.value.trim();
+    // Avatar sélectionné
+    const selAvatar = document.querySelector('#ob-avatar-picker button.ob-avatar-selected');
+    if (selAvatar) MY_PROFILE.avatar = selAvatar.dataset.emoji;
+  } else if (obStep === 1) {
+    // Préférences
+    const selST = document.querySelector('#ob-search-type-picker button.ob-st-selected');
+    if (selST) MY_PROFILE.searchType = parseInt(selST.dataset.idx);
+    const selOrient = document.querySelector('#ob-orient-picker button.ob-orient-selected');
+    if (selOrient) MY_PROFILE.orient = selOrient.dataset.orient;
+  }
+  // Étape 2 = SafeGuard — rien à sauvegarder
+}
+
+function saveObData() {
+  // Met à jour l'affichage du profil
+  document.getElementById('prof-avatar').textContent  = MY_PROFILE.avatar;
+  document.getElementById('prof-name').textContent    = MY_PROFILE.name + (MY_PROFILE.age ? ', ' + MY_PROFILE.age + ' ans' : '');
+  document.getElementById('prof-age-city').textContent = MY_PROFILE.city;
+  document.getElementById('prof-bio-preview').textContent = MY_PROFILE.bio || 'Ta bio apparaît ici…';
+  const tagsEl = document.getElementById('prof-tags-preview');
+  if (tagsEl) tagsEl.innerHTML = MY_PROFILE.tags.map(t =>
+    `<span style="padding:4px 12px;border-radius:20px;background:var(--card2);border:1px solid var(--border);font-size:12px;color:var(--muted);font-weight:600;">#${t}</span>`
+  ).join('');
+}
+
+function obToggleDark() {
+  toggleDarkMode();
+  obSyncDarkSwitch();
+}
+
+function obSyncDarkSwitch() {
+  const sw    = document.getElementById('ob-dark-switch');
+  const thumb = document.getElementById('ob-dark-thumb');
+  const icon  = document.getElementById('ob-dark-icon');
+  const sub   = document.getElementById('ob-dark-sub');
+  if (!sw) return;
+  sw.style.background    = isDarkMode ? 'var(--accent)' : 'var(--border)';
+  if (thumb) thumb.style.transform = isDarkMode ? 'translateX(24px)' : 'translateX(0)';
+  if (icon)  icon.innerHTML = isDarkMode
+    ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
+    : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  if (sub) sub.textContent = isDarkMode ? '🌙 Mode sombre activé !' : 'Idéal le soir pour les yeux';
+}
+
+function showDarkModeTooltip() {
+  // Tooltip animé qui pointe sur le bouton dark mode dans le profil
+  const tooltip = document.createElement('div');
+  tooltip.id = 'dark-tooltip';
+  tooltip.innerHTML = `
+    <div style="position:fixed;bottom:160px;right:20px;z-index:9999;animation:fadeUp .4s ease;">
+      <div style="background:var(--text);color:var(--bg);padding:10px 14px;border-radius:14px;font-size:13px;font-weight:700;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.3);position:relative;">
+        🌙 Mode sombre ici !
+        <div style="position:absolute;bottom:-7px;right:18px;width:14px;height:14px;background:var(--text);transform:rotate(45deg);border-radius:2px;"></div>
+      </div>
+      <!-- Cercle pulsant sur le bouton -->
+      <div style="position:fixed;bottom:108px;right:16px;width:50px;height:50px;border-radius:50%;border:3px solid var(--accent);animation:pulse 1s ease-in-out infinite;pointer-events:none;"></div>
+    </div>`;
+  document.body.appendChild(tooltip);
+  setTimeout(() => {
+    if (tooltip) tooltip.remove();
+  }, 4000);
+}
+
+function launchApp() {
   goto('s-app');
   initApp();
+  // Tooltip animé 1s après l'entrée dans l'app
+  setTimeout(showDarkModeTooltip, 1200);
+}
+
+function renderObStep() {
+  const bar     = document.getElementById('ob-progress-bar');
+  const lbl     = document.getElementById('ob-step-lbl');
+  const content = document.getElementById('ob-content');
+  const nextBtn = document.getElementById('ob-next-btn');
+  if (!content) return;
+
+  const pct = Math.round(((obStep + 1) / OB_STEPS) * 100);
+  if (bar) bar.style.width = pct + '%';
+  if (lbl) lbl.textContent = 'Étape ' + (obStep + 1) + ' sur ' + OB_STEPS;
+
+  if (obStep === 0) {
+    // ── ÉTAPE 1 : Complète ton profil ──
+    if (nextBtn) nextBtn.textContent = 'Continuer →';
+    content.innerHTML = `
+      <div style="text-align:center;margin-bottom:28px;">
+        <div style="font-size:44px;margin-bottom:10px;">👋</div>
+        <h2 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:6px;">Crée ton profil</h2>
+        <p style="color:var(--muted);font-size:14px;line-height:1.6;">Un profil complet reçoit <strong style="color:var(--accent);">3x plus de likes</strong>.<br>Ça prend 2 minutes !</p>
+      </div>
+
+      <!-- Avatar -->
+      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Ton avatar</p>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
+        <div id="ob-avatar-preview" style="width:72px;height:72px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:32px;border:3px solid var(--border);flex-shrink:0;">${MY_PROFILE.avatar}</div>
+        <div id="ob-avatar-picker" style="display:flex;flex-wrap:wrap;gap:8px;flex:1;">
+          ${['🙂','😊','😎','🥰','🤩','🧑','👩','👨','🧔','👱','🎤','🦰','🦱','🦳','🦲'].map(e =>
+            `<button data-emoji="${e}" onclick="obSelectAvatar(this)" style="width:36px;height:36px;border-radius:10px;border:2px solid var(--border);background:var(--card2);cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;transition:all .15s;" class="${MY_PROFILE.avatar===e?'ob-avatar-selected':''}" ${MY_PROFILE.avatar===e?'style="border-color:var(--accent);background:#ff3d6e18;"':''}>${e}</button>`
+          ).join('')}
+        </div>
+      </div>
+
+      <!-- Infos -->
+      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Tes infos</p>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
+        <div>
+          <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">Prénom *</label>
+          <input type="text" id="ob-name" placeholder="Ton prénom" maxlength="30" value="${MY_PROFILE.name !== 'Moi' ? MY_PROFILE.name : ''}" style="width:100%;"/>
+        </div>
+        <div style="display:flex;gap:12px;">
+          <div style="flex:1;">
+            <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">Âge *</label>
+            <input type="number" id="ob-age" min="18" max="99" placeholder="25" value="${MY_PROFILE.age||''}" style="width:100%;"/>
+          </div>
+          <div style="flex:2;">
+            <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">Ville *</label>
+            <input type="text" id="ob-city" placeholder="Paris, Lyon, Bordeaux…" maxlength="40" value="${MY_PROFILE.city !== 'Paris' ? MY_PROFILE.city : ''}" style="width:100%;"/>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">Ta bio <span style="font-weight:400;color:var(--muted);">(optionnel)</span></label>
+          <textarea id="ob-bio" maxlength="200" placeholder="Décris-toi en quelques mots…" style="width:100%;min-height:80px;padding:13px 16px;border:1.5px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--card);resize:none;outline:none;line-height:1.5;">${MY_PROFILE.bio||''}</textarea>
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Centres d'intérêt <span style="font-weight:400;">(3 max)</span></p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
+        ${OB_TAGS_LIST.map(tag => {
+          const sel = MY_PROFILE.tags.includes(tag);
+          return `<button onclick="obToggleTag('${tag}',this)" style="padding:6px 14px;border-radius:20px;border:1.5px solid ${sel?'var(--accent)':'var(--border)'};background:${sel?'#ff3d6e18':'var(--card2)'};color:${sel?'var(--accent)':'var(--muted)'};font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;">#${tag}</button>`;
+        }).join('')}
+      </div>
+      <p id="ob-tags-hint" style="font-size:11px;color:var(--muted);margin-bottom:4px;">Sélectionne jusqu'à 3 centres d'intérêt</p>
+    `;
+
+  } else if (obStep === 1) {
+    // ── ÉTAPE 2 : Préférences de rencontre ──
+    if (nextBtn) nextBtn.textContent = 'Continuer →';
+    const orients = (typeof getOrients === 'function') ? getOrients() : ['Hétérosexuel·le','Gay','Lesbienne','Bisexuel·le','Pansexuel·le','Asexuel·le'];
+    content.innerHTML = `
+      <div style="text-align:center;margin-bottom:28px;">
+        <div style="font-size:44px;margin-bottom:10px;">💫</div>
+        <h2 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:6px;">Tes préférences</h2>
+        <p style="color:var(--muted);font-size:14px;line-height:1.6;">On affine les profils qu'on te propose<br>selon ce que tu cherches.</p>
+      </div>
+
+      <!-- Type de recherche -->
+      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Je recherche</p>
+      <div id="ob-search-type-picker" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;">
+        ${OB_SEARCH_TYPES.map(([ic,lb],i) => {
+          const sel = MY_PROFILE.searchType === i;
+          return `<button data-idx="${i}" onclick="obSelectST(${i},this)" class="${sel?'ob-st-selected':''}" style="padding:14px 12px;border-radius:16px;border:1.5px solid ${sel?'var(--accent)':'var(--border)'};background:${sel?'#ff3d6e18':'var(--card2)'};cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif;transition:all .2s;">
+            <div style="font-size:26px;margin-bottom:8px;">${ic}</div>
+            <p style="font-size:13px;font-weight:600;margin:0;line-height:1.4;">${lb}</p>
+          </button>`;
+        }).join('')}
+      </div>
+
+      <!-- Orientation -->
+      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Orientation</p>
+      <div id="ob-orient-picker" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+        ${ORIENT_KEYS.map((key,i) => {
+          const sel = MY_PROFILE.orient === key;
+          return `<button data-orient="${key}" onclick="obSelectOrient('${key}',this)" class="${sel?'ob-orient-selected':''}" style="padding:8px 16px;border-radius:20px;border:1.5px solid ${sel?'var(--accent)':'var(--border)'};background:${sel?'#ff3d6e18':'var(--card2)'};color:${sel?'var(--accent)':'var(--muted)'};font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;">${orients[i]}</button>`;
+        }).join('')}
+      </div>
+    `;
+
+  } else if (obStep === 2) {
+    // ── ÉTAPE 3 : Découverte SafeGuard ──
+    if (nextBtn) nextBtn.textContent = '🚀 Accéder à SafeMatch';
+    content.innerHTML = `
+      <div style="text-align:center;margin-bottom:32px;">
+        <div style="width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,#00e5b033,#00b4d822);border:2px solid #00e5b066;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 16px;">🛡️</div>
+        <h2 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:8px;">Rencontre SafeGuard</h2>
+        <p style="color:var(--muted);font-size:14px;line-height:1.6;">Ton assistant personnel disponible<br><strong style="color:var(--teal);">24h/24, 7j/7</strong> dans tes messages.</p>
+      </div>
+
+      <!-- Features SafeGuard -->
+      ${[
+        ['🪪','Vérification d\'identité','Questions sur les profils vérifiés et le processus KYC'],
+        ['🚨','Signaler un profil','Besoin d\'aide pour signaler un comportement suspect ?'],
+        ['💳','Gérer ton abonnement','Résiliation, facturation, changement de formule'],
+        ['🔒','Tes droits RGPD','Accès à tes données, suppression, consentements'],
+        ['📍','Rencontre Sécurisée','Organiser un premier rendez-vous en toute sécurité'],
+      ].map(([ic,title,desc]) => `
+        <div style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--card2);border-radius:14px;border:1px solid var(--border);margin-bottom:10px;">
+          <div style="width:42px;height:42px;border-radius:12px;background:#00e5b018;border:1px solid #00e5b033;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">${ic}</div>
+          <div>
+            <p style="margin:0;font-size:14px;font-weight:700;">${title}</p>
+            <p style="margin:2px 0 0;font-size:12px;color:var(--muted);line-height:1.4;">${desc}</p>
+          </div>
+        </div>`).join('')}
+
+      <div style="margin-top:16px;padding:16px;background:linear-gradient(135deg,#00e5b012,#00b4d808);border-radius:16px;border:1.5px solid #00e5b033;text-align:center;">
+        <p style="font-size:13px;color:var(--teal);font-weight:700;margin-bottom:4px;">💬 SafeGuard est épinglé dans tes Messages</p>
+        <p style="font-size:12px;color:var(--muted);line-height:1.5;">Retrouve-le à tout moment dans l'onglet Messages — il répond en quelques secondes.</p>
+      </div>
+    `;
+
+  } else if (obStep === 3) {
+    // ── ÉTAPE 4 : Personnalisation apparence ──
+    if (nextBtn) nextBtn.textContent = '🚀 Accéder à SafeMatch';
+    content.innerHTML = `
+      <div style="text-align:center;margin-bottom:32px;">
+        <div style="font-size:44px;margin-bottom:10px;">✨</div>
+        <h2 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:8px;">Ton espace, tes règles</h2>
+        <p style="color:var(--muted);font-size:14px;line-height:1.7;">Ici on respecte les envies de chacun.<br>Personnalise SafeMatch comme tu veux.</p>
+      </div>
+
+      <!-- Dark mode card -->
+      <div style="padding:24px;background:var(--card);border-radius:20px;border:1.5px solid var(--border);margin-bottom:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:48px;height:48px;border-radius:14px;background:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg id="ob-dark-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </div>
+            <div>
+              <p style="font-size:15px;font-weight:700;margin-bottom:2px;">Mode sombre</p>
+              <p id="ob-dark-sub" style="font-size:12px;color:var(--muted);">Idéal le soir pour les yeux</p>
+            </div>
+          </div>
+          <!-- Switch animé -->
+          <div id="ob-dark-switch" onclick="obToggleDark()" style="width:54px;height:30px;border-radius:15px;background:var(--border);position:relative;cursor:pointer;transition:background .3s;flex-shrink:0;">
+            <div id="ob-dark-thumb" style="position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:white;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:transform .3s;"></div>
+          </div>
+        </div>
+
+        <!-- Aperçu visuel -->
+        <div id="ob-dark-preview" style="border-radius:14px;overflow:hidden;border:1.5px solid var(--border);">
+          <div style="padding:12px 14px;background:var(--bg);display:flex;align-items:center;gap:10px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:18px;">😊</div>
+            <div style="flex:1;">
+              <div style="height:10px;border-radius:5px;background:var(--border);width:60%;margin-bottom:6px;"></div>
+              <div style="height:8px;border-radius:4px;background:var(--border);width:40%;"></div>
+            </div>
+          </div>
+          <div style="padding:10px 14px;background:var(--card2);display:flex;justify-content:flex-end;">
+            <div style="padding:8px 14px;background:var(--grad);border-radius:14px 14px 2px 14px;max-width:60%;">
+              <div style="height:8px;border-radius:4px;background:rgba(255,255,255,.5);width:100%;"></div>
+            </div>
+          </div>
+          <div style="padding:10px 14px;background:var(--card2);display:flex;justify-content:flex-start;">
+            <div style="padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:14px 14px 14px 2px;max-width:60%;">
+              <div style="height:8px;border-radius:4px;background:var(--border);width:100%;"></div>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:10px;">👆 Aperçu en temps réel</p>
+      </div>
+
+      <!-- Info retrouver le bouton -->
+      <div style="padding:14px 16px;background:linear-gradient(135deg,#ff3d6e08,#ff704308);border-radius:14px;border:1px solid #ff3d6e22;display:flex;align-items:center;gap:12px;">
+        <div style="font-size:22px;flex-shrink:0;">💡</div>
+        <p style="font-size:12px;color:var(--muted);line-height:1.6;margin:0;">Tu pourras changer ça à tout moment depuis <strong style="color:var(--text);">Profil → Apparence</strong>. On te montrera où c'est au premier accès !</p>
+      </div>
+    `;
+    // Sync le switch avec l'état actuel
+    obSyncDarkSwitch();
+  }
+}
+
+// ── Helpers onboarding ──
+function obSelectAvatar(btn) {
+  MY_PROFILE.avatar = btn.dataset.emoji;
+  document.getElementById('ob-avatar-preview').textContent = btn.dataset.emoji;
+  document.querySelectorAll('#ob-avatar-picker button').forEach(b => {
+    b.classList.remove('ob-avatar-selected');
+    b.style.borderColor = 'var(--border)';
+    b.style.background = 'var(--card2)';
+  });
+  btn.classList.add('ob-avatar-selected');
+  btn.style.borderColor = 'var(--accent)';
+  btn.style.background = '#ff3d6e18';
+}
+
+function obSelectST(idx, btn) {
+  MY_PROFILE.searchType = idx;
+  document.querySelectorAll('#ob-search-type-picker button').forEach(b => {
+    b.classList.remove('ob-st-selected');
+    b.style.borderColor = 'var(--border)';
+    b.style.background = 'var(--card2)';
+  });
+  btn.classList.add('ob-st-selected');
+  btn.style.borderColor = 'var(--accent)';
+  btn.style.background = '#ff3d6e18';
+}
+
+function obSelectOrient(key, btn) {
+  MY_PROFILE.orient = key;
+  document.querySelectorAll('#ob-orient-picker button').forEach(b => {
+    b.classList.remove('ob-orient-selected');
+    b.style.borderColor = 'var(--border)';
+    b.style.background = 'var(--card2)';
+    b.style.color = 'var(--muted)';
+  });
+  btn.classList.add('ob-orient-selected');
+  btn.style.borderColor = 'var(--accent)';
+  btn.style.background = '#ff3d6e18';
+  btn.style.color = 'var(--accent)';
+}
+
+function obToggleTag(tag, btn) {
+  const idx = MY_PROFILE.tags.indexOf(tag);
+  if (idx > -1) {
+    MY_PROFILE.tags.splice(idx, 1);
+    btn.style.borderColor = 'var(--border)';
+    btn.style.background = 'var(--card2)';
+    btn.style.color = 'var(--muted)';
+  } else {
+    if (MY_PROFILE.tags.length >= 3) {
+      const hint = document.getElementById('ob-tags-hint');
+      if (hint) { hint.style.color = 'var(--accent)'; hint.textContent = '3 max !'; setTimeout(() => { hint.style.color = 'var(--muted)'; hint.textContent = 'Sélectionne jusqu\'à 3 centres d\'intérêt'; }, 2000); }
+      return;
+    }
+    MY_PROFILE.tags.push(tag);
+    btn.style.borderColor = 'var(--accent)';
+    btn.style.background = '#ff3d6e18';
+    btn.style.color = 'var(--accent)';
+  }
 }
 
 // ════════════════════════════════════════════════════════════
@@ -4472,7 +5131,7 @@ window.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => pwdInp.focus(), 300);
   }
   // Fermeture des modales au clic en dehors
-  ['loc-modal','filters-modal','doc-modal','report-modal','block-modal','visitors-modal','profile-sheet','edit-profile-modal','stat-modal','safety-modal','likes-modal'].forEach(id => {
+  ['loc-modal','filters-modal','doc-modal','report-modal','block-modal','visitors-modal','profile-sheet','edit-profile-modal','stat-modal','safety-modal','likes-modal','boost-modal'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('click', function(e) {
       if (e.target === this) {
