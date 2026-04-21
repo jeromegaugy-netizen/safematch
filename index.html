@@ -1266,22 +1266,35 @@
         <div id="safety-menu"></div>
       </div>
 
-      <!-- Apparence -->
+      <!-- Préférences -->
       <div class="card" style="padding:20px;margin-bottom:16px;">
-        <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;">Apparence</p>
-        <button onclick="toggleDarkMode()" style="width:100%;display:flex;align-items:center;gap:12px;padding:14px;background:var(--card2);border-radius:14px;border:1px solid var(--border);cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif;transition:all .2s;" onmouseenter="this.style.opacity='.8'" onmouseleave="this.style.opacity='1'">
+        <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;">Préférences</p>
+
+        <!-- Dark mode -->
+        <button onclick="toggleDarkMode()" style="width:100%;display:flex;align-items:center;gap:12px;padding:14px;background:var(--card2);border-radius:14px;border:1px solid var(--border);cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif;margin-bottom:10px;" onmouseenter="this.style.opacity='.8'" onmouseleave="this.style.opacity='1'">
           <div style="width:40px;height:40px;border-radius:12px;background:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
             <svg id="dark-icon-card" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           </div>
           <div style="flex:1;">
-            <p id="dark-mode-label" style="margin:0;font-size:14px;font-weight:700;color:var(--text);">Mode sombre</p>
-            <p id="dark-mode-sub" style="margin:2px 0 0;font-size:12px;color:var(--muted);">Actuellement : Mode clair</p>
+            <p id="dark-mode-label" style="margin:0;font-size:14px;font-weight:700;">Mode sombre</p>
+            <p id="dark-mode-sub" style="margin:2px 0 0;font-size:12px;color:var(--muted);">Actuellement : Mode clair ☀️</p>
           </div>
-          <!-- Toggle switch -->
           <div id="dark-switch" style="width:50px;height:28px;border-radius:14px;background:var(--border);position:relative;transition:background .3s;flex-shrink:0;">
             <div id="dark-switch-thumb" style="position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:white;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:transform .3s;"></div>
           </div>
         </button>
+
+        <!-- Langue -->
+        <div style="padding:14px;background:var(--card2);border-radius:14px;border:1px solid var(--border);">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div style="width:40px;height:40px;border-radius:12px;background:#00b89418;border:1px solid #00b89430;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px;">🌍</div>
+            <div>
+              <p style="margin:0;font-size:14px;font-weight:700;">Langue de l'interface</p>
+              <p style="margin:2px 0 0;font-size:12px;color:var(--muted);">Choisis ta langue</p>
+            </div>
+          </div>
+          <div id="lang-picker-profile" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+        </div>
       </div>
 
       <button id="prof-logout" class="btn btn-ghost" style="width:100%;color:var(--accent);border-color:#ff3d6e44;">Se déconnecter</button>
@@ -1793,7 +1806,6 @@ function goto(id) {
   const t = document.getElementById(id);
   t.classList.remove('hidden');
   setTimeout(()=>t.scrollTop=0,10);
-  updateLangSelectorVisibility();
 }
 
 function switchTab(tab) {
@@ -1805,10 +1817,10 @@ function switchTab(tab) {
     const pill = btn.querySelector('.nav-pill');
     if(pill) { pill.style.display = t===tab ? '' : 'none'; }
   });
-  // Bouton notif jamais "actif" visuellement
   const navNotif = document.getElementById('nav-notif');
   if (navNotif) navNotif.classList.remove('active');
   if(tab==='messages') { document.getElementById('chat-view').style.display='none'; document.getElementById('conv-list').style.display='block'; }
+  if(tab==='profile') { buildLangPicker(); }
 }
 
 // ════════════════════════════════════════════════════════════
@@ -3509,26 +3521,77 @@ function openStatModal(type) {
       </div>`;
 
   } else if (type === 'match') {
+    // Top profils par score de compatibilité
+    const topProfiles = [...PROFILES]
+      .sort((a, b) => b.match - a.match)
+      .slice(0, 20);
+    const maxMatch = topProfiles[0]?.match || 0;
+
     content.innerHTML = `
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
         <div style="width:44px;height:44px;border-radius:12px;background:#ff3d6e18;display:flex;align-items:center;justify-content:center;">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         </div>
-        <div><h3 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;">Score de compatibilité</h3><p style="font-size:13px;color:var(--muted);">Comment est calculé ton score</p></div>
-      </div>
-      <div style="text-align:center;padding:24px;background:linear-gradient(135deg,#ff3d6e0d,#ff70430d);border-radius:16px;margin-bottom:20px;">
-        <p style="font-size:60px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:0;">94%</p>
-        <p style="color:var(--muted);font-size:13px;">Score de compatibilité maximum</p>
-      </div>
-      ${[['🎯','Centres d\'intérêt communs','Yoga, Voyage, Musique','92%'],['📍','Proximité géographique','Paris — moins de 5 km','88%'],['🎂','Tranche d\'âge compatible','25-35 ans','95%'],['💬','Activité sur l\'app','Très actif·ve','97%']].map(([ic,lb,detail,pct])=>`
-      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card2);border-radius:12px;margin-bottom:8px;">
-        <span style="font-size:20px;">${ic}</span>
-        <div style="flex:1;">
-          <p style="margin:0;font-size:13px;font-weight:600;">${lb}</p>
-          <p style="margin:2px 0 0;font-size:11px;color:var(--muted);">${detail}</p>
+        <div>
+          <h3 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;">Meilleures compatibilités</h3>
+          <p style="font-size:13px;color:var(--muted);">Profils les plus compatibles avec toi</p>
         </div>
-        <span style="font-size:14px;font-weight:800;color:var(--accent);">${pct}</span>
-      </div>`).join('')}`;
+      </div>
+
+      <!-- Score max -->
+      <div style="padding:16px;background:linear-gradient(135deg,#ff3d6e0d,#ff70430d);border-radius:16px;border:1px solid #ff3d6e22;margin-bottom:16px;display:flex;align-items:center;gap:16px;">
+        <div style="text-align:center;flex-shrink:0;">
+          <p style="font-size:42px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:0;line-height:1;">${maxMatch}%</p>
+          <p style="font-size:11px;color:var(--muted);margin-top:2px;">Ton meilleur score</p>
+        </div>
+        <div style="flex:1;">
+          <p style="font-size:13px;font-weight:600;margin-bottom:6px;">Calculé sur :</p>
+          ${[['🎯','Centres d\'intérêt'],['📍','Proximité'],['🎂','Tranche d\'âge'],['💬','Activité']].map(([ic,lb])=>
+            `<p style="font-size:12px;color:var(--muted);margin:2px 0;">${ic} ${lb}</p>`
+          ).join('')}
+        </div>
+      </div>
+
+      <!-- Filtres rapides -->
+      <div style="display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;">
+        <button onclick="filterTopProfiles('all',this)" class="top-filter-btn" style="padding:6px 14px;border-radius:20px;border:1.5px solid var(--accent);background:#ff3d6e18;color:var(--accent);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;">Tous</button>
+        <button onclick="filterTopProfiles('90',this)" class="top-filter-btn" style="padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card2);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;">90%+ 🔥</button>
+        <button onclick="filterTopProfiles('80',this)" class="top-filter-btn" style="padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card2);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;">80%+</button>
+        <button onclick="filterTopProfiles('match',this)" class="top-filter-btn" style="padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card2);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;">💘 Matchs</button>
+      </div>
+
+      <!-- Liste des profils -->
+      <div id="top-profiles-list">
+        ${topProfiles.map((p, idx) => {
+          const isMatch = CONVS.some(c => c.name === p.name);
+          const barColor = p.match >= 90 ? 'var(--accent)' : p.match >= 75 ? 'var(--gold)' : 'var(--teal)';
+          return `
+          <button data-match="${p.match}" data-is-match="${isMatch}" onclick="document.getElementById('stat-modal').classList.remove('open');openProfileSheet(${p.id});" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card2);border-radius:14px;border:1px solid ${isMatch?'var(--accent)':'var(--border)'};cursor:pointer;text-align:left;width:100%;margin-bottom:8px;font-family:'DM Sans',sans-serif;transition:background .15s;" onmouseenter="this.style.background='var(--card)'" onmouseleave="this.style.background='var(--card2)'">
+            <!-- Rang -->
+            <div style="width:24px;text-align:center;flex-shrink:0;">
+              <span style="font-size:${idx<3?'18':'13'}px;">${idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':'#'+(idx+1)}</span>
+            </div>
+            <!-- Avatar -->
+            <div style="width:46px;height:46px;border-radius:50%;background:${p.color}33;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;border:2px solid ${p.color}55;">${p.emoji}</div>
+            <!-- Infos -->
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <p style="margin:0;font-size:14px;font-weight:700;">${p.name}, ${p.age}</p>
+                ${isMatch ? '<span style="font-size:10px;background:var(--grad);color:white;border-radius:6px;padding:1px 7px;font-weight:700;flex-shrink:0;">💘 Match</span>' : ''}
+              </div>
+              <!-- Barre de compatibilité -->
+              <div style="height:5px;background:var(--border);border-radius:3px;overflow:hidden;">
+                <div style="height:100%;width:${p.match}%;background:${barColor};border-radius:3px;transition:width .4s ease;"></div>
+              </div>
+            </div>
+            <!-- Score -->
+            <div style="text-align:right;flex-shrink:0;">
+              <p style="margin:0;font-size:16px;font-weight:800;color:${barColor};">${p.match}%</p>
+              <p style="margin:0;font-size:10px;color:var(--muted);">${p.city}</p>
+            </div>
+          </button>`;
+        }).join('')}
+      </div>`;
 
   } else if (type === 'matchs') {
     const matchConvs = CONVS.filter(c => !c.isAssistant);
@@ -3654,6 +3717,31 @@ function showDataToast(idx) {
   toast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--teal);color:white;padding:10px 22px;border-radius:22px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 20px #00b89433;animation:fadeUp .3s ease;white-space:nowrap;';
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 2500);
+}
+
+function filterTopProfiles(type, btn) {
+  // Style des filtres
+  document.querySelectorAll('.top-filter-btn').forEach(b => {
+    b.style.borderColor = 'var(--border)';
+    b.style.background  = 'var(--card2)';
+    b.style.color       = 'var(--muted)';
+    b.style.fontWeight  = '600';
+  });
+  btn.style.borderColor = 'var(--accent)';
+  btn.style.background  = '#ff3d6e18';
+  btn.style.color       = 'var(--accent)';
+  btn.style.fontWeight  = '700';
+
+  // Filtre les boutons de la liste
+  document.querySelectorAll('#top-profiles-list button').forEach(b => {
+    const match   = parseInt(b.dataset.match);
+    const isMatch = b.dataset.isMatch === 'true';
+    let show = true;
+    if (type === '90')    show = match >= 90;
+    if (type === '80')    show = match >= 80;
+    if (type === 'match') show = isMatch;
+    b.style.display = show ? 'flex' : 'none';
+  });
 }
 
 function unblockFromSafety(id) {
@@ -4822,16 +4910,13 @@ function t(key) {
 function setLang(lang) {
   currentLang = lang;
   applyTranslations();
-  // Update selector display
-  document.getElementById('lang-flag').textContent  = LANGS[lang].flag;
-  document.getElementById('lang-label').textContent = LANGS[lang].label;
-  document.getElementById('lang-dropdown').style.display = 'none';
   document.documentElement.lang = lang;
+  // Sauvegarde la préférence
+  try { localStorage.setItem('sm_lang', lang); } catch(e) {}
 }
 
 function toggleLangMenu() {
-  const dd = document.getElementById('lang-dropdown');
-  dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+  // Plus de menu flottant — la langue se change dans Profil → Préférences
 }
 
 function applyTranslations() {
@@ -4973,64 +5058,25 @@ function applyTranslations() {
 }
 
 // ── Language selector widget (injected into DOM)
-function injectLangSelector() {
-  const wrap = document.createElement('div');
-  wrap.id = 'lang-selector';
-  wrap.style.cssText = `
-    position: fixed;
-    bottom: 76px;
-    right: 12px;
-    z-index: 500;
-    font-family: 'DM Sans', sans-serif;
-  `;
-  wrap.innerHTML = `
-    <button onclick="toggleLangMenu()" style="
-      display:flex;align-items:center;gap:5px;
-      background:rgba(253,245,240,0.94);backdrop-filter:blur(16px);
-      border:1.5px solid #24243a;border-radius:20px;
-      padding:6px 10px;cursor:pointer;color:var(--text);
-      font-size:12px;font-weight:700;
-      box-shadow:0 4px 16px rgba(0,0,0,.4);
-    ">
-      <span id="lang-flag">${LANGS[currentLang].flag}</span>
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#7070a0" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
-    </button>
-    <div id="lang-dropdown" style="
-      display:none;
-      position:absolute;
-      bottom:44px;
-      right:0;
-      background:var(--card);
-      border:1.5px solid #24243a;
-      border-radius:16px;
-      overflow:hidden;
-      min-width:160px;
-      box-shadow:0 -4px 32px rgba(0,0,0,.7);
-    ">
-      ${Object.entries(LANGS).map(([code,l]) => `
-        <button onclick="setLang('${code}')" style="
-          width:100%;display:flex;align-items:center;gap:10px;
-          padding:11px 16px;background:none;border:none;
-          color:var(--text);font-size:14px;font-weight:600;cursor:pointer;
-          font-family:'DM Sans',sans-serif;text-align:left;
-          transition:background .15s;
-        " onmouseenter="this.style.background='#16162a'" onmouseleave="this.style.background='none'">
-          <span style="font-size:18px;">${l.flag}</span>
-          <span>${l.label}</span>
-          ${code === currentLang ? '<svg style="margin-left:auto" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00e5b0" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>' : ''}
-        </button>
-      `).join('')}
-    </div>
-  `;
-  document.body.appendChild(wrap);
+function buildLangPicker() {
+  const el = document.getElementById('lang-picker-profile');
+  if (!el) return;
+  el.innerHTML = '';
+  Object.entries(LANGS).forEach(([code, l]) => {
+    const sel = code === currentLang;
+    const btn = document.createElement('button');
+    btn.onclick = () => { setLang(code); buildLangPicker(); };
+    btn.style.cssText = `display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;border:1.5px solid ${sel ? 'var(--accent)' : 'var(--border)'};background:${sel ? '#ff3d6e12' : 'var(--card)'};cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;`;
+    btn.innerHTML = `
+      <span style="font-size:22px;">${l.flag}</span>
+      <span style="font-size:13px;font-weight:${sel ? '700' : '600'};color:${sel ? 'var(--accent)' : 'var(--text)'};">${l.label}</span>
+      ${sel ? '<svg style="margin-left:auto;flex-shrink:0;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>' : ''}`;
+    el.appendChild(btn);
+  });
 }
 
-// Hide lang selector when on screens without bottom nav
 function updateLangSelectorVisibility() {
-  const sel = document.getElementById('lang-selector');
-  if (!sel) return;
-  const appVisible = !document.getElementById('s-app').classList.contains('hidden');
-  sel.style.bottom = appVisible ? '76px' : '16px';
+  // Plus de sélecteur flottant
 }
 
 // ════════════════════════════════════════════════════════════
@@ -5177,20 +5223,16 @@ window.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Fermeture du sélecteur de langue au clic extérieur
-  document.addEventListener('click', e => {
-    const sel = document.getElementById('lang-selector');
-    if (sel && !sel.contains(e.target)) {
-      const dd = document.getElementById('lang-dropdown');
-      if (dd) dd.style.display = 'none';
-    }
-  });
+  // Restaure la langue si sauvegardée
+  try {
+    const savedLang = localStorage.getItem('sm_lang');
+    if (savedLang && LANGS[savedLang]) { currentLang = savedLang; applyTranslations(); }
+  } catch(e) {}
 
   // Restaure le mode sombre si activé précédemment
   initDarkMode();
 
-  // Injection du sélecteur de langue
-  injectLangSelector();
+  // Injection du sélecteur de langue — maintenant dans Profil → Préférences
   applyTranslations();
 });
 </script>
