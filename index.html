@@ -64,7 +64,17 @@
   body.dark-mode .card, body.dark-mode .plan-card, body.dark-mode .modal { background: var(--card); color: var(--text); border-color: var(--border); }
 
   /* ── GLOBAL BASE ── */
+  html, body { overflow-x: hidden; max-width: 100%; }
+  .screen { overflow-x: hidden !important; }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  /* ═══ PROTECTIONS IMAGES ═══ */
+  img {
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    pointer-events: none !important;
+  }
+  .card-avatar, .nav-btn img, .profile-avatar { pointer-events: auto !important; }
   html { height: 100%; height: -webkit-fill-available; }
   body { height: 100%; height: -webkit-fill-available; font-family: 'DM Sans', sans-serif; overflow: hidden; color: var(--text); }
   .screen { color: var(--text); }
@@ -82,7 +92,9 @@
   /* ── RESPONSIVE : mobile = plein écran, desktop = simulateur téléphone ── */
   @media (max-width: 480px) {
     body { background: #fdf5f0; color: #2d1b14; }
-    .screen { position: fixed; inset: 0; }
+    .screen { position: fixed; inset: 0; overflow: hidden; }
+    #s-pay, #s-consent, #s-verify { overflow-y: auto !important; }
+    #s-pay > div, #s-consent > div, #s-verify > div { min-height: 100%; }
     #nav { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
   }
 
@@ -721,7 +733,7 @@
      SCREEN 2.5 — PAYWALL
 ═══════════════════════════════════════════════════════════ -->
 <div class="screen hidden" id="s-pay">
-  <div style="width:100%;max-width:430px;margin:0 auto;padding:28px 22px 48px;min-height:100vh;position:relative;">
+  <div style="width:100%;max-width:430px;margin:0 auto;padding:28px 22px 60px;position:relative;overflow-x:hidden;overflow-y:auto;height:100%;box-sizing:border-box;">
 
     <!-- Orb déco -->
     <div style="position:absolute;width:260px;height:260px;border-radius:50%;background:radial-gradient(#ff3d6e1a,transparent);top:-60px;right:-80px;pointer-events:none;"></div>
@@ -770,7 +782,7 @@
             </div>
           </div>
           <div style="text-align:right;flex-shrink:0;">
-            <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;line-height:1;">29,99€</div>
+            <div id="plan-price-0" style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;line-height:1;">29,99€</div>
             <div style="color:var(--muted);font-size:12px;">/ mois</div>
           </div>
         </div>
@@ -795,7 +807,7 @@
             </div>
           </div>
           <div style="text-align:right;flex-shrink:0;">
-            <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;line-height:1;">26,99€</div>
+            <div id="plan-price-1" style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;line-height:1;">26,99€</div>
             <div style="color:var(--muted);font-size:12px;">/ mois</div>
             <div style="font-size:11px;color:var(--accent);font-weight:700;" id="pay-quarterly-save">-9€/mois</div>
           </div>
@@ -823,7 +835,7 @@
             </div>
           </div>
           <div style="text-align:right;flex-shrink:0;">
-            <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;line-height:1;color:var(--gold);">19,99€</div>
+            <div id="plan-price-2" style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;line-height:1;color:var(--gold);">19,99€</div>
             <div style="color:var(--muted);font-size:12px;">/ mois</div>
             <div style="font-size:11px;color:var(--muted);text-decoration:line-through;">29,99€</div>
           </div>
@@ -852,6 +864,39 @@
         <p id="recap-label" style="font-size:12px;color:var(--gold);font-weight:700;">Plan annuel</p>
         <p id="recap-renew" style="font-size:11px;color:var(--muted);">Renouvellement dans 12 mois</p>
       </div>
+    </div>
+
+    <!-- ─── CODE PROMO — bien visible ─── -->
+    <div style="margin-bottom:20px;padding:16px;background:linear-gradient(135deg,#ff3d6e0a,#ffb3470a);border:1.5px solid #ff3d6e33;border-radius:16px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--grad);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">🎁</div>
+        <div>
+          <p style="margin:0;font-size:14px;font-weight:700;">Code promo</p>
+          <p style="margin:0;font-size:12px;color:var(--muted);">Tu as un code ? Entre-le ici !</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;width:100%;overflow:hidden;">
+        <input type="text" id="promo-input" placeholder="MONCODE2026" style="flex:1;min-width:0;text-transform:uppercase;letter-spacing:2px;font-weight:700;font-size:14px;" oninput="this.value=this.value.toUpperCase()"/>
+        <button onclick="applyPromo()" class="btn btn-primary" style="padding:0 16px;font-size:14px;flex-shrink:0;white-space:nowrap;">Appliquer</button>
+      </div>
+      <p id="promo-msg" style="font-size:12px;margin-top:8px;display:none;padding:8px 12px;border-radius:10px;font-weight:600;"></p>
+    </div>
+
+    <!-- ─── COMPTE GRATUIT — visible comme une option ─── -->
+    <div style="margin-bottom:20px;padding:16px;background:var(--card2);border:1.5px solid var(--border);border-radius:16px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <div style="width:36px;height:36px;border-radius:10px;background:#00b89418;border:1px solid #00b89430;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">🆓</div>
+        <div>
+          <p style="margin:0;font-size:14px;font-weight:700;">Compte Gratuit</p>
+          <p style="margin:0;font-size:12px;color:var(--muted);">Accès limité — sans abonnement</p>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--teal);font-size:13px;">✓</span><span style="font-size:13px;color:var(--muted);">Voir les profils et naviguer</span></div>
+        <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--teal);font-size:13px;">✓</span><span style="font-size:13px;color:var(--muted);">Recevoir des messages</span></div>
+        <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--accent);font-size:13px;">✗</span><span style="font-size:13px;color:var(--muted);">Liker / répondre / partager position</span></div>
+      </div>
+      <button onclick="startFreeAccount()" style="width:100%;padding:13px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;">Continuer gratuitement →</button>
     </div>
 
     <!-- Payment methods -->
@@ -1053,10 +1098,10 @@
           <button onclick="swipe('left')" title="Passer" style="width:60px;height:60px;border-radius:50%;border:2px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;" onmouseenter="this.style.borderColor='var(--accent)';this.style.background='#ff3d6e18'" onmouseleave="this.style.borderColor='var(--border)';this.style.background='var(--card)'">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
-          <button onclick="swipe('right')" title="Liker" style="width:72px;height:72px;border-radius:50%;border:none;background:var(--grad);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--glow);transition:all .2s;" onmouseenter="this.style.transform='scale(1.1)'" onmouseleave="this.style.transform='scale(1)'">
+          <button onclick="isPremium()?swipe('right'):showPremiumGate('like')" title="Liker" style="width:72px;height:72px;border-radius:50%;border:none;background:var(--grad);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--glow);transition:all .2s;" onmouseenter="this.style.transform='scale(1.1)'" onmouseleave="this.style.transform='scale(1)'">
             <svg width="30" height="30" viewBox="0 0 24 24" fill="white" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
           </button>
-          <button onclick="superLike()" title="Super Like" style="width:60px;height:60px;border-radius:50%;border:2px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;" onmouseenter="this.style.borderColor='var(--gold)';this.style.background='#ffb34718'" onmouseleave="this.style.borderColor='var(--border)';this.style.background='var(--card)'">
+          <button onclick="isPremium()?superLike():showPremiumGate('superlike')" title="Super Like" style="width:60px;height:60px;border-radius:50%;border:2px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;" onmouseenter="this.style.borderColor='var(--gold)';this.style.background='#ffb34718'" onmouseleave="this.style.borderColor='var(--border)';this.style.background='var(--card)'">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
           </button>
         </div>
@@ -1104,7 +1149,7 @@
           <button id="chat-video-btn" style="width:34px;height:34px;border-radius:10px;background:var(--card);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Appel vidéo">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
           </button>
-          <button id="chat-loc-hdr-btn" onclick="openLocationModal()" style="width:34px;height:34px;border-radius:10px;background:var(--card);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Rencontre sécurisée">
+          <button id="chat-loc-hdr-btn" onclick="isPremium()?openLocationModal():showPremiumGate('location')" style="width:34px;height:34px;border-radius:10px;background:var(--card);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Partager ma position">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           </button>
           <button id="chat-block-btn" onclick="openBlockModal()" style="width:34px;height:34px;border-radius:10px;background:#ff6b6b18;border:1px solid #ff6b6b44;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Bloquer">
@@ -1146,12 +1191,12 @@
         </div>
         <div style="display:flex;gap:10px;align-items:center;">
           <!-- Bouton photo caché -->
-          <input type="file" id="photo-input" accept="image/*" style="display:none;" onchange="sendLocalPhoto(this)"/>
+          <!-- Input file supprimé — sécurité : pas d'upload de fichiers externes -->
           <button onclick="openPhotoMenu()" id="photo-btn" style="width:44px;height:44px;border-radius:50%;border:1.5px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
           </button>
           <input type="text" id="msg-input" placeholder="Écrire un message…" style="flex:1;border-radius:22px;" onkeydown="if(event.key==='Enter')sendMsg()"/>
-          <button onclick="sendMsg()" style="width:44px;height:44px;border-radius:50%;border:none;background:var(--grad);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <button onclick="isPremium()?sendMsg():showPremiumGate('reply')" style="width:44px;height:44px;border-radius:50%;border:none;background:var(--grad);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
           </button>
         </div>
@@ -1159,9 +1204,6 @@
         <!-- Menu photo (suggestions rapides pour la démo) -->
         <div id="photo-menu" style="display:none;flex-wrap:wrap;gap:8px;padding:10px 0 4px;">
           <p style="width:100%;font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px;">Envoyer une photo :</p>
-          <button onclick="document.getElementById('photo-input').click();closePhotoMenu();" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">
-            📷 Ma galerie
-          </button>
           <button onclick="sendDemoPhoto('nature');closePhotoMenu();" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">🌿 Nature</button>
           <button onclick="sendDemoPhoto('city');closePhotoMenu();" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">🏙️ Ville</button>
           <button onclick="sendDemoPhoto('food');closePhotoMenu();" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">🍕 Food</button>
@@ -1591,9 +1633,18 @@
 
 <!-- ═══ PHOTO VIEWER ═══ -->
 <div id="photo-viewer" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.95);flex-direction:column;align-items:center;justify-content:center;" onclick="closePhotoViewer()">
-  <button style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,.2);border:none;color:white;width:40px;height:40px;border-radius:50%;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;">×</button>
-  <img id="photo-viewer-img" src="" alt="" style="max-width:95%;max-height:85vh;border-radius:12px;object-fit:contain;"/>
-  <p style="color:rgba(255,255,255,.5);font-size:12px;margin-top:14px;">Appuie pour fermer</p>
+  <button style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,.2);border:none;color:white;width:40px;height:40px;border-radius:50%;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;" onclick="closePhotoViewer()">×</button>
+  <div style="position:relative;max-width:95%;max-height:85vh;" onclick="event.stopPropagation()">
+    <!-- Image — clic droit + glisser désactivés -->
+    <img id="photo-viewer-img" src="" alt=""
+      style="max-width:100%;max-height:80vh;border-radius:12px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;"
+      oncontextmenu="return false;" draggable="false"/>
+    <!-- Overlay transparent anti-clic droit sur mobile -->
+    <div style="position:absolute;inset:0;z-index:2;" oncontextmenu="return false;" onclick="closePhotoViewer()"></div>
+    <!-- Watermark discret — ID utilisateur -->
+    <div id="photo-watermark" style="position:absolute;bottom:10px;right:12px;z-index:3;font-size:10px;color:rgba(255,255,255,.15);font-weight:600;letter-spacing:1px;pointer-events:none;user-select:none;-webkit-user-select:none;"></div>
+  </div>
+  <p style="color:rgba(255,255,255,.4);font-size:11px;margin-top:14px;">Appuie pour fermer</p>
 </div>
 
 <!-- ═══ BOOST MODAL ═══ -->
@@ -1927,7 +1978,6 @@ function initApp(){
 // DISCOVER
 // ════════════════════════════════════════════════════════════
 let currentFilter = 'Tous';
-let filteredProfiles = [...PROFILES];
 let filteredIdx = 0;
 
 // Statuts en ligne simulés
@@ -2469,18 +2519,20 @@ function sendDemoPhoto(category) {
   sendPhotoMsg(src, labels[category], false);
 }
 
-function sendLocalPhoto(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => sendPhotoMsg(e.target.result, file.name.split('.')[0], true);
-  reader.readAsDataURL(file);
-  input.value = ''; // reset pour permettre de renvoyer le même fichier
-}
+// sendLocalPhoto supprimé — upload de fichiers désactivé pour sécurité
 function openPhotoViewer(src) {
   const viewer = document.getElementById('photo-viewer');
-  document.getElementById('photo-viewer-img').src = src;
+  const img = document.getElementById('photo-viewer-img');
+  img.src = src;
+  // Watermark avec nom + timestamp pour traçabilité
+  const wm = document.getElementById('photo-watermark');
+  if (wm && MY_PROFILE) {
+    const now = new Date();
+    wm.textContent = MY_PROFILE.name + ' · ' + now.toLocaleDateString('fr-FR') + ' · SafeMatch';
+  }
   viewer.style.display = 'flex';
+  // Bloque clic droit sur tout le viewer
+  viewer.oncontextmenu = () => false;
 }
 function closePhotoViewer() {
   document.getElementById('photo-viewer').style.display = 'none';
@@ -2922,7 +2974,7 @@ function initSafeGuard() {
       from: 'them',
       isAssistant: true,
       time: timeStr,
-      text: '👋 Bonjour ! Je suis **SafeGuard**, ton assistant SafeMatch.\n\nJe suis là pour t\'aider avec toutes tes questions :\n\n• 🪪 Vérification d\'identité\n• 🚨 Signaler un profil\n• 💳 Gérer ton abonnement\n• 🔒 Tes données & droits RGPD\n• 📍 Rencontre Sécurisée\n\nQue puis-je faire pour toi ?',
+      text: '👋 Bonjour ! Je suis **SafeGuard**, ton assistant SafeMatch.\n\nJe suis là pour t\'aider avec toutes tes questions :\n\n• 🪪 Vérification d\'identité\n• 🚨 Signaler un profil\n• 💳 Gérer ton abonnement\n• 🔒 Tes données & droits RGPD\n• 📍 Partager ma position\n\nQue puis-je faire pour toi ?',
     });
   }
 }
@@ -2936,7 +2988,7 @@ INFORMATIONS SUR SAFEMATCH :
 - Application de rencontres avec triple vérification : pièce d'identité, selfie vidéo anti-fraude et numéro de téléphone
 - Abonnements : Mensuel 29,99€/mois | Trimestriel 26,99€/mois (80,97€) | Annuel 19,99€/mois (239,88€)
 - Messages chiffrés de bout en bout (E2E)
-- Fonctionnalité "Rencontre Sécurisée" : partage de position approximative (±500m) temporaire
+- Fonctionnalité "Partager ma position" : partage de position approximative (±500m) temporaire
 - Conforme RGPD, DSA, et réglementations européennes
 - Contact DPO : privacy@safematch.app
 - Support : support@safematch.app
@@ -2980,7 +3032,7 @@ const SG_RESPONSES = [
   },
   {
     keys: ['rencontre sécur','localisa','position','géoloc','partag','meeting','rendez-vous','se retrouver'],
-    reply: `📍 **Fonctionnalité Rencontre Sécurisée**\n\nDisponible dans le chat, bouton 📍 :\n\n• Partage ta **zone approximative (±500m)** uniquement\n• Ton adresse exacte reste **totalement privée**\n• Durée au choix : 15 min, 30 min, 1h ou 2h\n• **Arrêt automatique** à la fin du délai\n• Partage visible uniquement par ton match vérifié`
+    reply: `📍 **Partager ma position**\n\nDisponible dans le chat, bouton 📍 :\n\n• Partage ta **zone approximative (±500m)** uniquement\n• Ton adresse exacte reste **totalement privée**\n• Durée au choix : 15 min, 30 min, 1h ou 2h\n• **Arrêt automatique** à la fin du délai\n• Partage visible uniquement par ton match vérifié`
   },
   {
     keys: ['message','chat','écrire','contact','parler','répondr','envelope','discussion'],
@@ -3004,7 +3056,7 @@ const SG_RESPONSES = [
   },
 ];
 
-const SG_FALLBACK = `Je ne suis pas sûr de comprendre ta question 🤔\n\nJe peux t'aider avec :\n• La **vérification d'identité**\n• Le **signalement** d'un profil\n• Ton **abonnement**\n• Tes **données personnelles** et droits RGPD\n• La **Rencontre Sécurisée**\n• La **messagerie** chiffrée\n\nOu contacte directement notre équipe : **support@safematch.app** 💙`;
+const SG_FALLBACK = `Je ne suis pas sûr de comprendre ta question 🤔\n\nJe peux t'aider avec :\n• La **vérification d'identité**\n• Le **signalement** d'un profil\n• Ton **abonnement**\n• Tes **données personnelles** et droits RGPD\n• Le **partage de position**\n• La **messagerie** chiffrée\n\nOu contacte directement notre équipe : **support@safematch.app** 💙`;
 
 function getSmartReply(msg) {
   const lower = msg.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
@@ -3286,10 +3338,17 @@ function renderMsgs(){
     // Photo message
     if (m.type === 'photo') {
       const align = m.from === 'me' ? 'flex-end' : 'flex-start';
+      const wm = MY_PROFILE ? (MY_PROFILE.name + ' · ID' + Math.floor(Math.random()*9000+1000)) : '';
       return `<div style="display:flex;justify-content:${align};">
-        <div style="max-width:72%;border-radius:${m.from==='me'?'18px 18px 4px 18px':'18px 18px 18px 4px'};overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.1);cursor:pointer;" onclick="openPhotoViewer('${m.src}')">
-          <img src="${m.src}" alt="photo" style="width:100%;max-width:240px;display:block;object-fit:cover;max-height:300px;" loading="lazy" onerror="this.style.display='none'"/>
-          <div style="padding:8px 12px;background:${m.from==='me'?'#ff3d6e22':'var(--card2)'};display:flex;justify-content:space-between;align-items:center;">
+        <div style="max-width:72%;border-radius:${m.from==='me'?'18px 18px 4px 18px':'18px 18px 18px 4px'};overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.1);cursor:pointer;position:relative;" onclick="openPhotoViewer('${m.src}')">
+          <!-- Overlay anti clic droit sur la photo dans le chat -->
+          <div style="position:absolute;inset:0;z-index:2;" oncontextmenu="return false;"></div>
+          <img src="${m.src}" alt="photo"
+            style="width:100%;max-width:240px;display:block;object-fit:cover;max-height:300px;pointer-events:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;"
+            oncontextmenu="return false;" draggable="false" loading="lazy" onerror="this.style.display='none'"/>
+          <!-- Watermark discret sur la photo -->
+          <div style="position:absolute;bottom:28px;right:8px;z-index:3;font-size:9px;color:rgba(255,255,255,.2);pointer-events:none;user-select:none;">${wm}</div>
+          <div style="padding:8px 12px;background:${m.from==='me'?'#ff3d6e22':'var(--card2)'};display:flex;justify-content:space-between;align-items:center;position:relative;z-index:3;">
             <span style="font-size:11px;color:var(--muted);">${m.caption||'📷 Photo'}</span>
             <span style="font-size:10px;color:var(--muted);">${m.time}</span>
           </div>
@@ -3306,7 +3365,7 @@ function renderMsgs(){
             <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid white;"></div>
           </div>
           <div style="padding:10px 14px;">
-            <p style="margin:0;font-size:13px;font-weight:700;color:var(--accent);">📍 Rencontre Sécurisée</p>
+            <p style="margin:0;font-size:13px;font-weight:700;color:var(--accent);">📍 Partager ma position</p>
             <p style="margin:2px 0 0;font-size:11px;color:var(--muted);">${m.text}</p>
           </div>
         </div>
@@ -4061,8 +4120,179 @@ function getFilteredProfiles() {
 }
 
 // ════════════════════════════════════════════════════════════
-// ⚡ BOOST DE PROFIL
+// 🎁 CODES PROMO
 // ════════════════════════════════════════════════════════════
+
+// Compte utilisateur simplifié — premium par défaut sur le prototype
+let userAccount = { type: 'premium' };
+
+function isPremium() {
+  return !userAccount || userAccount.type === 'premium';
+}
+
+function startFreeAccount() {
+  userAccount = { type: 'free' };
+  startOnboarding();
+}
+
+// Codes promo valides
+const PROMO_CODES = {
+  'LAUNCH2026': { type: 'free_premium', months: 1,  label: '1 mois offert 🎉' },
+  'BETA50':     { type: 'discount',     pct: 50,    label: '50% de réduction 🎁' },
+  'FRIEND30':   { type: 'free_premium', months: 1,  label: '30 jours offerts 🤝' },
+  'VIP':        { type: 'free_premium', months: 3,  label: '3 mois offerts 👑' },
+  'SAFEMATCH':  { type: 'free_premium', months: 2,  label: '2 mois offerts 💘' },
+};
+
+let appliedPromo = null;
+
+function applyPromo() {
+  const code  = document.getElementById('promo-input').value.trim().toUpperCase();
+  const msg   = document.getElementById('promo-msg');
+  msg.style.display = 'block';
+
+  if (!code) { msg.textContent = 'Entre un code promo'; msg.style.color = 'var(--accent)'; return; }
+
+  const promo = PROMO_CODES[code];
+  if (!promo) {
+    msg.textContent = '❌ Code invalide ou expiré';
+    msg.style.color = 'var(--accent)';
+    document.getElementById('promo-input').style.borderColor = 'var(--accent)';
+    return;
+  }
+
+  appliedPromo = promo;
+  msg.style.color = 'var(--teal)';
+
+  if (promo.type === 'free_premium') {
+    // Code = accès premium gratuit
+    msg.textContent = '✅ ' + promo.label + ' — Accès Premium activé !';
+    userAccount = userAccount || { name: MY_PROFILE.name, email: '' };
+    userAccount.type = 'premium';
+    // Bouton paiement → accès direct
+    setTimeout(() => {
+      document.getElementById('pay-success').style.display = 'flex';
+      document.getElementById('success-title').textContent = 'Code activé ! 🎉';
+      document.getElementById('success-plan').textContent = promo.label;
+      document.getElementById('success-sub').textContent = 'Ton accès Premium est activé. Profite de toutes les fonctionnalités !';
+    }, 1200);
+  } else if (promo.type === 'discount') {
+    msg.textContent = '✅ ' + promo.label + ' appliquée sur tous les abonnements !';
+    // Met à jour les prix affichés
+    applyDiscountToPlans(promo.pct);
+  }
+
+  document.getElementById('promo-input').style.borderColor = 'var(--teal)';
+}
+
+function applyDiscountToPlans(pct) {
+  const plans = [
+    { id: 'plan-price-0', base: 29.99 },
+    { id: 'plan-price-1', base: 26.99 },
+    { id: 'plan-price-2', base: 19.99 },
+  ];
+  plans.forEach(p => {
+    const el = document.getElementById(p.id);
+    if (el) {
+      const discounted = (p.base * (1 - pct/100)).toFixed(2);
+      el.innerHTML = '<s style="opacity:.5;font-size:.85em;">' + p.base + '€</s> ' + discounted + '€';
+    }
+  });
+  const btnPrice = document.getElementById('btn-price');
+  if (btnPrice) {
+    const base = 239.88;
+    btnPrice.textContent = (base * (1 - pct/100)).toFixed(2) + '€';
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// 🔒 FREEMIUM — BLOCAGES CONTEXTUELS
+// ════════════════════════════════════════════════════════════
+
+function showPremiumGate(feature) {
+  const messages = {
+    like:     { icon:'❤️', title:'Like réservé aux membres Premium', sub:'Passe à Premium pour liker des profils et créer des matchs !' },
+    reply:    { icon:'💬', title:'Réponds avec Premium', sub:'Tu as reçu un message ! Passe à Premium pour pouvoir répondre.' },
+    location: { icon:'📍', title:'Partage de position Premium', sub:'Partage ta position en toute sécurité avec tes matchs Premium.' },
+    filter:   { icon:'🔍', title:'Filtres avancés Premium', sub:'Accède à tous les filtres pour trouver ton match idéal.' },
+    superlike:{ icon:'⭐', title:'Super Like Premium', sub:'Montre que tu es vraiment intéressé(e) avec le Super Like !' },
+  };
+  const m = messages[feature] || messages.like;
+  // Supprime toute gate existante
+  const existing = document.getElementById('premium-gate');
+  if (existing) existing.remove();
+
+  const gate = document.createElement('div');
+  gate.id = 'premium-gate';
+  gate.style.cssText = 'position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;';
+  gate.onclick = e => { if (e.target === gate) closePremiumGate(); };
+  gate.innerHTML = `
+    <div style="background:var(--card);border-radius:28px 28px 0 0;padding:28px 24px 40px;width:100%;max-width:430px;text-align:center;">
+      <div style="width:40px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 24px;"></div>
+      <div style="font-size:48px;margin-bottom:12px;">${m.icon}</div>
+      <h3 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:8px;">${m.title}</h3>
+      <p style="color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:24px;">${m.sub}</p>
+      <div style="padding:14px;background:linear-gradient(135deg,#ff3d6e0d,#ff70430d);border-radius:14px;border:1px solid #ff3d6e22;margin-bottom:20px;">
+        <p style="font-size:13px;font-weight:700;color:var(--accent);">À partir de 19,99€/mois</p>
+        <p style="font-size:11px;color:var(--muted);margin-top:2px;">Sans engagement · Résiliation à tout moment</p>
+      </div>
+      <button onclick="closePremiumGate();goto('s-pay');" class="btn btn-primary" style="width:100%;font-size:15px;margin-bottom:10px;">Passer à Premium ✨</button>
+      <button onclick="closePremiumGate();" style="width:100%;background:none;border:none;font-size:13px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;">Plus tard</button>
+    </div>`;
+  document.body.appendChild(gate);
+}
+
+function closePremiumGate() {
+  const gate = document.getElementById('premium-gate');
+  if (gate) gate.remove();
+}
+
+// Wrapper pour les actions freemium
+function likeProfile() {
+  if (!isPremium()) { showPremiumGate('like'); return; }
+  swipeRight();
+}
+
+function superLikeProfile() {
+  if (!isPremium()) { showPremiumGate('superlike'); return; }
+  superLike();
+}
+
+function sendMsgGuard() {
+  if (!isPremium() && currentConv) {
+    // Vérifie si c'est une réponse (pas le premier message)
+    const hasReceived = currentConv.msgs.some(m => m.from === 'them');
+    if (hasReceived) { showPremiumGate('reply'); return; }
+  }
+  sendMsg();
+}
+
+function shareLocationGuard() {
+  if (!isPremium()) { showPremiumGate('location'); return; }
+  openLocationModal();
+}
+
+// Bannière freemium dans le chat si compte gratuit
+function showFreemiumChatBanner() {
+  if (isPremium()) return;
+  const hasReceived = currentConv && currentConv.msgs.some(m => m.from === 'them');
+  if (!hasReceived) return;
+  const existing = document.getElementById('freemium-chat-banner');
+  if (existing) return;
+  const banner = document.createElement('div');
+  banner.id = 'freemium-chat-banner';
+  banner.style.cssText = 'position:absolute;bottom:120px;left:16px;right:16px;z-index:10;padding:12px 16px;background:linear-gradient(135deg,#ff3d6e12,#ff704312);border:1.5px solid #ff3d6e33;border-radius:14px;display:flex;align-items:center;gap:12px;cursor:pointer;';
+  banner.onclick = () => showPremiumGate('reply');
+  banner.innerHTML = `
+    <div style="font-size:24px;">💬</div>
+    <div style="flex:1;">
+      <p style="margin:0;font-size:13px;font-weight:700;color:var(--accent);">Tu as reçu un message !</p>
+      <p style="margin:2px 0 0;font-size:11px;color:var(--muted);">Passe à Premium pour répondre</p>
+    </div>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>`;
+  const chatView = document.getElementById('chat-view');
+  if (chatView) chatView.appendChild(banner);
+}
 let boostActive = false;
 let boostTimer  = null;
 let boostSecondsLeft = 0;
@@ -4214,7 +4444,7 @@ function selectPlan(plan) {
   currentPlan = plan;
   const ids = ['monthly','quarterly','annual'];
   const colors = { monthly:'var(--accent)', quarterly:'var(--accent)', annual:'var(--gold)' };
-  const checkSVG = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#080810" stroke-width="4"><path d="M20 6L9 17l-5-5"/></svg>`;
+  const checkSVG = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#080810" stroke-width="4"><path d="M20 6L9 17l-5-5"/></svg>';
 
   ids.forEach(id => {
     const card  = document.getElementById('plan-'+id);
@@ -4528,7 +4758,7 @@ function renderObStep() {
         ['🚨','Signaler un profil','Besoin d\'aide pour signaler un comportement suspect ?'],
         ['💳','Gérer ton abonnement','Résiliation, facturation, changement de formule'],
         ['🔒','Tes droits RGPD','Accès à tes données, suppression, consentements'],
-        ['📍','Rencontre Sécurisée','Organiser un premier rendez-vous en toute sécurité'],
+        ['📍','Partager ma position','Partage ta zone approximative en toute sécurité'],
       ].map(([ic,title,desc]) => `
         <div style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--card2);border-radius:14px;border:1px solid var(--border);margin-bottom:10px;">
           <div style="width:42px;height:42px;border-radius:12px;background:#00e5b018;border:1px solid #00e5b033;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">${ic}</div>
@@ -4775,7 +5005,7 @@ const DOCS = {
       <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">Les abonnements sont facturés selon la formule choisie (mensuel, trimestriel, annuel). Le renouvellement est automatique sauf résiliation 48h avant l'échéance. Droit de rétractation de 14 jours.</p>
 
       <p style="font-size:13px;font-weight:700;margin-bottom:6px;">5. Responsabilité</p>
-      <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">SafeMatch met en relation des personnes vérifiées mais ne peut garantir le comportement de ses membres lors de rencontres physiques. La fonctionnalité "Rencontre Sécurisée" est un outil d'aide, non une garantie absolue.</p>
+      <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">SafeMatch met en relation des personnes vérifiées mais ne peut garantir le comportement de ses membres lors de rencontres physiques. La fonctionnalité "Partager ma position" est un outil d'aide, non une garantie absolue.</p>
 
       <p style="font-size:13px;font-weight:700;margin-bottom:6px;">6. Droit applicable</p>
       <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:20px;">Les présentes CGU sont soumises au droit français. Tout litige relève de la compétence des tribunaux français.</p>
@@ -4936,12 +5166,12 @@ const T = {
   msg_e2e_desc:    { fr:'Tes messages sont chiffrés de bout en bout. Même SafeMatch ne peut pas les lire.', en:'Your messages are end-to-end encrypted. Even SafeMatch cannot read them.', es:'Tus mensajes están cifrados de extremo a extremo. Ni SafeMatch puede leerlos.', it:'I tuoi messaggi sono cifrati end-to-end. Nemmeno SafeMatch può leggerli.', de:'Deine Nachrichten sind Ende-zu-Ende verschlüsselt. Selbst SafeMatch kann sie nicht lesen.' },
   msg_online:      { fr:'En ligne',           en:'Online',            es:'En línea',          it:'Online',            de:'Online' },
   msg_placeholder: { fr:'Écrire un message…', en:'Write a message…',  es:'Escribe un mensaje…', it:'Scrivi un messaggio…', de:'Nachricht schreiben…' },
-  msg_loc_btn:     { fr:'📍 Rencontre sécurisée', en:'📍 Safe meeting', es:'📍 Encuentro seguro', it:'📍 Incontro sicuro', de:'📍 Sicheres Treffen' },
+  msg_loc_btn:     { fr:'📍 Partager ma position', en:'📍 Share my location', es:'📍 Compartir mi ubicación', it:'📍 Condividi posizione', de:'📍 Position teilen' },
   msg_loc_active:  { fr:'📍 Position partagée en cours', en:'📍 Location sharing active', es:'📍 Ubicación compartida activa', it:'📍 Posizione condivisa attiva', de:'📍 Standortfreigabe aktiv' },
   msg_loc_stop:    { fr:'✕ Arrêter',          en:'✕ Stop',            es:'✕ Parar',           it:'✕ Ferma',           de:'✕ Stoppen' },
 
   // ── LOCATION ────────────────────────────────────────────
-  loc_title:       { fr:'Rencontre Sécurisée', en:'Safe Meeting',     es:'Encuentro Seguro',  it:'Incontro Sicuro',   de:'Sicheres Treffen' },
+  loc_title:       { fr:'Partager ma position', en:'Share my location', es:'Compartir mi ubicación', it:'Condividi posizione', de:'Position teilen' },
   loc_sub:         { fr:'Partage ta zone approximative temporairement', en:'Share your approximate area temporarily', es:'Comparte tu zona aproximada temporalmente', it:'Condividi la tua zona approssimativa temporaneamente', de:'Teile deinen ungefähren Bereich vorübergehend' },
   loc_safe:        { fr:'100% sécurisé : seule une zone ±500m est visible. Ton adresse exacte reste privée. Le partage s\'arrête automatiquement.', en:'100% secure: only a ±500m zone is visible. Your exact address stays private. Sharing stops automatically.', es:'100% seguro: solo se ve una zona de ±500m. Tu dirección exacta permanece privada. El intercambio se detiene automáticamente.', it:'100% sicuro: è visibile solo una zona di ±500m. Il tuo indirizzo esatto rimane privato. La condivisione si interrompe automaticamente.', de:'100% sicher: Nur eine ±500m Zone ist sichtbar. Deine genaue Adresse bleibt privat. Die Freigabe stoppt automatisch.' },
   loc_duration:    { fr:'Durée du partage',   en:'Sharing duration',  es:'Duración del intercambio', it:'Durata della condivisione', de:'Freigabedauer' },
@@ -5331,7 +5561,24 @@ window.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Restaure la langue si sauvegardée
+  // ═══ PROTECTIONS SÉCURITÉ ═══
+  // Bloque clic droit sur toute l'app
+  document.addEventListener('contextmenu', e => {
+    if (e.target.tagName === 'IMG' || e.target.closest('#photo-viewer') || e.target.closest('#chat-messages')) {
+      e.preventDefault();
+      return false;
+    }
+  });
+  // Bloque le glisser-déposer des images
+  document.addEventListener('dragstart', e => {
+    if (e.target.tagName === 'IMG') { e.preventDefault(); return false; }
+  });
+  // Bloque les raccourcis clavier de sauvegarde sur les images
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.target.closest('#photo-viewer')) {
+      e.preventDefault();
+    }
+  });
   try {
     const savedLang = localStorage.getItem('sm_lang');
     if (savedLang && LANGS[savedLang]) { currentLang = savedLang; applyTranslations(); }
