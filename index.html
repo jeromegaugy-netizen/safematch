@@ -976,11 +976,15 @@
     <!-- Barre de progression -->
     <div style="padding:20px 24px 0;flex-shrink:0;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-        <span id="ob-step-lbl" style="font-size:12px;font-weight:700;color:var(--muted);">Étape 1 sur 3</span>
+        <button id="ob-back-btn" onclick="obBack()" style="display:none;background:none;border:none;font-size:13px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:4px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+          Retour
+        </button>
+        <span id="ob-step-lbl" style="font-size:12px;font-weight:700;color:var(--muted);">Étape 1 sur 4</span>
         <button onclick="skipOnboarding()" style="background:none;border:none;font-size:13px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;">Passer →</button>
       </div>
       <div style="height:4px;background:var(--border);border-radius:4px;overflow:hidden;">
-        <div id="ob-progress-bar" style="height:100%;width:33%;background:var(--grad);border-radius:4px;transition:width .4s ease;"></div>
+        <div id="ob-progress-bar" style="height:100%;width:25%;background:var(--grad);border-radius:4px;transition:width .4s ease;"></div>
       </div>
     </div>
 
@@ -4546,6 +4550,12 @@ function startOnboarding() {
   renderObStep();
 }
 
+function obBack() {
+  if (obStep <= 0) return;
+  obStep--;
+  renderObStep();
+}
+
 function skipOnboarding() {
   // Sauvegarde ce qui a été rempli
   saveObData();
@@ -4648,11 +4658,14 @@ function renderObStep() {
   const lbl     = document.getElementById('ob-step-lbl');
   const content = document.getElementById('ob-content');
   const nextBtn = document.getElementById('ob-next-btn');
+  const backBtn = document.getElementById('ob-back-btn');
   if (!content) return;
 
   const pct = Math.round(((obStep + 1) / OB_STEPS) * 100);
   if (bar) bar.style.width = pct + '%';
   if (lbl) lbl.textContent = 'Étape ' + (obStep + 1) + ' sur ' + OB_STEPS;
+  // Bouton retour — visible seulement si on n'est pas à l'étape 1
+  if (backBtn) backBtn.style.display = obStep > 0 ? 'flex' : 'none';
 
   if (obStep === 0) {
     // ── ÉTAPE 1 : Complète ton profil ──
