@@ -248,10 +248,24 @@
   .tag { padding: 4px 12px; border-radius: 20px; background: var(--card2); border: 1px solid var(--border); font-size: 12px; color: var(--muted); font-weight: 500; }
 
   /* ── CHAT BUBBLE ── */
-  .bubble { max-width: 72%; padding: 10px 14px; font-size: 14px; line-height: 1.5; word-break: break-word; }
+  .bubble { max-width: 72%; padding: 10px 14px; font-size: 14px; line-height: 1.5; word-break: break-word; position: relative; }
   .bubble.me { background: var(--grad); color: white; border-radius: 18px 18px 4px 18px; margin-left: auto; }
   .bubble.them { background: var(--card); border: 1px solid var(--border); color: var(--text); border-radius: 18px 18px 18px 4px; }
   .bubble-time { font-size: 10px; opacity: .5; margin-top: 3px; text-align: right; }
+  .bubble-reaction { position: absolute; bottom: -10px; right: 6px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1px 5px; font-size: 13px; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+  .bubble.me .bubble-reaction { right: auto; left: 6px; }
+  @keyframes typingDot {
+    0%, 60%, 100% { transform: translateY(0); opacity: .4; }
+    30% { transform: translateY(-5px); opacity: 1; }
+  }
+  @keyframes voicePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+  .voice-recording { background: linear-gradient(135deg,#ff3d6e18,#ff704318) !important; border-color: var(--accent) !important; animation: voicePulse .6s ease-in-out infinite; }
+  .msg-voice { display: flex; align-items: center; gap: 10px; min-width: 160px; }
+  .voice-bar { flex: 1; height: 28px; display: flex; align-items: center; gap: 2px; }
+  .voice-bar span { display: inline-block; width: 3px; border-radius: 2px; background: currentColor; opacity: .7; }
 
   #match-overlay { position: fixed; inset: 0; z-index: 300; background: rgba(253,245,240,.97); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .4s; }
   #match-overlay.show { opacity: 1; pointer-events: all; }
@@ -1040,6 +1054,8 @@
       <!-- Profile Card -->
       <div id="profile-card-wrap" style="position:relative;margin-bottom:20px;min-height:480px;">
         <div id="profile-card" class="profile-card" style="background:var(--card);border:1px solid var(--border);">
+          <!-- Stories -->
+          <div id="card-stories" style="display:flex;gap:6px;padding:10px 12px 0;overflow-x:auto;scrollbar-width:none;"></div>
           <!-- Avatar area -->
           <div id="card-avatar" style="height:180px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;font-size:80px;">
             🌸
@@ -1066,7 +1082,11 @@
               </div>
             </div>
             <p id="card-bio" style="color:var(--muted);font-size:13px;line-height:1.6;margin-bottom:14px;"></p>
-            <div id="card-tags" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+            <div id="card-tags" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;"></div>
+            <!-- Compatibilité détaillée -->
+            <div id="card-compat" style="display:none;margin-bottom:14px;padding:12px;background:linear-gradient(135deg,#ff3d6e08,#ff704308);border-radius:14px;border:1px solid #ff3d6e18;"></div>
+            <!-- Brise-glace -->
+            <div id="card-icebreaker" style="display:none;"></div>
           </div>
         </div>
         <!-- Like/Nope overlay text -->
@@ -1182,6 +1202,25 @@
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           <span style="font-size:11px;color:var(--teal);font-weight:600;">Messages chiffrés de bout en bout</span>
         </div>
+        <!-- Indicateur "en train d'écrire" -->
+        <div id="typing-indicator" style="display:none;align-items:center;gap:8px;">
+          <div id="typing-avatar" style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;"></div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:18px 18px 18px 4px;padding:10px 14px;display:flex;align-items:center;gap:4px;">
+            <div class="typing-dot" style="width:7px;height:7px;border-radius:50%;background:var(--muted);animation:typingDot 1.2s ease-in-out infinite;"></div>
+            <div class="typing-dot" style="width:7px;height:7px;border-radius:50%;background:var(--muted);animation:typingDot 1.2s ease-in-out .2s infinite;"></div>
+            <div class="typing-dot" style="width:7px;height:7px;border-radius:50%;background:var(--muted);animation:typingDot 1.2s ease-in-out .4s infinite;"></div>
+          </div>
+        </div>
+        <!-- Modale réactions -->
+        <div id="reaction-picker" style="display:none;position:fixed;z-index:200;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:8px 12px;box-shadow:0 8px 32px rgba(0,0,0,.15);flex-direction:row;gap:4px;">
+          <button onclick="addReaction('❤️')" style="font-size:22px;background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;transition:transform .15s;" onmouseenter="this.style.transform='scale(1.3)'" onmouseleave="this.style.transform='scale(1)'">❤️</button>
+          <button onclick="addReaction('😂')" style="font-size:22px;background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;transition:transform .15s;" onmouseenter="this.style.transform='scale(1.3)'" onmouseleave="this.style.transform='scale(1)'">😂</button>
+          <button onclick="addReaction('😮')" style="font-size:22px;background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;transition:transform .15s;" onmouseenter="this.style.transform='scale(1.3)'" onmouseleave="this.style.transform='scale(1)'">😮</button>
+          <button onclick="addReaction('🔥')" style="font-size:22px;background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;transition:transform .15s;" onmouseenter="this.style.transform='scale(1.3)'" onmouseleave="this.style.transform='scale(1)'">🔥</button>
+          <button onclick="addReaction('👏')" style="font-size:22px;background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;transition:transform .15s;" onmouseenter="this.style.transform='scale(1.3)'" onmouseleave="this.style.transform='scale(1)'">👏</button>
+          <button onclick="addReaction('😢')" style="font-size:22px;background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;transition:transform .15s;" onmouseenter="this.style.transform='scale(1.3)'" onmouseleave="this.style.transform='scale(1)'">😢</button>
+          <button onclick="closeReactionPicker()" style="font-size:16px;background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:8px;color:var(--muted);">✕</button>
+        </div>
       </div>
       <!-- Input bar — toujours visible en bas -->
       <div style="position:absolute;bottom:0;left:0;right:0;z-index:10;padding:10px 16px 16px;border-top:1px solid var(--border);background:var(--bg);">
@@ -1193,15 +1232,18 @@
           <button onclick="sendSuggestion(this)" style="padding:5px 12px;border-radius:16px;border:1px solid #00e5b033;background:#00e5b010;color:var(--teal);font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Gérer mon abonnement</button>
           <button onclick="sendSuggestion(this)" style="padding:5px 12px;border-radius:16px;border:1px solid #00e5b033;background:#00e5b010;color:var(--teal);font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Supprimer mes données</button>
         </div>
-        <div style="display:flex;gap:10px;align-items:center;">
-          <!-- Bouton photo caché -->
-          <!-- Input file supprimé — sécurité : pas d'upload de fichiers externes -->
-          <button onclick="openPhotoMenu()" id="photo-btn" style="width:44px;height:44px;border-radius:50%;border:1.5px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <!-- Bouton photo -->
+          <button onclick="openPhotoMenu()" id="photo-btn" style="width:40px;height:40px;border-radius:50%;border:1.5px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
           </button>
-          <input type="text" id="msg-input" placeholder="Écrire un message…" style="flex:1;border-radius:22px;" onkeydown="if(event.key==='Enter')sendMsg()"/>
-          <button onclick="isPremium()?sendMsg():showPremiumGate('reply')" style="width:44px;height:44px;border-radius:50%;border:none;background:var(--grad);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          <!-- Bouton vocal -->
+          <button id="voice-btn" onmousedown="startVoice()" onmouseup="stopVoice()" ontouchstart="startVoice()" ontouchend="stopVoice()" style="width:40px;height:40px;border-radius:50%;border:1.5px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;" title="Message vocal — maintenir appuyé">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          </button>
+          <input type="text" id="msg-input" placeholder="Écrire un message…" style="flex:1;min-width:0;border-radius:22px;" onkeydown="if(event.key==='Enter')sendMsg()" oninput="onMsgInput()"/>
+          <button onclick="isPremium()?sendMsg():showPremiumGate('reply')" style="width:40px;height:40px;border-radius:50%;border:none;background:var(--grad);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
           </button>
         </div>
 
@@ -1335,6 +1377,28 @@
             </div>
           </div>
           <div id="lang-picker-profile" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+        </div>
+      </div>
+
+      <!-- Mode Pause + Rapport -->
+      <div class="card" style="padding:20px;margin-bottom:16px;">
+        <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;">Mon activité</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button id="pause-mode-btn" onclick="togglePauseMode()" style="width:100%;display:flex;align-items:center;gap:12px;padding:14px;background:var(--card2);border-radius:14px;border:1px solid var(--border);cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif;">
+            <div style="width:40px;height:40px;border-radius:12px;background:#00000010;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px;">⏸️</div>
+            <div style="flex:1;">
+              <p style="margin:0;font-size:14px;font-weight:700;">Mode pause</p>
+              <p style="margin:2px 0 0;font-size:12px;color:var(--muted);">Rendre mon profil invisible temporairement</p>
+            </div>
+          </button>
+          <button onclick="openWeeklyReport()" style="width:100%;display:flex;align-items:center;gap:12px;padding:14px;background:var(--card2);border-radius:14px;border:1px solid var(--border);cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif;">
+            <div style="width:40px;height:40px;border-radius:12px;background:#6b8aff18;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px;">📊</div>
+            <div style="flex:1;">
+              <p style="margin:0;font-size:14px;font-weight:700;">Mon rapport hebdomadaire</p>
+              <p style="margin:2px 0 0;font-size:12px;color:var(--muted);">Vues, likes, matchs cette semaine</p>
+            </div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
         </div>
       </div>
 
@@ -2059,32 +2123,43 @@ function renderCard(){
     document.getElementById('card-tags').innerHTML = '';
     document.getElementById('card-badge').innerHTML = '';
     document.getElementById('card-match').textContent = '—';
+    var cs = document.getElementById('card-stories');
+    if (cs) cs.innerHTML = '';
     return;
   }
   const p = filteredProfiles[filteredIdx % filteredProfiles.length];
   const status = profileStatuses[p.id] || ONLINE_STATUSES[6];
 
-  document.getElementById('card-avatar').style.background=`linear-gradient(135deg,${p.color}55,${p.color}22)`;
-  document.getElementById('card-avatar').childNodes[0].textContent=p.emoji;
-  document.getElementById('card-match').textContent=p.match+'%';
-  document.getElementById('card-name').textContent=p.name+', '+p.age;
-  document.getElementById('card-city').textContent=p.city;
+  document.getElementById('card-avatar').style.background = 'linear-gradient(135deg,' + p.color + '55,' + p.color + '22)';
+  document.getElementById('card-avatar').childNodes[0].textContent = p.emoji;
+  document.getElementById('card-match').textContent = p.match + '%';
+  document.getElementById('card-name').textContent = p.name + ', ' + p.age;
+  document.getElementById('card-city').textContent = p.city;
   document.getElementById('card-orient').textContent = orientLabel(p.orient) || p.orient;
-  document.getElementById('card-orient').style.color=p.color;
-  document.getElementById('card-bio').textContent=p.bio;
-  document.getElementById('card-tags').innerHTML=p.tags.map(t=>`<span class="tag">#${t}</span>`).join('');
-  document.getElementById('card-badge').innerHTML=p.verified?'<span class="verified">🛡️ Vérifié</span>':'';
+  document.getElementById('card-orient').style.color = p.color;
+  document.getElementById('card-bio').textContent = p.bio;
+  document.getElementById('card-tags').innerHTML = p.tags.map(function(t) { return '<span class="tag">#' + t + '</span>'; }).join('');
+  document.getElementById('card-badge').innerHTML = p.verified ? '<span class="verified">🛡️ Vérifié</span>' : '';
 
   // Statut en ligne
   const statusEl = document.getElementById('card-status');
-  if (statusEl) statusEl.innerHTML = `
-    <div style="width:8px;height:8px;border-radius:50%;background:${status.dot};flex-shrink:0;${status.pulse?'animation:pulse 1.5s ease-in-out infinite;':''}"></div>
-    <span style="font-size:11px;color:${status.color};font-weight:700;">${status.label}</span>`;
+  if (statusEl) statusEl.innerHTML =
+    '<div style="width:8px;height:8px;border-radius:50%;background:' + status.dot + ';flex-shrink:0;' + (status.pulse ? 'animation:pulse 1.5s ease-in-out infinite;' : '') + '"></div>' +
+    '<span style="font-size:11px;color:' + status.color + ';font-weight:700;">' + status.label + '</span>';
 
-  const card=document.getElementById('profile-card');
-  card.style.boxShadow=`0 16px 50px ${p.color}22`;
-  card.style.borderColor=p.color+'44';
-  card.classList.remove('swipe-right','swipe-left');
+  // Stories
+  renderCardStories(p);
+
+  // Compatibilité détaillée
+  renderCardCompat(p);
+
+  // Brise-glace
+  renderCardIcebreaker(p);
+
+  const card = document.getElementById('profile-card');
+  card.style.boxShadow = '0 16px 50px ' + p.color + '22';
+  card.style.borderColor = p.color + '44';
+  card.classList.remove('swipe-right', 'swipe-left');
 }
 
 function setFilter(btn, f){
@@ -2500,19 +2575,23 @@ function sendPhotoMsg(src, caption, isLocal) {
   if (!currentConv) return;
   const now = new Date();
   const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
-  currentConv.msgs.push({ from:'me', type:'photo', src, caption: caption || '', time });
+  currentConv.msgs.push({ id:'msg-'+Date.now(), from:'me', type:'photo', src, caption: caption || '', time });
   currentConv.lastMsg = '📷 Photo';
   currentConv.time = time;
   renderMsgs();
-  // Réponse auto après 2s (sauf SafeGuard)
   if (!currentConv.isAssistant) {
-    const reactions = ['😍','Super photo !','Magnifique ! 😍','J\'adore ! ❤️','Woah 🤩','Trop bien !'];
-    setTimeout(() => {
-      const t2 = new Date();
-      const tr = t2.getHours() + ':' + String(t2.getMinutes()).padStart(2,'0');
-      currentConv.msgs.push({ from:'them', text: reactions[Math.floor(Math.random()*reactions.length)], time: tr });
-      renderMsgs();
-    }, 2000);
+    setTimeout(function() {
+      showTypingIndicator();
+      setTimeout(function() {
+        hideTypingIndicator();
+        const reactions = ['😍 Superbe !','Trop belle photo ! 🔥','J\'adore ! ❤️','Woah 🤩','Magnifique !'];
+        const t2 = new Date();
+        const tr = t2.getHours() + ':' + String(t2.getMinutes()).padStart(2,'0');
+        currentConv.msgs.push({ id:'msg-'+Date.now(), from:'them', text: reactions[Math.floor(Math.random()*reactions.length)], time: tr });
+        renderMsgs();
+        renderConvList();
+      }, 1200 + Math.random()*800);
+    }, 600);
   }
 }
 
@@ -3343,21 +3422,32 @@ function renderMsgs(){
     if (m.type === 'photo') {
       const align = m.from === 'me' ? 'flex-end' : 'flex-start';
       const wm = MY_PROFILE ? (MY_PROFILE.name + ' · ID' + Math.floor(Math.random()*9000+1000)) : '';
-      return `<div style="display:flex;justify-content:${align};">
-        <div style="max-width:72%;border-radius:${m.from==='me'?'18px 18px 4px 18px':'18px 18px 18px 4px'};overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.1);cursor:pointer;position:relative;" onclick="openPhotoViewer('${m.src}')">
-          <!-- Overlay anti clic droit sur la photo dans le chat -->
-          <div style="position:absolute;inset:0;z-index:2;" oncontextmenu="return false;"></div>
-          <img src="${m.src}" alt="photo"
-            style="width:100%;max-width:240px;display:block;object-fit:cover;max-height:300px;pointer-events:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;"
-            oncontextmenu="return false;" draggable="false" loading="lazy" onerror="this.style.display='none'"/>
-          <!-- Watermark discret sur la photo -->
-          <div style="position:absolute;bottom:28px;right:8px;z-index:3;font-size:9px;color:rgba(255,255,255,.2);pointer-events:none;user-select:none;">${wm}</div>
-          <div style="padding:8px 12px;background:${m.from==='me'?'#ff3d6e22':'var(--card2)'};display:flex;justify-content:space-between;align-items:center;position:relative;z-index:3;">
-            <span style="font-size:11px;color:var(--muted);">${m.caption||'📷 Photo'}</span>
-            <span style="font-size:10px;color:var(--muted);">${m.time}</span>
-          </div>
-        </div>
-      </div>`;
+      return '<div style="display:flex;justify-content:' + align + ';">' +
+        '<div style="max-width:72%;border-radius:' + (m.from==='me'?'18px 18px 4px 18px':'18px 18px 18px 4px') + ';overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.1);cursor:pointer;position:relative;" onclick="openPhotoViewer(\'' + m.src + '\')">' +
+        '<div style="position:absolute;inset:0;z-index:2;" oncontextmenu="return false;"></div>' +
+        '<img src="' + m.src + '" alt="photo" style="width:100%;max-width:240px;display:block;object-fit:cover;max-height:300px;pointer-events:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;" oncontextmenu="return false;" draggable="false" loading="lazy" onerror="this.style.display=\'none\'"/>' +
+        '<div style="position:absolute;bottom:28px;right:8px;z-index:3;font-size:9px;color:rgba(255,255,255,.2);pointer-events:none;user-select:none;">' + wm + '</div>' +
+        '<div style="padding:8px 12px;background:' + (m.from==='me'?'#ff3d6e22':'var(--card2)') + ';display:flex;justify-content:space-between;align-items:center;position:relative;z-index:3;">' +
+        '<span style="font-size:11px;color:var(--muted);">' + (m.caption||'📷 Photo') + '</span>' +
+        '<span style="font-size:10px;color:var(--muted);">' + m.time + '</span></div>' +
+        '</div></div>';
+    }
+
+    // Voice message
+    if (m.type === 'voice') {
+      const align = m.from === 'me' ? 'flex-end' : 'flex-start';
+      const bg    = m.from === 'me' ? 'background:var(--grad);color:white;' : 'background:var(--card);border:1px solid var(--border);color:var(--text);';
+      const br    = m.from === 'me' ? '18px 18px 4px 18px' : '18px 18px 18px 4px';
+      return '<div style="display:flex;justify-content:' + align + ';">' +
+        '<div class="bubble ' + m.from + '" style="' + bg + 'border-radius:' + br + ';padding:10px 14px;position:relative;" oncontextmenu="openReactionPicker(\'' + m.id + '\',' + 0 + ',' + 0 + ');return false;">' +
+        '<div class="msg-voice">' +
+        '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>' +
+        '<div class="voice-bar">' + (m.barsHTML || '') + '</div>' +
+        '<span style="font-size:11px;opacity:.7;">' + m.duration + 's</span>' +
+        '</div>' +
+        '<div class="bubble-time">' + m.time + '</div>' +
+        (m.reaction ? '<div class="bubble-reaction">' + m.reaction + '</div>' : '') +
+        '</div></div>';
     }
 
     // Location message
@@ -3394,9 +3484,15 @@ function renderMsgs(){
     }
 
     // Regular message
-    return `<div style="display:flex;justify-content:${m.from==='me'?'flex-end':'flex-start'};">
-      <div class="bubble ${m.from}">${m.text}<div class="bubble-time">${m.time}</div></div>
-    </div>`;
+    return '<div style="display:flex;justify-content:' + (m.from==='me'?'flex-end':'flex-start') + ';">' +
+      '<div class="bubble ' + m.from + '" id="' + m.id + '" ' +
+      'ontouchstart="startLongPress(\'' + m.id + '\',event)" ontouchend="cancelLongPress()" ontouchmove="cancelLongPress()" ' +
+      'oncontextmenu="openReactionPicker(\'' + m.id + '\',event.clientX,event.clientY);return false;" ' +
+      'style="position:relative;cursor:pointer;">' +
+      m.text +
+      '<div class="bubble-time">' + m.time + '</div>' +
+      (m.reaction ? '<div class="bubble-reaction">' + m.reaction + '</div>' : '') +
+      '</div></div>';
   }).join('');
   // Reconstruit en préservant la bannière E2E
   el.innerHTML = '';
@@ -3405,41 +3501,55 @@ function renderMsgs(){
   el.scrollTop=el.scrollHeight;
 }
 
+// Long press pour ouvrir le sélecteur de réactions
+var longPressTimer = null;
+function startLongPress(msgId, e) {
+  longPressTimer = setTimeout(function() {
+    var x = e.touches ? e.touches[0].clientX : e.clientX;
+    var y = e.touches ? e.touches[0].clientY : e.clientY;
+    openReactionPicker(msgId, x, y);
+  }, 500);
+}
+function cancelLongPress() { clearTimeout(longPressTimer); }
+function onMsgInput() { /* future use */ }
+
 function sendMsg(){
   const inp=document.getElementById('msg-input');
   const txt=inp.value.trim();
   if(!txt||!currentConv)return;
-  // Bloquer l'envoi si profil bloqué
   if(!currentConv.isAssistant && blockedUsers.includes(currentConv.id)) return;
   const now=new Date();
   const time=now.getHours()+':'+(now.getMinutes()+'').padStart(2,'0');
-  currentConv.msgs.push({from:'me',text:txt,time});
+  const msgId = 'msg-' + Date.now();
+  currentConv.msgs.push({id:msgId, from:'me',text:txt,time});
   currentConv.lastMsg=txt; currentConv.time=time;
   inp.value='';
   renderMsgs();
 
-  // Si on est dans SafeGuard → appel API Claude
   if(currentConv.isAssistant){
     askSafeGuard(txt);
     return;
   }
 
-  // Sinon auto-reply normal
-  setTimeout(()=>{
-    const replies=["C'est super ! 😊","Totalement d'accord avec toi !","Haha exactement 😂","Tu es vraiment sympa !","On devrait se retrouver bientôt ! ✨"];
-    const r=replies[Math.floor(Math.random()*replies.length)];
-    const t2=new Date();
-    const tr=t2.getHours()+':'+(t2.getMinutes()+'').padStart(2,'0');
-    currentConv.msgs.push({from:'them',text:r,time:tr});
-    currentConv.lastMsg=r; currentConv.time=tr;
-    // Si l'utilisateur a quitté le chat, marquer non-lu
-    if(document.getElementById('chat-view').style.display==='none'){
-      currentConv.unread=true;
-      updateUnreadBadge();
-      renderConvList();
-    }
-    renderMsgs();
-  },1500);
+  // Affiche "en train d'écrire" puis réponse
+  setTimeout(function() {
+    showTypingIndicator();
+    setTimeout(function() {
+      hideTypingIndicator();
+      const replies=["C'est super ! 😊","Totalement d'accord avec toi !","Haha exactement 😂","Tu es vraiment sympa !","On devrait se retrouver bientôt ! ✨"];
+      const r=replies[Math.floor(Math.random()*replies.length)];
+      const t2=new Date();
+      const tr=t2.getHours()+':'+(t2.getMinutes()+'').padStart(2,'0');
+      currentConv.msgs.push({id:'msg-'+Date.now(), from:'them',text:r,time:tr});
+      currentConv.lastMsg=r; currentConv.time=tr;
+      if(document.getElementById('chat-view').style.display==='none'){
+        currentConv.unread=true;
+        updateUnreadBadge();
+        renderConvList();
+      }
+      renderMsgs();
+    }, 1000 + Math.random()*1500);
+  }, 500);
 }
 
 // ════════════════════════════════════════════════════════════
@@ -4297,6 +4407,427 @@ function showFreemiumChatBanner() {
   const chatView = document.getElementById('chat-view');
   if (chatView) chatView.appendChild(banner);
 }
+// ════════════════════════════════════════════════════════════
+// 📸 STORIES DE PROFIL
+// ════════════════════════════════════════════════════════════
+const STORY_QUESTIONS = [
+  ['🌍','Ma destination de rêve ?','L\'endroit où je veux absolument aller'],
+  ['🎵','La chanson de ma vie ?','Celle que j\'écoute en boucle'],
+  ['🍕','Mon plat préféré ?','Ce que je commanderai toujours'],
+  ['😂','Mon film comique préféré ?','Celui qui me fait rire à chaque fois'],
+  ['🐾','Chien ou chat ?','L\'éternel débat'],
+  ['📚','Le livre qui m\'a changé ?','Une lecture inoubliable'],
+  ['🏖️','Mer ou montagne ?','Mon habitat naturel'],
+  ['☕','Café ou thé ?','Mon rituel du matin'],
+  ['🎮','Mon jeu vidéo favori ?','Celui qui m\'a marqué'],
+  ['✈️','Mon dernier voyage ?','L\'aventure que je raconte encore'],
+];
+
+const STORY_ANSWERS = {
+  nature:  ['La Nouvelle-Zélande 🌿','Le Japon 🗾','La Patagonie 🏔️','La Thaïlande 🌺','Le Maroc 🕌'],
+  music:   ['Bohemian Rhapsody 🎸','Blinding Lights ✨','Lose Yourself 🎤','Shape of You 💃','Mr. Brightside 🎵'],
+  food:    ['Les sushis 🍣','La raclette 🧀','Le curry 🍛','Le tiramisu 🍮','Les tacos 🌮'],
+  movie:   ['Le Dîner de Cons 😂','Intouchables ❤️','La Grande Vadrouille 🎭','Superbad 🤣','Napoleon Dynamite 😄'],
+  pet:     ['Chien sans hésiter 🐕','Chat forcément 🐈','Les deux ! 🐕🐈','Ni l\'un ni l\'autre 😅'],
+  book:    ['L\'Alchimiste 📖','Harry Potter ⚡','Le Petit Prince 🌹','1984 📗','L\'Étranger 📘'],
+  sea:     ['La mer toujours ! 🏖️','La montagne sans hésiter ⛰️','Les deux selon la saison 🤩'],
+  drink:   ['Café noir ☕','Thé vert 🍵','Café au lait 🥛','Tisane 🌿'],
+  game:    ['Zelda 🗡️','FIFA ⚽','Minecraft 🧱','The Witcher 🐺','Fortnite 🎯'],
+  travel:  ['Le Japon 🗾','New York 🗽','Bali 🌴','L\'Islande 🌋','Le Pérou 🦙'],
+};
+
+function getProfileStories(p) {
+  // Génère 3 stories basées sur l'ID du profil (stable)
+  var seed = p.id * 7;
+  var stories = [];
+  var usedQ = [];
+  for (var i = 0; i < 3; i++) {
+    var qIdx = (seed + i * 3) % STORY_QUESTIONS.length;
+    if (usedQ.indexOf(qIdx) > -1) qIdx = (qIdx + 1) % STORY_QUESTIONS.length;
+    usedQ.push(qIdx);
+    var q = STORY_QUESTIONS[qIdx];
+    var answerKeys = Object.keys(STORY_ANSWERS);
+    var aKey = answerKeys[(seed + i) % answerKeys.length];
+    var answers = STORY_ANSWERS[aKey];
+    var answer = answers[(seed + i * 2) % answers.length];
+    stories.push({ icon: q[0], question: q[1], answer: answer });
+  }
+  return stories;
+}
+
+function renderCardStories(p) {
+  var el = document.getElementById('card-stories');
+  if (!el) return;
+  var stories = getProfileStories(p);
+  el.innerHTML = stories.map(function(s, i) {
+    return '<div onclick="openStoryModal(' + p.id + ',' + i + ')" style="flex-shrink:0;width:64px;cursor:pointer;">' +
+      '<div style="width:58px;height:58px;border-radius:16px;background:linear-gradient(135deg,' + p.color + '33,' + p.color + '11);border:2px solid ' + p.color + '55;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto;">' + s.icon + '</div>' +
+      '<p style="font-size:9px;color:var(--muted);text-align:center;margin-top:4px;line-height:1.3;">' + s.question + '</p>' +
+      '</div>';
+  }).join('');
+}
+
+function openStoryModal(profileId, storyIdx) {
+  var p = PROFILES.find(function(pr) { return pr.id === profileId; });
+  if (!p) return;
+  var stories = getProfileStories(p);
+  var s = stories[storyIdx];
+  if (!s) return;
+  var modal = document.createElement('div');
+  modal.id = 'story-modal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:24px;';
+  modal.onclick = function(e) { if (e.target === modal) modal.remove(); };
+  modal.innerHTML =
+    '<div style="background:var(--card);border-radius:24px;padding:32px 24px;max-width:340px;width:100%;text-align:center;">' +
+    '<div style="font-size:56px;margin-bottom:14px;">' + s.icon + '</div>' +
+    '<p style="font-size:13px;color:var(--muted);margin-bottom:10px;font-weight:600;">' + p.emoji + ' ' + p.name + ' répond à :</p>' +
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:18px;font-weight:800;margin-bottom:18px;">' + s.question + '</h3>' +
+    '<div style="padding:16px;background:linear-gradient(135deg,' + p.color + '18,' + p.color + '08);border-radius:16px;border:1.5px solid ' + p.color + '33;margin-bottom:24px;">' +
+    '<p style="font-size:20px;font-weight:800;">' + s.answer + '</p>' +
+    '</div>' +
+    '<button onclick="this.closest(\'#story-modal\').remove();document.getElementById(\'msg-input\').value=\'J\\\'ai vu ta réponse \\\'' + s.answer + '\\\' — moi aussi ! \'" class="btn btn-primary" style="width:100%;margin-bottom:10px;">💬 Réagir à cette réponse</button>' +
+    '<button onclick="this.closest(\'#story-modal\').remove();" style="width:100%;background:none;border:none;font-size:13px;color:var(--muted);cursor:pointer;font-family:\'DM Sans\',sans-serif;">Fermer</button>' +
+    '</div>';
+  document.body.appendChild(modal);
+}
+
+// ════════════════════════════════════════════════════════════
+// 💬 QUESTIONS BRISE-GLACE
+// ════════════════════════════════════════════════════════════
+const ICEBREAKERS = {
+  'Yoga':      ['Tu pratiques le yoga depuis longtemps ? 🧘','Quel est ton style de yoga préféré ?'],
+  'Voyage':    ['Quel est le pays qui t\'a le plus marqué(e) ? ✈️','Tu préfères les voyages solo ou en groupe ?'],
+  'Lecture':   ['Quel est le dernier livre que tu n\'as pas pu poser ? 📚','Tu es plutôt roman ou essai ?'],
+  'Cuisine':   ['Tu cuisines souvent ? Spécialité maison ? 🍳','C\'est toi qui invites ou tu préfères qu\'on sorte au resto ?'],
+  'Danse':     ['Tu danses depuis toujours ou tu as appris récemment ? 💃','Quel style de danse tu pratiques ?'],
+  'Cinéma':    ['C\'est quoi ton film préféré de tous les temps ? 🎬','Plutôt salle obscure ou Netflix dans le canapé ?'],
+  'Sport':     ['Tu t\'entraînes combien de fois par semaine ? 💪','Sport en salle ou en plein air ?'],
+  'Nature':    ['Tu as un coin nature secret près de chez toi ? 🌿','Randonneur(se) ou plutôt pique-nique tranquille ?'],
+  'Musique':   ['Tu joues d\'un instrument ? 🎸','Concert ou festival, tu préfères quoi ?'],
+  'Photo':     ['Tu shoots plutôt du paysage ou des portraits ? 📷','Film argentique ou numérique ?'],
+  'Randonnée': ['Tu as déjà fait une grande randonnée multi-jours ? 🥾','Ta plus belle marche c\'était où ?'],
+  'Vélo':      ['Plutôt VTT ou vélo de route ? 🚵','Tu as déjà fait une longue distance à vélo ?'],
+  'Art':       ['Tu crées toi-même ou tu es plutôt spectateur ? 🎨','Ton mouvement artistique préféré ?'],
+  'Surf':      ['Tu surfs depuis combien de temps ? 🏄','Ton spot préféré c\'est où ?'],
+  'Gaming':    ['Tu joues plutôt solo ou multi ? 🎮','Console, PC ou mobile ?'],
+  'Jazz':      ['Tu écoutes ça pour te détendre ? 🎷','Tu sors souvent en concert jazz ?'],
+  'Ski':       ['Piste bleue ou noire ? ⛷️','Tu préfères les Alpes ou les Pyrénées ?'],
+  'Tennis':    ['Tu joues en club ? 🎾','Simple ou double, tu préfères quoi ?'],
+  'Tech':      ['Tu bosses dans la tech ou c\'est une passion ? 💻','Dernière technologie qui t\'a bluffé(e) ?'],
+  'BD':        ['Plutôt franco-belge ou manga ? 📖','Ton auteur BD préféré ?'],
+};
+
+function getIcebreaker(p) {
+  var myTags = MY_PROFILE.tags || [];
+  var pTags  = p.tags || [];
+  var common = myTags.filter(function(t) { return pTags.indexOf(t) > -1; });
+  if (common.length === 0) return null;
+  var tag = common[Math.floor(Math.random() * common.length)];
+  var questions = ICEBREAKERS[tag];
+  if (!questions) return null;
+  return { tag: tag, question: questions[Math.floor(Math.random() * questions.length)] };
+}
+
+function renderCardIcebreaker(p) {
+  var el = document.getElementById('card-icebreaker');
+  if (!el) return;
+  var ice = getIcebreaker(p);
+  if (!ice) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  el.style.display = 'block';
+  el.innerHTML =
+    '<div style="padding:12px 14px;background:linear-gradient(135deg,#00b89410,#00b4d810);border-radius:14px;border:1px solid #00b89430;">' +
+    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">' +
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
+    '<span style="font-size:11px;font-weight:700;color:var(--teal);">💡 Brise-glace — #' + ice.tag + ' en commun</span>' +
+    '</div>' +
+    '<p style="font-size:13px;color:var(--text);font-weight:600;margin-bottom:10px;">' + ice.question + '</p>' +
+    '<button onclick="useIcebreaker(\'' + ice.question.replace(/'/g, "\\'") + '\')" style="width:100%;padding:8px;border-radius:10px;background:var(--teal);border:none;color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:\'DM Sans\',sans-serif;">Envoyer ce message →</button>' +
+    '</div>';
+}
+
+function useIcebreaker(question) {
+  // Ouvre le chat avec le message pré-rempli
+  var filteredP = getFilteredProfiles();
+  if (!filteredP.length) return;
+  var p = filteredP[filteredIdx % filteredP.length];
+  // Vérifie s'il y a un match/conv existant
+  var conv = CONVS.find(function(c) { return c.name === p.name; });
+  if (!conv) {
+    // Crée un match et ouvre le chat
+    triggerMatch(p);
+    setTimeout(function() {
+      var inp = document.getElementById('msg-input');
+      if (inp) inp.value = question;
+    }, 800);
+  } else {
+    openChat(conv.id);
+    setTimeout(function() {
+      var inp = document.getElementById('msg-input');
+      if (inp) inp.value = question;
+    }, 300);
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// 🎯 COMPATIBILITÉ DÉTAILLÉE
+// ════════════════════════════════════════════════════════════
+function renderCardCompat(p) {
+  var el = document.getElementById('card-compat');
+  if (!el || !p) return;
+
+  var myTags = MY_PROFILE.tags || [];
+  var pTags  = p.tags || [];
+  var common = myTags.filter(function(t) { return pTags.indexOf(t) > -1; });
+
+  var dist = estimateDistance(MY_PROFILE.city, p.city);
+  var distLabel = dist < 5 ? 'Même ville 📍' : dist < 20 ? 'À ' + Math.round(dist) + ' km' : dist < 100 ? 'À ~' + Math.round(dist) + ' km' : 'Loin';
+
+  var ageDiff = Math.abs((MY_PROFILE.age || 28) - p.age);
+  var ageCompat = ageDiff <= 2 ? '🎂 Même génération' : ageDiff <= 5 ? '🎂 Proches en âge' : '🎂 Âges différents';
+
+  var details = [];
+  if (common.length > 0) details.push({ icon:'🎯', label: common.length + ' intérêt' + (common.length > 1 ? 's' : '') + ' en commun', sub: common.slice(0, 3).map(function(t) { return '#' + t; }).join(' ') });
+  details.push({ icon:'📍', label: distLabel, sub: p.city });
+  details.push({ icon:'🎂', label: ageCompat, sub: p.age + ' ans' });
+
+  el.style.display = 'block';
+  el.innerHTML =
+    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">' +
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>' +
+    '<span style="font-size:11px;font-weight:700;color:var(--accent);">Pourquoi ' + p.match + '% de compatibilité ?</span>' +
+    '</div>' +
+    details.map(function(d) {
+      return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">' +
+        '<span style="font-size:16px;width:22px;text-align:center;">' + d.icon + '</span>' +
+        '<div><p style="margin:0;font-size:12px;font-weight:700;">' + d.label + '</p>' +
+        '<p style="margin:0;font-size:11px;color:var(--muted);">' + d.sub + '</p></div>' +
+        '</div>';
+    }).join('');
+}
+
+// ════════════════════════════════════════════════════════════
+// ⏸️ MODE PAUSE
+// ════════════════════════════════════════════════════════════
+var pauseMode = false;
+
+function togglePauseMode() {
+  pauseMode = !pauseMode;
+  var btn = document.getElementById('pause-mode-btn');
+  if (btn) {
+    btn.textContent = pauseMode ? '▶️ Reprendre' : '⏸️ Mode pause';
+    btn.style.background = pauseMode ? '#00b89418' : 'var(--card2)';
+    btn.style.borderColor = pauseMode ? '#00b89433' : 'var(--border)';
+    btn.style.color = pauseMode ? 'var(--teal)' : 'var(--muted)';
+  }
+  showToast(pauseMode ? '⏸️ Mode pause activé — tu es invisible' : '✅ Tu es à nouveau visible !', pauseMode ? 'var(--muted)' : 'var(--teal)');
+  // Masque/affiche dans Découvrir
+  var disc = document.getElementById('tab-discover');
+  var pauseBanner = document.getElementById('pause-banner');
+  if (!pauseBanner && pauseMode) {
+    pauseBanner = document.createElement('div');
+    pauseBanner.id = 'pause-banner';
+    pauseBanner.style.cssText = 'margin:0 16px 16px;padding:12px 16px;background:#00000012;border-radius:14px;border:1px solid var(--border);display:flex;align-items:center;gap:12px;';
+    pauseBanner.innerHTML = '<span style="font-size:22px;">⏸️</span><div><p style="margin:0;font-size:13px;font-weight:700;">Mode pause actif</p><p style="margin:2px 0 0;font-size:11px;color:var(--muted);">Ton profil est invisible dans la recherche</p></div>';
+    if (disc) disc.insertBefore(pauseBanner, disc.firstChild.nextSibling);
+  } else if (pauseBanner && !pauseMode) {
+    pauseBanner.remove();
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// 📊 RAPPORT HEBDOMADAIRE
+// ════════════════════════════════════════════════════════════
+function openWeeklyReport() {
+  var likesReceived = Math.floor(20 + Math.random() * 40);
+  var profileViews  = Math.floor(50 + Math.random() * 150);
+  var newMatches    = CONVS.length;
+  var topTag        = (MY_PROFILE.tags && MY_PROFILE.tags[0]) || 'Voyage';
+  var compatAvg     = Math.floor(65 + Math.random() * 25);
+
+  var modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;';
+  modal.onclick = function(e) { if (e.target === modal) modal.remove(); };
+  modal.innerHTML =
+    '<div style="background:var(--card);border-radius:28px 28px 0 0;padding:28px 24px 40px;width:100%;max-width:430px;">' +
+    '<div style="width:40px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 20px;"></div>' +
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:20px;font-weight:800;margin-bottom:4px;">📊 Cette semaine</h3>' +
+    '<p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Ton activité du 19 au 25 avril</p>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">' +
+    statCard('👁️', profileViews + '', 'Vues de profil', '#6b8aff') +
+    statCard('❤️', likesReceived + '', 'Likes reçus', 'var(--accent)') +
+    statCard('💘', newMatches + '', 'Matchs actifs', '#ff7043') +
+    statCard('⭐', compatAvg + '%', 'Compatibilité moy.', 'var(--gold)') +
+    '</div>' +
+    '<div style="padding:14px;background:linear-gradient(135deg,#ff3d6e0d,#ff70430d);border-radius:14px;border:1px solid #ff3d6e22;margin-bottom:20px;">' +
+    '<p style="font-size:13px;font-weight:700;margin-bottom:4px;">💡 Conseil de la semaine</p>' +
+    '<p style="font-size:12px;color:var(--muted);line-height:1.6;">Les profils avec #' + topTag + ' ont 2x plus de chances de matcher avec toi. Continue à interagir avec ces profils !</p>' +
+    '</div>' +
+    '<button onclick="this.closest(\'div[style*=fixed]\').remove();" class="btn btn-primary" style="width:100%;">Super, merci ! 🎉</button>' +
+    '</div>';
+  document.body.appendChild(modal);
+}
+
+function statCard(icon, value, label, color) {
+  return '<div style="padding:16px;background:var(--card2);border-radius:16px;border:1px solid var(--border);text-align:center;">' +
+    '<div style="font-size:28px;margin-bottom:6px;">' + icon + '</div>' +
+    '<p style="font-family:\'Syne\',sans-serif;font-size:24px;font-weight:800;color:' + color + ';margin:0;">' + value + '</p>' +
+    '<p style="font-size:11px;color:var(--muted);margin:2px 0 0;">' + label + '</p>' +
+    '</div>';
+}
+let isTypingShown = false;
+
+function showTypingIndicator() {
+  if (isTypingShown) return;
+  isTypingShown = true;
+  const indicator = document.getElementById('typing-indicator');
+  const avatar    = document.getElementById('typing-avatar');
+  if (!indicator || !currentConv) return;
+  avatar.textContent = currentConv.emoji;
+  avatar.style.background = currentConv.color + '33';
+  indicator.style.display = 'flex';
+  const msgs = document.getElementById('chat-messages');
+  if (msgs) setTimeout(() => { msgs.scrollTop = msgs.scrollHeight; }, 50);
+}
+
+function hideTypingIndicator() {
+  isTypingShown = false;
+  const indicator = document.getElementById('typing-indicator');
+  if (indicator) indicator.style.display = 'none';
+}
+
+// ════════════════════════════════════════════════════════════
+// 😂 RÉACTIONS AUX MESSAGES
+// ════════════════════════════════════════════════════════════
+let reactionTargetId = null;
+
+function openReactionPicker(msgId, x, y) {
+  reactionTargetId = msgId;
+  const picker = document.getElementById('reaction-picker');
+  if (!picker) return;
+  picker.style.display = 'flex';
+  picker.style.left = Math.min(x - 20, window.innerWidth - 240) + 'px';
+  picker.style.top  = Math.max(y - 70, 80) + 'px';
+  setTimeout(() => {
+    document.addEventListener('click', closeReactionPicker, { once: true });
+  }, 100);
+}
+
+function closeReactionPicker() {
+  const picker = document.getElementById('reaction-picker');
+  if (picker) picker.style.display = 'none';
+  reactionTargetId = null;
+}
+
+function addReaction(emoji) {
+  if (!reactionTargetId || !currentConv) return;
+  const msg = currentConv.msgs.find(function(m) { return m.id === reactionTargetId; });
+  if (msg) { msg.reaction = emoji; renderMsgs(); }
+  closeReactionPicker();
+}
+
+// ════════════════════════════════════════════════════════════
+// 🎤 MESSAGES VOCAUX
+// ════════════════════════════════════════════════════════════
+let voiceStart = null;
+let voiceTimer = null;
+
+function startVoice() {
+  voiceStart = Date.now();
+  const btn = document.getElementById('voice-btn');
+  if (btn) {
+    btn.classList.add('voice-recording');
+    btn.querySelector('svg').style.stroke = 'var(--accent)';
+  }
+  const inp = document.getElementById('msg-input');
+  if (inp) { inp.placeholder = '🎤 Enregistrement…'; inp.disabled = true; }
+  voiceTimer = setInterval(function() {
+    const secs = Math.floor((Date.now() - voiceStart) / 1000);
+    if (inp) inp.placeholder = '🎤 ' + secs + 's — Relâche pour envoyer';
+    if (secs >= 60) stopVoice();
+  }, 1000);
+}
+
+function stopVoice() {
+  if (!voiceStart) return;
+  const duration = Math.max(1, Math.floor((Date.now() - voiceStart) / 1000));
+  voiceStart = null;
+  clearInterval(voiceTimer);
+  const btn = document.getElementById('voice-btn');
+  if (btn) {
+    btn.classList.remove('voice-recording');
+    btn.querySelector('svg').style.stroke = 'var(--muted)';
+  }
+  const inp = document.getElementById('msg-input');
+  if (inp) { inp.placeholder = 'Écrire un message…'; inp.disabled = false; }
+  if (duration < 1 || !currentConv) return;
+  const heights = Array.from({length: 20}, function() { return 4 + Math.floor(Math.random() * 20); });
+  const barsHTML = heights.map(function(h) { return '<span style="height:' + h + 'px;"></span>'; }).join('');
+  const now = new Date();
+  const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
+  currentConv.msgs.push({ id: 'msg-' + Date.now(), from: 'me', type: 'voice', duration: duration, barsHTML: barsHTML, time: time });
+  currentConv.lastMsg = '🎤 Message vocal';
+  renderMsgs();
+  renderConvList();
+  // Réponse automatique
+  setTimeout(function() {
+    showTypingIndicator();
+    setTimeout(function() {
+      hideTypingIndicator();
+      var replies = ['😄 Trop mignon ta voix !', "J'adore les messages vocaux !", 'Sympa d\'entendre ta voix 😊', '🎤 Je t\'envoie le mien aussi !'];
+      var reply = replies[Math.floor(Math.random() * replies.length)];
+      var nowR = new Date();
+      var timeR = nowR.getHours() + ':' + String(nowR.getMinutes()).padStart(2,'0');
+      currentConv.msgs.push({ id: 'msg-' + Date.now(), from: 'them', text: reply, time: timeR });
+      currentConv.lastMsg = reply;
+      renderMsgs();
+      renderConvList();
+    }, 1500 + Math.random() * 1000);
+  }, 800);
+}
+
+// ════════════════════════════════════════════════════════════
+// ⭐ LIMITE SUPER LIKES
+// ════════════════════════════════════════════════════════════
+let superLikesLeft = 3;
+let superLikeDate  = new Date().toDateString();
+
+function checkSuperLikeReset() {
+  var today = new Date().toDateString();
+  if (today !== superLikeDate) {
+    superLikesLeft = isPremium() ? 3 : 0;
+    superLikeDate  = today;
+  }
+}
+
+function superLike() {
+  checkSuperLikeReset();
+  if (superLikesLeft <= 0) {
+    showToast('⭐ Plus de Super Likes aujourd\'hui — reviens demain !', 'var(--gold)');
+    return;
+  }
+  superLikesLeft--;
+  if (superLikesLeft > 0) {
+    showToast('⭐ Super Like envoyé ! Il t\'en reste ' + superLikesLeft + ' aujourd\'hui', 'var(--gold)');
+  } else {
+    showToast('⭐ Dernier Super Like utilisé pour aujourd\'hui !', 'var(--gold)');
+  }
+  var filtered = getFilteredProfiles();
+  if (!filtered.length) return;
+  var p = filtered[filteredIdx % filtered.length];
+  recordLike(p.id);
+  triggerMatch(p);
+  filteredIdx++;
+  renderCard();
+}
+
+function showToast(msg, color) {
+  var toast = document.createElement('div');
+  toast.textContent = msg;
+  toast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:' + (color || 'var(--teal)') + ';color:white;padding:10px 20px;border-radius:22px;font-size:13px;font-weight:700;z-index:9999;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.2);';
+  document.body.appendChild(toast);
+  setTimeout(function() { toast.remove(); }, 2500);
+}
+
 let boostActive = false;
 let boostTimer  = null;
 let boostSecondsLeft = 0;
