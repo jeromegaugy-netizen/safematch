@@ -4,6 +4,10 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
 <meta name="color-scheme" content="light"/>
+  <meta http-equiv="X-Content-Type-Options" content="nosniff"/>
+  <meta http-equiv="X-Frame-Options" content="DENY"/>
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin"/>
+  <meta name="robots" content="noindex, nofollow"/>
 <meta name="theme-color" content="#fdf5f0"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
@@ -1927,7 +1931,6 @@
       <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Compatibilité minimum</p>
       <div id="filter-match-btns" style="display:flex;gap:8px;margin-bottom:28px;"></div>
 
-
     </div>
     <div style="flex-shrink:0;padding:12px 0 24px;border-top:1px solid var(--border);margin-top:8px;">
       <button id="filter-apply-btn" class="btn btn-primary" style="width:100%;font-size:15px;" onclick="applyFilters()">Appliquer les filtres</button>
@@ -3008,14 +3011,7 @@ function openVisitorsPanel() {
     const renderItem = (v) => {
       const isNew = !v.seen;
       return `
-      <button onclick="markVisitorSeen(${v.id});openProfileSheet(${v.id});closeVisitorsPanel();" style="
-        display:flex;align-items:center;gap:14px;padding:12px 14px;
-        background:${isNew ? '#ff3d6e08' : 'var(--card2)'};
-        border-radius:14px;
-        border:1.5px solid ${isNew ? '#ff3d6e33' : 'var(--border)'};
-        cursor:pointer;text-align:left;width:100%;transition:all .2s;
-        margin-bottom:8px;
-      " onmouseenter="this.style.background='var(--card)'" onmouseleave="this.style.background='${isNew ? '#ff3d6e08' : 'var(--card2)'}'">
+      <button onclick="markVisitorSeen(${v.id});openProfileSheet(${v.id});closeVisitorsPanel();" style="display:flex;align-items:center;gap:14px;padding:12px 14px; background:${isNew ? '#ff3d6e08' : 'var(--card2)'}; border-radius:14px; border:1.5px solid ${isNew ? '#ff3d6e33' : 'var(--border)'}; cursor:pointer;text-align:left;width:100%;transition:all .2s; margin-bottom:8px;" onmouseenter="this.style.background='var(--card)'" onmouseleave="this.style.background='${isNew ? '#ff3d6e08' : 'var(--card2)'}'">
         <div style="position:relative;">
           <div style="width:48px;height:48px;border-radius:50%;background:${v.color}33;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;${!isNew ? 'opacity:.65;filter:grayscale(.4);' : ''}">${v.emoji}</div>
           ${isNew ? `<div style="position:absolute;top:-1px;right:-1px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);"></div>` : ''}
@@ -3368,13 +3364,7 @@ function renderConvList(){
 
   // SafeGuard épinglé en premier avec style spécial
   const sgHTML = `
-    <button onclick="openSafeGuard()" style="
-      display:flex;align-items:center;gap:14px;padding:14px 16px;
-      background:linear-gradient(135deg,#00e5b012,#00b4d808);
-      border-radius:16px;border:1.5px solid #00e5b044;
-      cursor:pointer;text-align:left;width:100%;
-      transition:all .2s;margin-bottom:6px;position:relative;overflow:hidden;
-    " onmouseenter="this.style.background='linear-gradient(135deg,#00e5b020,#00b4d812)'"
+    <button onclick="openSafeGuard()" style="display:flex;align-items:center;gap:14px;padding:14px 16px; background:linear-gradient(135deg,#00e5b012,#00b4d808); border-radius:16px;border:1.5px solid #00e5b044; cursor:pointer;text-align:left;width:100%; transition:all .2s;margin-bottom:6px;position:relative;overflow:hidden;" onmouseenter="this.style.background='linear-gradient(135deg,#00e5b020,#00b4d812)'"
        onmouseleave="this.style.background='linear-gradient(135deg,#00e5b012,#00b4d808)'">
       <!-- Shimmer line top -->
       <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--teal),transparent);"></div>
@@ -3407,15 +3397,7 @@ function renderConvList(){
   el.innerHTML = sgHTML + CONVS.map(c=>{
     const isBlocked = blockedUsers.includes(c.id);
     return `
-    <button onclick="openChat(${c.id})" style="
-      display:flex;align-items:center;gap:14px;padding:14px 16px;
-      background:${isBlocked ? 'var(--card2)' : 'var(--card)'};
-      border-radius:16px;
-      border:1px solid ${isBlocked ? '#ff6b6b33' : 'var(--border)'};
-      cursor:pointer;text-align:left;width:100%;
-      transition:background .2s;margin-bottom:6px;
-      opacity:${isBlocked ? '.55' : '1'};
-    " onmouseenter="this.style.background='var(--card2)'" onmouseleave="this.style.background='${isBlocked ? 'var(--card2)' : 'var(--card)'}'">
+    <button onclick="openChat(${c.id})" style="display:flex;align-items:center;gap:14px;padding:14px 16px; background:${isBlocked ? 'var(--card2)' : 'var(--card)'}; border-radius:16px; border:1px solid ${isBlocked ? '#ff6b6b33' : 'var(--border)'}; cursor:pointer;text-align:left;width:100%; transition:background .2s;margin-bottom:6px; opacity:${isBlocked ? '.55' : '1'};" onmouseenter="this.style.background='var(--card2)'" onmouseleave="this.style.background='${isBlocked ? 'var(--card2)' : 'var(--card)'}'">
       <div style="position:relative;">
         <div style="width:52px;height:52px;border-radius:50%;background:${c.color}33;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;${isBlocked ? 'filter:grayscale(1);' : ''}">${c.emoji}</div>
         ${isBlocked
@@ -4424,13 +4406,17 @@ function startFreeAccount() {
 }
 
 // Codes promo valides
-const PROMO_CODES = {
-  'LAUNCH2026': { type: 'free_premium', months: 1,  label: '1 mois offert 🎉' },
-  'BETA50':     { type: 'discount',     pct: 50,    label: '50% de réduction 🎁' },
-  'FRIEND30':   { type: 'free_premium', months: 1,  label: '30 jours offerts 🤝' },
-  'VIP':        { type: 'free_premium', months: 3,  label: '3 mois offerts 👑' },
-  'SAFEMATCH':  { type: 'free_premium', months: 2,  label: '2 mois offerts 💘' },
-};
+// Codes promo (obfusqués)
+const PROMO_CODES = (function() {
+  var d = atob;
+  var codes = {};
+  codes[d('TEFVTkNIMjAyNg==')] = { type: 'free_premium', months: 1,  label: '1 mois offert 🎉' };
+  codes[d('QkVUQTUw')]         = { type: 'discount',     pct: 50,    label: '50% de réduction 🎁' };
+  codes[d('RlJJRU5EMzA=')]     = { type: 'free_premium', months: 1,  label: '30 jours offerts 🤝' };
+  codes[d('VklQ')]              = { type: 'free_premium', months: 3,  label: '3 mois offerts 👑' };
+  codes[d('U0FGRU1BVENI')]     = { type: 'free_premium', months: 2,  label: '2 mois offerts 💘' };
+  return codes;
+})();
 
 let appliedPromo = null;
 
@@ -6111,10 +6097,6 @@ function setLang(lang) {
   try { localStorage.setItem('sm_lang', lang); } catch(e) {}
 }
 
-function toggleLangMenu() {
-  // Plus de menu flottant — la langue se change dans Profil → Préférences
-}
-
 function applyTranslations() {
   // Helper: set innerHTML of element by id
   const s  = (id, key)  => { const el=document.getElementById(id); if(el) el.innerHTML=t(key); };
@@ -6276,16 +6258,12 @@ function buildLangPicker() {
   });
 }
 
-function updateLangSelectorVisibility() {
-  // Plus de sélecteur flottant
-}
-
 // ════════════════════════════════════════════════════════════
 // 🔐 PROTECTION MOT DE PASSE
 // ════════════════════════════════════════════════════════════
 
 // ⚙️ CONFIGURATION — Change le mot de passe ici
-const DEMO_PASSWORD = 'SafeMatch2026LCL.+';
+const DEMO_PASSWORD = atob('U2FmZU1hdGNoMjAyNkxDTC4r');
 const MAX_ATTEMPTS  = 5;
 
 let pwdAttempts = 0;
