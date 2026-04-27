@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
 <meta name="color-scheme" content="light"/>
 <meta name="theme-color" content="#fdf5f0"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -52,7 +52,7 @@
     --teal:    #00c896;
     --gold:    #ffb347;
     --text:    #f0ddd0;
-    --muted:   #907060;
+    --muted:   #a08070;
     --glow:    0 8px 32px #ff3d6e40;
   }
   body.dark-mode .screen { background: var(--bg); color: var(--text); }
@@ -62,10 +62,44 @@
   body.dark-mode #match-overlay { background: rgba(10,6,3,.97) !important; }
   body.dark-mode input, body.dark-mode textarea { background: var(--card2) !important; color: var(--text) !important; border-color: var(--border) !important; }
   body.dark-mode .card, body.dark-mode .plan-card, body.dark-mode .modal { background: var(--card); color: var(--text); border-color: var(--border); }
+  /* Force tous les textes inline en dark mode */
+  body.dark-mode p, body.dark-mode h1, body.dark-mode h2, body.dark-mode h3, body.dark-mode h4, body.dark-mode span, body.dark-mode label { color: inherit; }
+  body.dark-mode .modal-bg .modal { background: var(--card) !important; }
+  body.dark-mode .card2, body.dark-mode [style*="background:var(--card2)"] { background: var(--card2) !important; }
+  /* Textes forcés lisibles */
+  body.dark-mode [style*="color:#2d1b14"], body.dark-mode [style*="color: #2d1b14"] { color: var(--text) !important; }
+  body.dark-mode [style*="color:#a07060"], body.dark-mode [style*="color: #a07060"] { color: var(--muted) !important; }
+  body.dark-mode [style*="background:#fff"], body.dark-mode [style*="background: #fff"],
+  body.dark-mode [style*="background:white"], body.dark-mode [style*="background: white"] { background: var(--card) !important; }
+  body.dark-mode [style*="background:#fdf5f0"], body.dark-mode [style*="background: #fdf5f0"] { background: var(--bg) !important; }
+  body.dark-mode [style*="background:#fff0eb"], body.dark-mode [style*="background: #fff0eb"] { background: var(--card2) !important; }
+  body.dark-mode [style*="background:#ffffff"], body.dark-mode [style*="background: #ffffff"] { background: var(--card) !important; }
+  /* Bubbles chat */
+  body.dark-mode .bubble.them { background: var(--card2) !important; border-color: var(--border) !important; color: var(--text) !important; }
+  /* Profile cards */
+  body.dark-mode .profile-card { background: var(--card) !important; border-color: var(--border) !important; }
+  body.dark-mode .tag { background: var(--card2) !important; border-color: var(--border) !important; color: var(--muted) !important; }
+  /* Plan cards */
+  body.dark-mode .plan-card { background: var(--card) !important; }
+  body.dark-mode .plan-card.selected { background: var(--card2) !important; }
+  /* Nav labels */
+  body.dark-mode .nav-btn span { color: var(--muted); }
+  body.dark-mode .nav-btn.active span { color: var(--accent); }
+  /* Legal sections */
+  body.dark-mode .legal-section h4 { color: var(--text) !important; }
+  body.dark-mode .legal-section p { color: var(--muted) !important; }
 
   /* ── GLOBAL BASE ── */
-  html, body { overflow-x: hidden; max-width: 100%; }
-  .screen { overflow-x: hidden !important; }
+  html, body { overflow-x: hidden; max-width: 100%; touch-action: pan-x pan-y; }
+  .screen { overflow-x: hidden !important; touch-action: pan-x pan-y; }
+  /* Empêche le zoom sur tous les inputs */
+  input, textarea, select { font-size: 16px !important; touch-action: manipulation; }
+  /* Toutes les pages ont la même largeur que Découvrir */
+  .screen > div, #s-pay > div, #s-consent > div, #s-verify > div, #s-onboarding > div, #s-splash > div, #s-pwd > div {
+    max-width: 430px;
+    margin-left: auto;
+    margin-right: auto;
+  }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   /* ═══ PROTECTIONS IMAGES ═══ */
   img {
@@ -252,7 +286,9 @@
   .bubble.me { background: var(--grad); color: white; border-radius: 18px 18px 4px 18px; margin-left: auto; }
   .bubble.them { background: var(--card); border: 1px solid var(--border); color: var(--text); border-radius: 18px 18px 18px 4px; }
   .bubble-time { font-size: 10px; opacity: .5; margin-top: 3px; text-align: right; }
-  .bubble-reaction { position: absolute; bottom: -10px; right: 6px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1px 5px; font-size: 13px; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+  .legal-section { margin-bottom: 16px; }
+  .legal-section h4 { font-size: 13px; font-weight: 800; margin-bottom: 6px; color: var(--text); }
+  .legal-section p { font-size: 13px; color: var(--muted); line-height: 1.7; } background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1px 5px; font-size: 13px; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
   .bubble.me .bubble-reaction { right: auto; left: 6px; }
   @keyframes typingDot {
     0%, 60%, 100% { transform: translateY(0); opacity: .4; }
@@ -1058,13 +1094,19 @@
           <div id="card-stories" style="display:flex;gap:6px;padding:10px 12px 0;overflow-x:auto;scrollbar-width:none;"></div>
           <!-- Avatar area -->
           <div id="card-avatar" style="height:180px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;font-size:80px;">
-            🌸
+            <span class="avatar-emoji" style="position:relative;z-index:1;">🌸</span>
+            <!-- Photo réelle si uploadée -->
+            <img class="profile-photo" src="" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;z-index:2;" draggable="false"/>
+            <!-- Avatar CSS généré — initiale sur fond coloré -->
+            <div class="avatar-initials" style="display:none;position:absolute;inset:0;z-index:2;align-items:center;justify-content:center;flex-direction:column;gap:8px;">
+              <span class="avatar-initial-letter" style="font-family:'Syne',sans-serif;font-size:72px;font-weight:800;color:white;text-shadow:0 2px 16px rgba(0,0,0,.3);line-height:1;"></span>
+            </div>
             <!-- Match badge -->
-            <div style="position:absolute;top:14px;right:14px;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);border-radius:20px;padding:6px 14px;display:flex;align-items:center;gap:6px;">
+            <div style="position:absolute;top:14px;right:14px;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);border-radius:20px;padding:6px 14px;display:flex;align-items:center;gap:6px;z-index:3;">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--accent)" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
               <span id="card-match" style="color:white;font-weight:800;font-size:14px;">94%</span>
             </div>
-            <div id="card-badge" style="position:absolute;top:14px;left:14px;"></div>
+            <div id="card-badge" style="position:absolute;top:14px;left:14px;z-index:3;"></div>
           </div>
           <!-- Info -->
           <div style="padding:22px;">
@@ -1247,15 +1289,21 @@
           </button>
         </div>
 
-        <!-- Menu photo (suggestions rapides pour la démo) -->
-        <div id="photo-menu" style="display:none;flex-wrap:wrap;gap:8px;padding:10px 0 4px;">
-          <p style="width:100%;font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px;">Envoyer une photo :</p>
-          <button onclick="sendDemoPhoto('nature');closePhotoMenu();" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">🌿 Nature</button>
-          <button onclick="sendDemoPhoto('city');closePhotoMenu();" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">🏙️ Ville</button>
-          <button onclick="sendDemoPhoto('food');closePhotoMenu();" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">🍕 Food</button>
-          <button onclick="sendDemoPhoto('sport');closePhotoMenu();" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">🏄 Sport</button>
-          <button onclick="sendDemoPhoto('travel');closePhotoMenu();" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">✈️ Voyage</button>
-        </div>
+          <!-- Input file pour photo galerie -->
+          <input type="file" id="photo-input-gallery" accept="image/*" style="display:none;" onchange="sendRealPhoto(this)"/>
+          <!-- Input file pour appareil photo -->
+          <input type="file" id="photo-input-camera" accept="image/*" capture="environment" style="display:none;" onchange="sendRealPhoto(this)"/>
+
+          <!-- Menu photo -->
+          <div id="photo-menu" style="display:none;flex-wrap:wrap;gap:8px;padding:10px 0 4px;">
+            <p style="width:100%;font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px;">Envoyer une photo :</p>
+            <button onclick="document.getElementById('photo-input-camera').click();closePhotoMenu();" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;border:1.5px solid var(--accent);background:#ff3d6e0d;color:var(--accent);font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">📷 Appareil photo</button>
+            <button onclick="document.getElementById('photo-input-gallery').click();closePhotoMenu();" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">🖼️ Ma galerie</button>
+            <button onclick="sendDemoPhoto('nature');closePhotoMenu();" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">🌿 Nature</button>
+            <button onclick="sendDemoPhoto('city');closePhotoMenu();" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">🏙️ Ville</button>
+            <button onclick="sendDemoPhoto('food');closePhotoMenu();" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">🍕 Food</button>
+            <button onclick="sendDemoPhoto('sport');closePhotoMenu();" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">🏄 Sport</button>
+          </div>
       </div>
     </div>
   </div>
@@ -1284,7 +1332,11 @@
       <!-- Profile header card -->
       <div class="card" style="overflow:hidden;margin-bottom:16px;">
         <div id="prof-banner" style="height:110px;background:linear-gradient(135deg,#ff3d6e33,#00e5b018);position:relative;">
-          <div id="prof-avatar" style="position:absolute;bottom:-36px;left:22px;width:78px;height:78px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:34px;border:4px solid var(--card);">🙂</div>
+          <div id="prof-avatar" onclick="openAvatarPicker()" style="position:absolute;bottom:-36px;left:22px;width:78px;height:78px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:34px;border:4px solid var(--card);cursor:pointer;overflow:hidden;">🙂
+            <div style="position:absolute;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;border-radius:50%;" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='0'">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </div>
+          </div>
         </div>
         <div style="padding:48px 22px 22px;">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;">
@@ -1378,6 +1430,37 @@
           </div>
           <div id="lang-picker-profile" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
         </div>
+      </div>
+
+      <!-- Code parrain + légal -->
+      <div class="card" style="padding:20px;margin-bottom:16px;">
+        <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;">Partager & Légal</p>
+
+        <!-- Code parrain -->
+        <div style="padding:16px;background:linear-gradient(135deg,#ff3d6e0a,#ffb3470a);border:1.5px solid #ff3d6e22;border-radius:16px;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+            <div style="width:40px;height:40px;border-radius:12px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🎁</div>
+            <div>
+              <p style="margin:0;font-size:14px;font-weight:700;">Parrainer un ami</p>
+              <p style="margin:2px 0 0;font-size:12px;color:var(--muted);">1 mois offert par filleul Premium</p>
+            </div>
+          </div>
+          <div id="referral-code-display" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:10px;">
+            <span style="font-size:13px;font-weight:700;letter-spacing:2px;flex:1;" id="my-referral-code">SAFE-XXXX</span>
+            <button onclick="copyReferralCode()" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:12px;font-weight:700;font-family:'DM Sans',sans-serif;">Copier</button>
+          </div>
+          <button onclick="shareReferral()" class="btn btn-primary" style="width:100%;font-size:13px;">📤 Partager mon code</button>
+        </div>
+
+        <!-- CGU & Confidentialité -->
+        <button onclick="document.getElementById('cgu-modal').classList.add('open')" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--card2);border-radius:12px;border:1px solid var(--border);cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:8px;">
+          <span style="font-size:13px;font-weight:600;">📄 Conditions Générales d'Utilisation</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+        <button onclick="document.getElementById('privacy-modal').classList.add('open')" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--card2);border-radius:12px;border:1px solid var(--border);cursor:pointer;font-family:'DM Sans',sans-serif;">
+          <span style="font-size:13px;font-weight:600;">🛡️ Politique de Confidentialité</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
       </div>
 
       <!-- Mode Pause + Rapport -->
@@ -1723,6 +1806,60 @@
     <div style="flex-shrink:0;padding:12px 0 24px;border-top:1px solid var(--border);margin-top:8px;">
       <button id="boost-action-btn" class="btn btn-primary" style="width:100%;font-size:15px;background:linear-gradient(135deg,#ffb347,#ff8c00);box-shadow:0 8px 24px #ffb34744;" onclick="activateBoost()">⚡ Booster maintenant — Gratuit</button>
       <button class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="document.getElementById('boost-modal').classList.remove('open')">Plus tard</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CGU MODAL ═══ -->
+<div class="modal-bg" id="cgu-modal">
+  <div class="modal" style="max-height:90vh;display:flex;flex-direction:column;padding:0;">
+    <div style="padding:20px 24px 0;flex-shrink:0;">
+      <div class="modal-handle" style="margin-top:0;margin-bottom:16px;"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <h3 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;">Conditions Générales d'Utilisation</h3>
+        <button onclick="document.getElementById('cgu-modal').classList.remove('open')" style="background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;">×</button>
+      </div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:0 24px 32px;">
+      <p style="font-size:11px;color:var(--muted);margin-bottom:16px;">Dernière mise à jour : 27 avril 2026</p>
+      <div class="legal-section"><h4>1. Objet</h4><p>SafeMatch est une application de rencontres pour personnes majeures. En utilisant SafeMatch, vous acceptez les présentes CGU.</p></div>
+      <div class="legal-section"><h4>2. Inscription</h4><p>Réservée aux personnes physiques majeures. Informations exactes requises. Un seul compte par personne.</p></div>
+      <div class="legal-section"><h4>3. Vérification</h4><p>Procédure de vérification obligatoire. Tout profil non vérifié dans les 7 jours sera suspendu.</p></div>
+      <div class="legal-section"><h4>4. Contenu</h4><p>Interdit : contenu offensant, illégal, trompeur. SafeMatch peut supprimer tout contenu non conforme.</p></div>
+      <div class="legal-section"><h4>5. Abonnement</h4><p>Abonnements payants résiliables à tout moment, sans pénalité, avec effet à la fin de la période en cours.</p></div>
+      <div class="legal-section"><h4>6. Responsabilité</h4><p>SafeMatch assure la sécurité mais ne peut être tenu responsable des comportements individuels.</p></div>
+      <div class="legal-section"><h4>7. Données</h4><p>Conformément au RGPD, vous disposez d'un droit d'accès, rectification et suppression de vos données.</p></div>
+      <div class="legal-section"><h4>8. Droit applicable</h4><p>CGU régies par le droit français. Litiges soumis aux tribunaux de Paris.</p></div>
+      <div style="padding:14px;background:linear-gradient(135deg,#ff3d6e0d,transparent);border-radius:12px;border:1px solid #ff3d6e22;margin-top:8px;">
+        <p style="font-size:12px;color:var(--muted);text-align:center;">Contact : <span style="color:var(--accent);font-weight:700;">legal@safematch.app</span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PRIVACY MODAL ═══ -->
+<div class="modal-bg" id="privacy-modal">
+  <div class="modal" style="max-height:90vh;display:flex;flex-direction:column;padding:0;">
+    <div style="padding:20px 24px 0;flex-shrink:0;">
+      <div class="modal-handle" style="margin-top:0;margin-bottom:16px;"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <h3 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;">Politique de Confidentialité</h3>
+        <button onclick="document.getElementById('privacy-modal').classList.remove('open')" style="background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;">×</button>
+      </div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:0 24px 32px;">
+      <p style="font-size:11px;color:var(--muted);margin-bottom:16px;">Dernière mise à jour : 27 avril 2026 — Conforme RGPD</p>
+      <div class="legal-section"><h4>Données collectées</h4><p>Prénom, âge, ville, photo, données de vérification, historique des interactions et données techniques.</p></div>
+      <div class="legal-section"><h4>Base légale</h4><p>Consentement explicite (art. 6.1.a RGPD). Retirable à tout moment.</p></div>
+      <div class="legal-section"><h4>Données sensibles</h4><p>Orientation sexuelle traitée avec protection renforcée, jamais transmise à des tiers.</p></div>
+      <div class="legal-section"><h4>Partage</h4><p>Données jamais vendues. Partagées uniquement avec prestataires techniques sous garanties strictes.</p></div>
+      <div class="legal-section"><h4>Conservation</h4><p>Durée d'inscription + 3 ans. Données de vérification supprimées après 1 an.</p></div>
+      <div class="legal-section"><h4>Vos droits RGPD</h4><p>Accès, rectification, suppression, portabilité, limitation, opposition. Via privacy@safematch.app.</p></div>
+      <div class="legal-section"><h4>Cookies</h4><p>Pas de cookies publicitaires. Uniquement cookies techniques nécessaires.</p></div>
+      <div class="legal-section"><h4>Contact DPO</h4><p>dpo@safematch.app</p></div>
+      <div style="padding:14px;background:#00b89410;border-radius:12px;border:1px solid #00b89430;margin-top:8px;">
+        <p style="font-size:12px;color:var(--teal);text-align:center;font-weight:700;">🛡️ Données hébergées en Europe · Conformité RGPD totale</p>
+      </div>
     </div>
   </div>
 </div>
@@ -2130,8 +2267,32 @@ function renderCard(){
   const p = filteredProfiles[filteredIdx % filteredProfiles.length];
   const status = profileStatuses[p.id] || ONLINE_STATUSES[6];
 
-  document.getElementById('card-avatar').style.background = 'linear-gradient(135deg,' + p.color + '55,' + p.color + '22)';
-  document.getElementById('card-avatar').childNodes[0].textContent = p.emoji;
+  const avatarEl     = document.getElementById('card-avatar');
+  const emojiSpan    = avatarEl.querySelector('.avatar-emoji');
+  const photoImg     = avatarEl.querySelector('.profile-photo');
+  const initialsDiv  = avatarEl.querySelector('.avatar-initials');
+  const initialLetter = avatarEl.querySelector('.avatar-initial-letter');
+
+  // Fond dégradé toujours visible
+  avatarEl.style.background = 'linear-gradient(135deg,' + p.color + 'cc,' + p.color + '66)';
+
+  if (p.photo && photoImg) {
+    // Photo réelle uploadée
+    photoImg.src = p.photo;
+    photoImg.style.display = 'block';
+    if (emojiSpan)   emojiSpan.style.display   = 'none';
+    if (initialsDiv) initialsDiv.style.display  = 'none';
+    avatarEl.style.fontSize = '0';
+  } else {
+    // Avatar CSS avec initiale — visible immédiatement, zéro réseau
+    if (photoImg)    photoImg.style.display     = 'none';
+    if (emojiSpan)   emojiSpan.style.display    = 'none';
+    if (initialsDiv) {
+      initialsDiv.style.display = 'flex';
+      if (initialLetter) initialLetter.textContent = p.name.charAt(0).toUpperCase();
+    }
+    avatarEl.style.fontSize = '0';
+  }
   document.getElementById('card-match').textContent = p.match + '%';
   document.getElementById('card-name').textContent = p.name + ', ' + p.age;
   document.getElementById('card-city').textContent = p.city;
@@ -2196,12 +2357,7 @@ function swipe(dir){
   },420);
 }
 
-function superLike(){
-  if (!filteredProfiles.length) return;
-  const card=document.getElementById('profile-card');
-  card.style.transform='scale(0.95)';
-  setTimeout(()=>{ card.style.transform=''; swipe('right'); },200);
-}
+// superLike() avec limite est défini plus bas dans la section LIMITE SUPER LIKES
 
 function showMatch(p){
   matchedProfile = p;
@@ -2602,7 +2758,19 @@ function sendDemoPhoto(category) {
   sendPhotoMsg(src, labels[category], false);
 }
 
-// sendLocalPhoto supprimé — upload de fichiers désactivé pour sécurité
+function sendRealPhoto(input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  if (!file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    sendPhotoMsg(e.target.result, '📷 Photo', true);
+  };
+  reader.readAsDataURL(file);
+  input.value = ''; // Reset pour permettre de renvoyer la même photo
+}
+
+// sendLocalPhoto supprimé — remplacé par sendRealPhoto
 function openPhotoViewer(src) {
   const viewer = document.getElementById('photo-viewer');
   const img = document.getElementById('photo-viewer-img');
@@ -2929,8 +3097,11 @@ function openProfileSheet(id, fallback) {
     <!-- Grande carte profil style Découvrir -->
     <div style="border-radius:24px;overflow:hidden;border:1.5px solid ${p.color}44;box-shadow:0 16px 50px ${p.color}22;margin-bottom:20px;">
       <!-- Zone avatar grande -->
-      <div style="height:220px;background:linear-gradient(160deg,${p.color}33,${p.color}11);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;">
-        <div style="font-size:80px;margin-bottom:8px;">${p.emoji}</div>
+      <div style="height:280px;background:linear-gradient(160deg,${p.color}33,${p.color}11);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;">
+        ${p.photo
+          ? '<img src="' + p.photo + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;-webkit-user-select:none;" draggable="false" oncontextmenu="return false;"/><div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,' + p.color + '33);"></div>'
+          : '<div style="font-size:80px;margin-bottom:8px;">' + p.emoji + '</div>'
+        }
         <!-- Score compatibilité -->
         <div style="position:absolute;top:14px;right:14px;background:var(--grad);border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:4px;">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="white" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -3494,11 +3665,14 @@ function renderMsgs(){
       (m.reaction ? '<div class="bubble-reaction">' + m.reaction + '</div>' : '') +
       '</div></div>';
   }).join('');
-  // Reconstruit en préservant la bannière E2E
+  // Reconstruit en préservant la bannière E2E et le typing indicator
+  const indicator = document.getElementById('typing-indicator');
   el.innerHTML = '';
   if (banner) el.appendChild(banner);
   el.insertAdjacentHTML('beforeend', msgsHTML);
-  el.scrollTop=el.scrollHeight;
+  // Réinjecte le typing indicator à la fin (toujours après les messages)
+  if (indicator) el.appendChild(indicator);
+  el.scrollTop = el.scrollHeight;
 }
 
 // Long press pour ouvrir le sélecteur de réactions
@@ -4485,8 +4659,8 @@ function openStoryModal(profileId, storyIdx) {
     '<div style="padding:16px;background:linear-gradient(135deg,' + p.color + '18,' + p.color + '08);border-radius:16px;border:1.5px solid ' + p.color + '33;margin-bottom:24px;">' +
     '<p style="font-size:20px;font-weight:800;">' + s.answer + '</p>' +
     '</div>' +
-    '<button onclick="this.closest(\'#story-modal\').remove();document.getElementById(\'msg-input\').value=\'J\\\'ai vu ta réponse \\\'' + s.answer + '\\\' — moi aussi ! \'" class="btn btn-primary" style="width:100%;margin-bottom:10px;">💬 Réagir à cette réponse</button>' +
-    '<button onclick="this.closest(\'#story-modal\').remove();" style="width:100%;background:none;border:none;font-size:13px;color:var(--muted);cursor:pointer;font-family:\'DM Sans\',sans-serif;">Fermer</button>' +
+    '<button onclick="document.getElementById(\'story-modal\').remove();document.getElementById(\'msg-input\').value=\'J\\\'ai vu ta réponse \\\'' + s.answer + '\\\' — moi aussi ! \'" class="btn btn-primary" style="width:100%;margin-bottom:10px;">💬 Réagir à cette réponse</button>' +
+    '<button onclick="document.getElementById(\'story-modal\').remove();" style="width:100%;background:none;border:none;font-size:13px;color:var(--muted);cursor:pointer;font-family:\'DM Sans\',sans-serif;">Fermer</button>' +
     '</div>';
   document.body.appendChild(modal);
 }
@@ -4553,12 +4727,12 @@ function useIcebreaker(question) {
   // Vérifie s'il y a un match/conv existant
   var conv = CONVS.find(function(c) { return c.name === p.name; });
   if (!conv) {
-    // Crée un match et ouvre le chat
-    triggerMatch(p);
+    // Swipe right pour créer le match
+    swipe('right');
     setTimeout(function() {
       var inp = document.getElementById('msg-input');
       if (inp) inp.value = question;
-    }, 800);
+    }, 1200);
   } else {
     openChat(conv.id);
     setTimeout(function() {
@@ -4606,8 +4780,151 @@ function renderCardCompat(p) {
 }
 
 // ════════════════════════════════════════════════════════════
-// ⏸️ MODE PAUSE
+// 🎁 CODE PARRAIN
 // ════════════════════════════════════════════════════════════
+function generateReferralCode() {
+  var name = (MY_PROFILE.name || 'USER').substring(0, 4).toUpperCase();
+  var num  = Math.floor(1000 + Math.random() * 9000);
+  return 'SAFE-' + name + num;
+}
+
+var myReferralCode = generateReferralCode();
+
+function initReferralCode() {
+  var el = document.getElementById('my-referral-code');
+  if (el) el.textContent = myReferralCode;
+}
+
+function copyReferralCode() {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(myReferralCode).then(function() {
+      showToast('✅ Code copié : ' + myReferralCode, 'var(--teal)');
+    });
+  } else {
+    showToast('✅ Code : ' + myReferralCode, 'var(--teal)');
+  }
+}
+
+function shareReferral() {
+  var text = 'Rejoins-moi sur SafeMatch — des rencontres vraies et sécurisées ! Utilise mon code ' + myReferralCode + ' pour 1 mois offert 🎁';
+  if (navigator.share) {
+    navigator.share({ title: 'SafeMatch', text: text }).catch(function() {});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      showToast('✅ Message copié — partage-le !', 'var(--teal)');
+    });
+  } else {
+    showToast('📋 ' + myReferralCode, 'var(--teal)');
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// 📸 PHOTO DE PROFIL
+// ════════════════════════════════════════════════════════════
+function openAvatarPicker() {
+  var modal = document.createElement('div');
+  modal.id = 'avatar-picker-modal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;';
+  modal.onclick = function(e) { if (e.target === modal) modal.remove(); };
+  modal.innerHTML =
+    '<div style="background:var(--card);border-radius:28px 28px 0 0;padding:28px 24px 40px;width:100%;max-width:430px;">' +
+    '<div style="width:40px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 20px;"></div>' +
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:18px;font-weight:800;margin-bottom:16px;">Photo de profil</h3>' +
+    '<div style="display:flex;flex-direction:column;gap:10px;">' +
+    '<button onclick="selectDemoPhoto()" style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--card2);border-radius:14px;border:1px solid var(--border);cursor:pointer;font-family:\'DM Sans\',sans-serif;">' +
+    '<div style="width:40px;height:40px;border-radius:12px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:20px;">📷</div>' +
+    '<div style="text-align:left;"><p style="margin:0;font-size:14px;font-weight:700;">Choisir une photo de démo</p><p style="margin:2px 0 0;font-size:12px;color:var(--muted);">Photos exemples SafeMatch</p></div>' +
+    '</button>' +
+    '<button onclick="pickEmoji()" style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--card2);border-radius:14px;border:1px solid var(--border);cursor:pointer;font-family:\'DM Sans\',sans-serif;">' +
+    '<div style="width:40px;height:40px;border-radius:12px;background:#6b8aff18;display:flex;align-items:center;justify-content:center;font-size:20px;">😊</div>' +
+    '<div style="text-align:left;"><p style="margin:0;font-size:14px;font-weight:700;">Choisir un avatar emoji</p><p style="margin:2px 0 0;font-size:12px;color:var(--muted);">Rester anonyme</p></div>' +
+    '</button>' +
+    '</div>' +
+    '<button onclick="document.getElementById(\'avatar-picker-modal\').remove();" style="width:100%;margin-top:14px;background:none;border:none;font-size:13px;color:var(--muted);cursor:pointer;font-family:\'DM Sans\',sans-serif;">Annuler</button>' +
+    '</div>';
+  document.body.appendChild(modal);
+}
+
+function selectDemoPhoto() {
+  document.getElementById('avatar-picker-modal').remove();
+  // Démo photos : avatars CSS avec couleurs et initiales variées
+  var demos = [
+    { color:'#ff6b8a', initial:'S', label:'Rose' },
+    { color:'#6b8aff', initial:'M', label:'Bleu' },
+    { color:'#ff8a6b', initial:'L', label:'Corail' },
+    { color:'#c56bff', initial:'J', label:'Violet' },
+    { color:'#ffb347', initial:'A', label:'Or' },
+    { color:'#6bffb8', initial:'E', label:'Vert' },
+  ];
+  var modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;';
+  modal.onclick = function(e) { if (e.target === modal) modal.remove(); };
+  var grid = demos.map(function(d) {
+    return '<div onclick="setProfileCSSAvatar(\'' + d.color + '\',\'' + d.initial + '\')" style="aspect-ratio:1;border-radius:14px;overflow:hidden;cursor:pointer;border:2px solid ' + d.color + '44;background:linear-gradient(135deg,' + d.color + 'cc,' + d.color + '66);display:flex;align-items:center;justify-content:center;transition:transform .15s;" onmouseenter="this.style.transform=\'scale(1.05)\'" onmouseleave="this.style.transform=\'scale(1)\'">' +
+      '<span style="font-family:Syne,sans-serif;font-size:36px;font-weight:800;color:white;">' + d.initial + '</span>' +
+      '</div>';
+  }).join('');
+  modal.innerHTML =
+    '<div style="background:var(--card);border-radius:28px 28px 0 0;padding:28px 24px 40px;width:100%;max-width:430px;">' +
+    '<div style="width:40px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 20px;"></div>' +
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:18px;font-weight:800;margin-bottom:16px;">Choisir un avatar</h3>' +
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;">' + grid + '</div>' +
+    '<p style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:16px;">Ou ajoute ta propre photo :</p>' +
+    '<button onclick="document.getElementById(\'photo-input-profile\').click();" class="btn btn-primary" style="width:100%;margin-bottom:10px;">📷 Depuis ma galerie / caméra</button>' +
+    '<input type="file" id="photo-input-profile" accept="image/*" style="display:none;" onchange="setProfileRealPhoto(this)"/>' +
+    '<button onclick="this.closest(\'div[style*=fixed]\').remove();" style="width:100%;background:none;border:none;font-size:13px;color:var(--muted);cursor:pointer;font-family:\'DM Sans\',sans-serif;">Annuler</button>' +
+    '</div>';
+  document.body.appendChild(modal);
+}
+
+function setProfileCSSAvatar(color, initial) {
+  MY_PROFILE.avatarColor = color;
+  MY_PROFILE.avatarInitial = initial;
+  MY_PROFILE.photo = null;
+  updateProfAvatarDisplay();
+  document.querySelectorAll('div[style*="position:fixed"][style*="z-index:8000"]').forEach(function(m) { m.remove(); });
+  showToast('✅ Avatar mis à jour !', 'var(--teal)');
+}
+
+function setProfileRealPhoto(input) {
+  if (!input.files || !input.files[0]) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    MY_PROFILE.photo = e.target.result;
+    updateProfAvatarDisplay();
+    document.querySelectorAll('div[style*="position:fixed"][style*="z-index:8000"]').forEach(function(m) { m.remove(); });
+    showToast('✅ Photo de profil mise à jour !', 'var(--teal)');
+  };
+  reader.readAsDataURL(input.files[0]);
+  input.value = '';
+}
+
+function updateProfAvatarDisplay() {
+  var el = document.getElementById('prof-avatar');
+  if (!el) return;
+  if (MY_PROFILE.photo) {
+    el.style.backgroundImage = 'url(' + MY_PROFILE.photo + ')';
+    el.style.backgroundSize = 'cover';
+    el.style.backgroundPosition = 'center';
+    el.style.fontSize = '0';
+    el.textContent = '';
+  } else if (MY_PROFILE.avatarColor) {
+    el.style.background = 'linear-gradient(135deg,' + MY_PROFILE.avatarColor + 'cc,' + MY_PROFILE.avatarColor + '66)';
+    el.style.backgroundImage = 'none';
+    el.style.fontSize = '28px';
+    el.textContent = MY_PROFILE.avatarInitial || MY_PROFILE.name.charAt(0);
+  } else {
+    el.style.backgroundImage = 'none';
+    el.style.fontSize = '34px';
+    el.textContent = MY_PROFILE.avatar || '🙂';
+  }
+}
+
+function pickEmoji() {
+  document.getElementById('avatar-picker-modal').remove();
+  // Ouvre l'éditeur de profil sur l'onglet avatar
+  openEditProfile();
+}
 var pauseMode = false;
 
 function togglePauseMode() {
@@ -4811,13 +5128,15 @@ function superLike() {
   } else {
     showToast('⭐ Dernier Super Like utilisé pour aujourd\'hui !', 'var(--gold)');
   }
-  var filtered = getFilteredProfiles();
-  if (!filtered.length) return;
-  var p = filtered[filteredIdx % filtered.length];
+  // Animation + swipe
+  var card = document.getElementById('profile-card');
+  if (card) { card.style.transform = 'scale(0.95)'; setTimeout(function() { card.style.transform = ''; }, 200); }
+  if (!filteredProfiles.length) return;
+  var p = filteredProfiles[filteredIdx % filteredProfiles.length];
   recordLike(p.id);
-  triggerMatch(p);
+  setTimeout(function() { showMatch(p); }, 300);
   filteredIdx++;
-  renderCard();
+  setTimeout(function() { renderCard(); }, 350);
 }
 
 function showToast(msg, color) {
@@ -4915,19 +5234,19 @@ function activateBoost() {
 // ════════════════════════════════════════════════════════════
 function showPushNotif(title, body) {
   const notif = document.createElement('div');
-  notif.onclick = () => { notif.remove(); openVisitorsPanel(); };
-  notif.innerHTML = `
-    <div style="display:flex;align-items:center;gap:12px;">
-      <div style="width:40px;height:40px;border-radius:12px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🛡️</div>
-      <div style="flex:1;min-width:0;">
-        <p style="margin:0;font-size:13px;font-weight:700;">${title}</p>
-        <p style="margin:2px 0 0;font-size:11px;color:var(--muted);">${body}</p>
-      </div>
-      <button onclick="event.stopPropagation();this.parentElement.parentElement.remove();" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:0 4px;">×</button>
-    </div>`;
-  notif.style.cssText = 'position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px 16px;min-width:280px;max-width:340px;z-index:9999;cursor:pointer;box-shadow:0 8px 32px rgba(0,0,0,.15);animation:fadeUp .4s ease;';
+  notif.onclick = function() { notif.remove(); openVisitorsPanel(); };
+  notif.innerHTML =
+    '<div style="display:flex;align-items:center;gap:12px;">' +
+    '<div style="width:40px;height:40px;border-radius:12px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🛡️</div>' +
+    '<div style="flex:1;min-width:0;">' +
+    '<p style="margin:0;font-size:13px;font-weight:700;color:var(--text);">' + title + '</p>' +
+    '<p style="margin:2px 0 0;font-size:11px;color:var(--muted);">' + body + '</p>' +
+    '</div>' +
+    '<button onclick="event.stopPropagation();this.closest(\'div[style*=fixed]\').remove();" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:0 4px;">×</button>' +
+    '</div>';
+  notif.style.cssText = 'position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px 16px;min-width:280px;max-width:340px;z-index:9999;cursor:pointer;box-shadow:0 8px 32px rgba(0,0,0,.3);color:var(--text);';
   document.body.appendChild(notif);
-  setTimeout(() => { if (notif.parentElement) notif.remove(); }, 5000);
+  setTimeout(function() { if (notif.parentElement) notif.remove(); }, 5000);
 }
 
 function updateDiscNotifBadge() {
@@ -6095,7 +6414,7 @@ window.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => pwdInp.focus(), 300);
   }
   // Fermeture des modales au clic en dehors
-  ['loc-modal','filters-modal','doc-modal','report-modal','block-modal','visitors-modal','profile-sheet','edit-profile-modal','stat-modal','safety-modal','likes-modal','boost-modal'].forEach(id => {
+  ['loc-modal','filters-modal','doc-modal','report-modal','block-modal','visitors-modal','profile-sheet','edit-profile-modal','stat-modal','safety-modal','likes-modal','boost-modal','cgu-modal','privacy-modal'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('click', function(e) {
       if (e.target === this) {
@@ -6104,6 +6423,18 @@ window.addEventListener('DOMContentLoaded', function() {
       }
     });
   });
+
+  // ═══ BLOQUE LE ZOOM PINCH sur Safari iOS ═══
+  document.addEventListener('gesturestart',  function(e) { e.preventDefault(); }, { passive: false });
+  document.addEventListener('gesturechange', function(e) { e.preventDefault(); }, { passive: false });
+  document.addEventListener('gestureend',    function(e) { e.preventDefault(); }, { passive: false });
+  // Bloque le double-tap zoom
+  var lastTap = 0;
+  document.addEventListener('touchend', function(e) {
+    var now = Date.now();
+    if (now - lastTap < 300) e.preventDefault();
+    lastTap = now;
+  }, { passive: false });
 
   // ═══ PROTECTIONS SÉCURITÉ ═══
   // Bloque clic droit sur toute l'app
@@ -6130,6 +6461,10 @@ window.addEventListener('DOMContentLoaded', function() {
 
   // Restaure le mode sombre si activé précédemment
   initDarkMode();
+
+  // Init code parrain
+  myReferralCode = generateReferralCode();
+  initReferralCode();
 
   // Injection du sélecteur de langue — maintenant dans Profil → Préférences
   applyTranslations();
