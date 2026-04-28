@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#fdf5f0"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
-<title>SafeMatch — Rencontres Vérifiées</title>
+<title>Elpmis — Rencontres Vérifiées</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
@@ -70,9 +70,28 @@
   body.dark-mode p, body.dark-mode h1, body.dark-mode h2, body.dark-mode h3, body.dark-mode h4, body.dark-mode span, body.dark-mode label { color: inherit; }
   body.dark-mode .modal-bg .modal { background: var(--card) !important; }
   body.dark-mode .card2, body.dark-mode [style*="background:var(--card2)"] { background: var(--card2) !important; }
-  /* Textes forcés lisibles */
-  body.dark-mode [style*="color:#2d1b14"], body.dark-mode [style*="color: #2d1b14"] { color: var(--text) !important; }
-  body.dark-mode [style*="color:#a07060"], body.dark-mode [style*="color: #a07060"] { color: var(--muted) !important; }
+  /* Force texte lisible en dark mode — couvre tous les innerHTML dynamiques */
+  body.dark-mode h1, body.dark-mode h2, body.dark-mode h3, body.dark-mode h4,
+  body.dark-mode h5, body.dark-mode h6 { color: var(--text) !important; }
+  body.dark-mode p:not([style*="color"]) { color: var(--text); }
+  body.dark-mode button:not([style*="color"]):not(.btn) { color: var(--text); }
+  /* Cartes onboarding */
+  body.dark-mode #ob-content p { color: var(--text); }
+  body.dark-mode #ob-content button p { color: var(--text) !important; }
+  body.dark-mode #ob-search-type-picker button p { color: var(--text) !important; }
+  body.dark-mode #ob-search-type-picker button { color: var(--text) !important; }
+  /* Modaux */
+  body.dark-mode .modal p:not([style*="color"]) { color: var(--text); }
+  body.dark-mode .modal h2, body.dark-mode .modal h3 { color: var(--text) !important; }
+  /* Cards dynamiques */
+  body.dark-mode [id$="-content"] p:not([style*="color"]) { color: var(--text); }
+  body.dark-mode [id$="-content"] h2, body.dark-mode [id$="-content"] h3 { color: var(--text) !important; }
+  /* Stat cards rapport hebdo */
+  body.dark-mode div[style*="background:var(--card2)"] p { color: var(--text); }
+  /* Notifications */
+  body.dark-mode #notif-list p:not([style*="color"]) { color: var(--text); }
+  /* Fix général pour tous les éléments créés dynamiquement */
+  body.dark-mode * { -webkit-text-fill-color: inherit; }
   body.dark-mode [style*="background:#fff"], body.dark-mode [style*="background: #fff"],
   body.dark-mode [style*="background:white"], body.dark-mode [style*="background: white"] { background: var(--card) !important; }
   body.dark-mode [style*="background:#fdf5f0"], body.dark-mode [style*="background: #fdf5f0"] { background: var(--bg) !important; }
@@ -196,7 +215,7 @@
     }
     /* Badge desktop discret */
     body::after {
-      content: 'SafeMatch · Prototype';
+      content: 'Elpmis · Prototype';
       position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
       color: rgba(255,255,255,.25); font-size: 12px; font-family: 'DM Sans', sans-serif;
       pointer-events: none; white-space: nowrap;
@@ -385,7 +404,7 @@
       </div>
 
       <h1 style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;letter-spacing:-1px;margin-bottom:6px;color:var(--text);">Accès protégé</h1>
-      <p style="color:var(--muted);font-size:14px;margin-bottom:36px;line-height:1.6;">Cette démo SafeMatch est réservée<br>aux personnes autorisées.</p>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:36px;line-height:1.6;">Cette démo Elpmis est réservée<br>aux personnes autorisées.</p>
 
       <!-- Indicateurs de points -->
       <div id="pwd-dots" style="display:flex;justify-content:center;gap:10px;margin-bottom:28px;">
@@ -427,7 +446,7 @@
       <!-- Badge démo -->
       <div style="margin-top:40px;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--card);border:1px solid var(--border);border-radius:20px;">
         <div style="width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite;"></div>
-        <span style="font-size:11px;color:var(--muted);font-weight:600;">Prototype confidentiel · SafeMatch 2026</span>
+        <span style="font-size:11px;color:var(--muted);font-weight:600;">Prototype confidentiel · Elpmis 2026</span>
       </div>
 
     </div>
@@ -448,7 +467,8 @@
       <div class="float" style="width:96px;height:96px;border-radius:28px;background:var(--grad);display:flex;align-items:center;justify-content:center;margin:0 auto 28px;box-shadow:var(--glow),0 0 0 1px #ff3d6e44;">
         <svg width="50" height="50" viewBox="0 0 24 24" fill="white"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       </div>
-      <h1 style="font-family:'Syne',sans-serif;font-size:clamp(32px,10vw,48px);font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px;line-height:1;margin-bottom:8px;white-space:nowrap;overflow:hidden;width:100%;text-align:center;">SafeMatch</h1>
+      <h1 style="font-family:'Syne',sans-serif;font-size:clamp(32px,10vw,48px);font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px;line-height:1;margin-bottom:6px;white-space:nowrap;overflow:hidden;width:100%;text-align:center;">Elpmis</h1>
+      <p style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--muted);margin-bottom:16px;letter-spacing:.3px;font-style:italic;">À l'envers des autres.</p>
       <p id="splash-tagline" style="color:var(--teal);font-weight:600;font-size:16px;margin-bottom:6px;">Rencontres 100% vérifiées</p>
       <p id="splash-desc" style="color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:48px;">Chaque profil est authentifié par pièce d'identité,<br>selfie vidéo et numéro de téléphone.</p>
 
@@ -486,14 +506,14 @@
         <div style="width:34px;height:34px;border-radius:10px;background:var(--grad);display:flex;align-items:center;justify-content:center;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
-        <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;">SafeMatch</span>
+        <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;">Elpmis</span>
       </div>
       <h2 style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;letter-spacing:-1px;line-height:1.2;margin-bottom:8px;color:var(--text);">Tes données,<br><span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">ton contrôle</span></h2>
       <p style="color:var(--muted);font-size:13px;line-height:1.7;">Conformément au <strong style="color:var(--text);">RGPD</strong> et au <strong style="color:var(--text);">Digital Services Act</strong>, chaque consentement est indépendant. Lis chaque point avant d'accepter.</p>
     </div>
 
     <!-- Mandatory section -->
-    <p style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;">Obligatoires pour utiliser SafeMatch</p>
+    <p style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;">Obligatoires pour utiliser Elpmis</p>
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;">
 
       <!-- 1. CGU -->
@@ -504,7 +524,7 @@
             <span style="font-weight:700;font-size:14px;">Conditions Générales d'Utilisation</span>
             <span class="consent-required">Requis</span>
           </div>
-          <p style="font-size:12px;color:var(--muted);line-height:1.6;">J'ai lu et j'accepte les <u style="cursor:pointer;color:var(--accent);" onclick="openDoc('cgu',event)">CGU de SafeMatch</u>. Je confirme avoir au moins 18 ans.</p>
+          <p style="font-size:12px;color:var(--muted);line-height:1.6;">J'ai lu et j'accepte les <u style="cursor:pointer;color:var(--accent);" onclick="openDoc('cgu',event)">CGU de Elpmis</u>. Je confirme avoir au moins 18 ans.</p>
         </div>
       </div>
 
@@ -570,7 +590,7 @@
             <span style="font-weight:700;font-size:14px;">Amélioration de l'app</span>
             <span class="consent-optional">Optionnel</span>
           </div>
-          <p style="font-size:12px;color:var(--muted);line-height:1.6;">Partager des données d'usage <strong style="color:var(--text);">anonymisées</strong> pour améliorer SafeMatch. Aucune donnée personnelle n'est transmise.</p>
+          <p style="font-size:12px;color:var(--muted);line-height:1.6;">Partager des données d'usage <strong style="color:var(--text);">anonymisées</strong> pour améliorer Elpmis. Aucune donnée personnelle n'est transmise.</p>
         </div>
       </div>
 
@@ -626,7 +646,7 @@
           <span style="font-size:11px;color:var(--muted);">Retrait du consentement</span>
         </div>
       </div>
-      <p style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;">Pour exercer tes droits : <span style="color:var(--accent);">privacy@safematch.app</span><br>DPO nommé conformément au RGPD Art. 37.</p>
+      <p style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;">Pour exercer tes droits : <span style="color:var(--accent);">privacy@elpmis.app</span><br>DPO nommé conformément au RGPD Art. 37.</p>
     </div>
 
   </div>
@@ -653,7 +673,7 @@
         <div style="width:34px;height:34px;border-radius:10px;background:var(--grad);display:flex;align-items:center;justify-content:center;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
-        <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;">SafeMatch</span>
+        <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;">Elpmis</span>
       </div>
       <h2 style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1.15;color:var(--text);"><span id="verify-title">Vérifie ton</span><br><span id="verify-title2" style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">identité</span></h2>
       <p id="verify-sub" style="color:var(--muted);font-size:13px;margin-top:8px;">3 étapes · Moins de 3 minutes</p>
@@ -1017,7 +1037,7 @@
   </div>
   <h2 id="success-title" style="font-family:'Syne',sans-serif;font-size:34px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;">Paiement confirmé !</h2>
   <p id="success-plan" style="color:var(--muted);font-size:15px;margin-bottom:8px;"></p>
-  <p id="success-sub" style="color:var(--muted);font-size:13px;margin-bottom:40px;line-height:1.6;">Un reçu a été envoyé à ton adresse e-mail.<br>Bienvenue dans la communauté SafeMatch 🎉</p>
+  <p id="success-sub" style="color:var(--muted);font-size:13px;margin-bottom:40px;line-height:1.6;">Un reçu a été envoyé à ton adresse e-mail.<br>Bienvenue dans la communauté Elpmis 🎉</p>
   <button id="success-enter" class="btn btn-primary" style="width:280px;font-size:16px;" onclick="enterApp()">Accéder à l'application →</button>
 </div>
 
@@ -1195,12 +1215,12 @@
       <div style="margin-top:20px;padding:16px;background:#00e5b010;border-radius:16px;border:1px solid #00e5b030;">
         <div style="display:flex;gap:10px;align-items:flex-start;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <div><p id="msg-e2e" style="font-weight:700;font-size:13px;color:var(--teal);margin-bottom:3px;">Chiffrement E2E activé</p><p id="msg-e2e-desc" style="font-size:12px;color:var(--muted);line-height:1.5;">Tes messages sont chiffrés de bout en bout. Même SafeMatch ne peut pas les lire.</p></div>
+          <div><p id="msg-e2e" style="font-weight:700;font-size:13px;color:var(--teal);margin-bottom:3px;">Chiffrement E2E activé</p><p id="msg-e2e-desc" style="font-size:12px;color:var(--muted);line-height:1.5;">Tes messages sont chiffrés de bout en bout. Même Elpmis ne peut pas les lire.</p></div>
         </div>
       </div>
     </div>
     <!-- Chat view (hidden by default) -->
-    <div id="chat-view" style="display:none;max-width:430px;margin:0 auto;position:relative;height:calc(100vh - 80px);flex-direction:column;overflow:hidden;">
+    <div id="chat-view" style="display:none;max-width:430px;margin:0 auto;position:absolute;top:0;left:0;right:0;bottom:80px;flex-direction:column;overflow:hidden;background:var(--bg);z-index:50;">
       <!-- Chat header — fixe en haut -->
       <div style="position:absolute;top:0;left:0;right:0;z-index:10;padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--bg);">
         <button onclick="closeChat()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:20px;padding:4px;flex-shrink:0;">←</button>
@@ -1243,7 +1263,7 @@
         <button id="loc-stop-btn" onclick="stopLocation()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:11px;font-weight:800;">✕ Arrêter</button>
       </div>
       <!-- Messages + bannière E2E incluse dans la zone scrollable -->
-      <div id="chat-messages" style="position:absolute;top:62px;bottom:120px;left:0;right:0;overflow-y:auto;padding:8px 16px 4px;display:flex;flex-direction:column;gap:10px;">
+      <div id="chat-messages" style="position:absolute;top:62px;bottom:130px;left:0;right:0;overflow-y:auto;padding:8px 16px 4px;display:flex;flex-direction:column;gap:10px;">
         <div id="chat-e2e-banner" style="margin:0 0 4px;padding:7px 14px;background:#00e5b010;border-radius:10px;display:flex;align-items:center;gap:8px;flex-shrink:0;">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           <span style="font-size:11px;color:var(--teal);font-weight:600;">Messages chiffrés de bout en bout</span>
@@ -1269,7 +1289,7 @@
         </div>
       </div>
       <!-- Input bar — toujours visible en bas -->
-      <div style="position:absolute;bottom:0;left:0;right:0;z-index:10;padding:10px 16px 16px;border-top:1px solid var(--border);background:var(--bg);">
+      <div style="position:absolute;bottom:0;left:0;right:0;z-index:10;padding:10px 16px;padding-bottom:max(16px,env(safe-area-inset-bottom));border-top:1px solid var(--border);background:var(--bg);">
         <div id="chat-loc-btn-wrap" style="display:none;"></div>
         <!-- SafeGuard quick suggestions -->
         <div id="sg-suggestions" style="display:none;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
@@ -1336,8 +1356,10 @@
       <!-- Profile header card -->
       <div class="card" style="overflow:hidden;margin-bottom:16px;">
         <div id="prof-banner" style="height:110px;background:linear-gradient(135deg,#ff3d6e33,#00e5b018);position:relative;">
-          <div id="prof-avatar" onclick="openAvatarPicker()" style="position:absolute;bottom:-36px;left:22px;width:78px;height:78px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:34px;border:4px solid var(--card);cursor:pointer;overflow:hidden;">🙂
-            <div style="position:absolute;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;border-radius:50%;" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='0'">
+          <div id="prof-avatar" onclick="openAvatarPicker()" style="position:absolute;bottom:-36px;left:22px;width:78px;height:78px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:34px;border:4px solid var(--card);cursor:pointer;overflow:hidden;">
+            <span id="prof-avatar-emoji" style="position:relative;z-index:1;">🙂</span>
+            <img id="prof-avatar-img" src="" alt="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;" draggable="false"/>
+            <div style="position:absolute;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;border-radius:50%;z-index:3;" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='0'">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
             </div>
           </div>
@@ -1826,16 +1848,16 @@
     </div>
     <div style="flex:1;overflow-y:auto;padding:0 24px 32px;">
       <p style="font-size:11px;color:var(--muted);margin-bottom:16px;">Dernière mise à jour : 27 avril 2026</p>
-      <div class="legal-section"><h4>1. Objet</h4><p>SafeMatch est une application de rencontres pour personnes majeures. En utilisant SafeMatch, vous acceptez les présentes CGU.</p></div>
+      <div class="legal-section"><h4>1. Objet</h4><p>Elpmis est une application de rencontres pour personnes majeures. En utilisant Elpmis, vous acceptez les présentes CGU.</p></div>
       <div class="legal-section"><h4>2. Inscription</h4><p>Réservée aux personnes physiques majeures. Informations exactes requises. Un seul compte par personne.</p></div>
       <div class="legal-section"><h4>3. Vérification</h4><p>Procédure de vérification obligatoire. Tout profil non vérifié dans les 7 jours sera suspendu.</p></div>
-      <div class="legal-section"><h4>4. Contenu</h4><p>Interdit : contenu offensant, illégal, trompeur. SafeMatch peut supprimer tout contenu non conforme.</p></div>
+      <div class="legal-section"><h4>4. Contenu</h4><p>Interdit : contenu offensant, illégal, trompeur. Elpmis peut supprimer tout contenu non conforme.</p></div>
       <div class="legal-section"><h4>5. Abonnement</h4><p>Abonnements payants résiliables à tout moment, sans pénalité, avec effet à la fin de la période en cours.</p></div>
-      <div class="legal-section"><h4>6. Responsabilité</h4><p>SafeMatch assure la sécurité mais ne peut être tenu responsable des comportements individuels.</p></div>
+      <div class="legal-section"><h4>6. Responsabilité</h4><p>Elpmis assure la sécurité mais ne peut être tenu responsable des comportements individuels.</p></div>
       <div class="legal-section"><h4>7. Données</h4><p>Conformément au RGPD, vous disposez d'un droit d'accès, rectification et suppression de vos données.</p></div>
       <div class="legal-section"><h4>8. Droit applicable</h4><p>CGU régies par le droit français. Litiges soumis aux tribunaux de Paris.</p></div>
       <div style="padding:14px;background:linear-gradient(135deg,#ff3d6e0d,transparent);border-radius:12px;border:1px solid #ff3d6e22;margin-top:8px;">
-        <p style="font-size:12px;color:var(--muted);text-align:center;">Contact : <span style="color:var(--accent);font-weight:700;">legal@safematch.app</span></p>
+        <p style="font-size:12px;color:var(--muted);text-align:center;">Contact : <span style="color:var(--accent);font-weight:700;">legal@elpmis.app</span></p>
       </div>
     </div>
   </div>
@@ -1858,9 +1880,9 @@
       <div class="legal-section"><h4>Données sensibles</h4><p>Orientation sexuelle traitée avec protection renforcée, jamais transmise à des tiers.</p></div>
       <div class="legal-section"><h4>Partage</h4><p>Données jamais vendues. Partagées uniquement avec prestataires techniques sous garanties strictes.</p></div>
       <div class="legal-section"><h4>Conservation</h4><p>Durée d'inscription + 3 ans. Données de vérification supprimées après 1 an.</p></div>
-      <div class="legal-section"><h4>Vos droits RGPD</h4><p>Accès, rectification, suppression, portabilité, limitation, opposition. Via privacy@safematch.app.</p></div>
+      <div class="legal-section"><h4>Vos droits RGPD</h4><p>Accès, rectification, suppression, portabilité, limitation, opposition. Via privacy@elpmis.app.</p></div>
       <div class="legal-section"><h4>Cookies</h4><p>Pas de cookies publicitaires. Uniquement cookies techniques nécessaires.</p></div>
-      <div class="legal-section"><h4>Contact DPO</h4><p>dpo@safematch.app</p></div>
+      <div class="legal-section"><h4>Contact DPO</h4><p>dpo@elpmis.app</p></div>
       <div style="padding:14px;background:#00b89410;border-radius:12px;border:1px solid #00b89430;margin-top:8px;">
         <p style="font-size:12px;color:var(--teal);text-align:center;font-weight:700;">🛡️ Données hébergées en Europe · Conformité RGPD totale</p>
       </div>
@@ -2077,7 +2099,7 @@ function switchTab(tab) {
   });
   const navNotif = document.getElementById('nav-notif');
   if (navNotif) navNotif.classList.remove('active');
-  if(tab==='messages') { document.getElementById('chat-view').style.display='none'; document.getElementById('conv-list').style.display='block'; }
+  if(tab==='messages') { document.getElementById('chat-view').style.display='none'; document.getElementById('conv-list').style.display='block'; var nav=document.getElementById('nav'); if(nav) nav.style.display=''; }
   if(tab==='profile') { buildLangPicker(); }
 }
 
@@ -2602,7 +2624,7 @@ function saveProfile() {
   MY_PROFILE.bio    = document.getElementById('edit-bio').value.trim();
 
   // Met à jour l'affichage du profil
-  document.getElementById('prof-avatar').textContent = MY_PROFILE.avatar;
+  updateProfAvatarDisplay();
   document.getElementById('prof-name').textContent = MY_PROFILE.name + ', ' + MY_PROFILE.age + ' ans';
   document.getElementById('prof-age-city').textContent = MY_PROFILE.city;
   document.getElementById('prof-bio-preview').textContent = MY_PROFILE.bio || 'Ta bio apparaît ici…';
@@ -2782,7 +2804,7 @@ function openPhotoViewer(src) {
   const wm = document.getElementById('photo-watermark');
   if (wm && MY_PROFILE) {
     const now = new Date();
-    wm.textContent = MY_PROFILE.name + ' · ' + now.toLocaleDateString('fr-FR') + ' · SafeMatch';
+    wm.textContent = MY_PROFILE.name + ' · ' + now.toLocaleDateString('fr-FR') + ' · Elpmis';
   }
   viewer.style.display = 'flex';
   // Bloque clic droit sur tout le viewer
@@ -3210,7 +3232,7 @@ const SAFEGUARD = {
   emoji: '🛡️',
   color: '#00e5b0',
   isAssistant: true,
-  lastMsg: 'Bonjour ! Je suis ton assistant SafeMatch 👋',
+  lastMsg: 'Bonjour ! Je suis ton assistant Elpmis 👋',
   time: 'Épinglé',
   unread: true,
   msgs: [],
@@ -3224,31 +3246,31 @@ function initSafeGuard() {
       from: 'them',
       isAssistant: true,
       time: timeStr,
-      text: '👋 Bonjour ! Je suis **SafeGuard**, ton assistant SafeMatch.\n\nJe suis là pour t\'aider avec toutes tes questions :\n\n• 🪪 Vérification d\'identité\n• 🚨 Signaler un profil\n• 💳 Gérer ton abonnement\n• 🔒 Tes données & droits RGPD\n• 📍 Partager ma position\n\nQue puis-je faire pour toi ?',
+      text: '👋 Bonjour ! Je suis **SafeGuard**, ton assistant Elpmis.\n\nJe suis là pour t\'aider avec toutes tes questions :\n\n• 🪪 Vérification d\'identité\n• 🚨 Signaler un profil\n• 💳 Gérer ton abonnement\n• 🔒 Tes données & droits RGPD\n• 📍 Partager ma position\n\nQue puis-je faire pour toi ?',
     });
   }
 }
 
 // Prompt système pour Claude — le "cerveau" de SafeGuard
-const SAFEGUARD_SYSTEM = `Tu es SafeGuard, l'assistant officiel de SafeMatch, une application de rencontres sécurisée.
+const SAFEGUARD_SYSTEM = `Tu es SafeGuard, l'assistant officiel de Elpmis, une application de rencontres sécurisée.
 
-TON RÔLE : Aider les utilisateurs de SafeMatch avec leurs questions sur l'application.
+TON RÔLE : Aider les utilisateurs de Elpmis avec leurs questions sur l'application.
 
-INFORMATIONS SUR SAFEMATCH :
+INFORMATIONS SUR ELPMIS :
 - Application de rencontres avec triple vérification : pièce d'identité, selfie vidéo anti-fraude et numéro de téléphone
 - Abonnements : Mensuel 29,99€/mois | Trimestriel 26,99€/mois (80,97€) | Annuel 19,99€/mois (239,88€)
 - Messages chiffrés de bout en bout (E2E)
 - Fonctionnalité "Partager ma position" : partage de position approximative (±500m) temporaire
 - Conforme RGPD, DSA, et réglementations européennes
-- Contact DPO : privacy@safematch.app
-- Support : support@safematch.app
+- Contact DPO : privacy@elpmis.app
+- Support : support@elpmis.app
 - Disponible en : Français, English, Español, Italiano, Deutsch
 
 TES RÈGLES STRICTES :
-1. Tu réponds UNIQUEMENT aux questions liées à SafeMatch
+1. Tu réponds UNIQUEMENT aux questions liées à Elpmis
 2. Tu ne donnes JAMAIS de conseils sentimentaux ou relationnels
 3. Tu ne parles JAMAIS d'autres applications de rencontres
-4. Pour tout signalement grave (harcèlement, arnaque, danger), tu diriges vers support@safematch.app ET les autorités si nécessaire
+4. Pour tout signalement grave (harcèlement, arnaque, danger), tu diriges vers support@elpmis.app ET les autorités si nécessaire
 5. Tu es bienveillant, professionnel et rassurant
 6. Tu réponds dans la langue de l'utilisateur automatiquement
 7. Tes réponses sont courtes (3-5 lignes max) et directes
@@ -3256,7 +3278,7 @@ TES RÈGLES STRICTES :
 9. Pour la résiliation d'abonnement : renvoie vers les paramètres > Mon abonnement
 10. En cas de doute sur la sécurité d'un utilisateur, tu priorises sa sécurité avant tout
 
-Tu t'appelles SafeGuard. Tu représentes les valeurs de SafeMatch : sécurité, confiance, authenticité.`;
+Tu t'appelles SafeGuard. Tu représentes les valeurs de Elpmis : sécurité, confiance, authenticité.`;
 
 let safeguardHistory = [];
 let sgTyping = false;
@@ -3266,19 +3288,19 @@ let sgTyping = false;
 const SG_RESPONSES = [
   {
     keys: ['vérif','verify','identit','comment ça marche','id','passeport','cni','selfie','liveness','anti-fraud'],
-    reply: `🛡️ **Vérification d'identité SafeMatch**\n\nLe processus se déroule en 3 étapes :\n\n• 📱 **Téléphone** — Code SMS de confirmation\n• 🪪 **Pièce d'identité** — CNI ou Passeport scanné\n• 🎥 **Selfie vidéo** — Détection de présence réelle anti-deepfake\n\nTon document est **supprimé immédiatement** après vérification. Seul le statut "Vérifié" est conservé. Aucune donnée biométrique n'est stockée.`
+    reply: `🛡️ **Vérification d'identité Elpmis**\n\nLe processus se déroule en 3 étapes :\n\n• 📱 **Téléphone** — Code SMS de confirmation\n• 🪪 **Pièce d'identité** — CNI ou Passeport scanné\n• 🎥 **Selfie vidéo** — Détection de présence réelle anti-deepfake\n\nTon document est **supprimé immédiatement** après vérification. Seul le statut "Vérifié" est conservé. Aucune donnée biométrique n'est stockée.`
   },
   {
     keys: ['signale','report','suspect','harcèle','arnaque','fake','faux','danger','agressif','problème avec'],
-    reply: `🚨 **Signaler un profil**\n\nTu peux signaler directement depuis le chat :\n\n• Appuie sur le bouton **⚠️ jaune** en haut à droite de la conversation\n• Choisis le motif (faux profil, harcèlement, arnaque…)\n• Confirme l'envoi\n\nTon signalement est **anonyme** et traité sous **24h**. Le profil est temporairement restreint dès réception.\n\nEn cas de danger immédiat 🆘 contacte le **15, 17 ou 18**.\n\n📧 **Urgences SafeMatch :** support@safematch.app`
+    reply: `🚨 **Signaler un profil**\n\nTu peux signaler directement depuis le chat :\n\n• Appuie sur le bouton **⚠️ jaune** en haut à droite de la conversation\n• Choisis le motif (faux profil, harcèlement, arnaque…)\n• Confirme l'envoi\n\nTon signalement est **anonyme** et traité sous **24h**. Le profil est temporairement restreint dès réception.\n\nEn cas de danger immédiat 🆘 contacte le **15, 17 ou 18**.\n\n📧 **Urgences Elpmis :** support@elpmis.app`
   },
   {
     keys: ['abonn','prix','tarif','mensuel','trimestr','annuel','factur','payer','paiement','renouvell','résili','annul','rembourst'],
-    reply: `💳 **Abonnements SafeMatch**\n\n• **Mensuel** — 29,99€/mois\n• **Trimestriel** — 26,99€/mois (80,97€ tous les 3 mois)\n• **Annuel** — 19,99€/mois (239,88€/an) ⭐\n\nPour gérer ton abonnement : **Profil → Mon abonnement**\n\nRésiliation possible à tout moment. Droit de rétractation 14 jours. Questions ? support@safematch.app`
+    reply: `💳 **Abonnements Elpmis**\n\n• **Mensuel** — 29,99€/mois\n• **Trimestriel** — 26,99€/mois (80,97€ tous les 3 mois)\n• **Annuel** — 19,99€/mois (239,88€/an) ⭐\n\nPour gérer ton abonnement : **Profil → Mon abonnement**\n\nRésiliation possible à tout moment. Droit de rétractation 14 jours. Questions ? support@elpmis.app`
   },
   {
     keys: ['supprimer','effac','donn','rgpd','confidential','privacy','dpo','mes infos','mes données'],
-    reply: `🔒 **Tes droits RGPD**\n\nTu peux exercer à tout moment :\n• **Droit d'accès** — voir toutes tes données\n• **Droit d'effacement** — suppression sous 30 jours\n• **Droit à la portabilité** — export de tes données\n• **Retrait du consentement** — dans Profil → Mes données\n\n📧 **DPO :** privacy@safematch.app\n🏛️ **Réclamation CNIL :** cnil.fr`
+    reply: `🔒 **Tes droits RGPD**\n\nTu peux exercer à tout moment :\n• **Droit d'accès** — voir toutes tes données\n• **Droit d'effacement** — suppression sous 30 jours\n• **Droit à la portabilité** — export de tes données\n• **Retrait du consentement** — dans Profil → Mes données\n\n📧 **DPO :** privacy@elpmis.app\n🏛️ **Réclamation CNIL :** cnil.fr`
   },
   {
     keys: ['rencontre sécur','localisa','position','géoloc','partag','meeting','rendez-vous','se retrouver'],
@@ -3286,11 +3308,11 @@ const SG_RESPONSES = [
   },
   {
     keys: ['message','chat','écrire','contact','parler','répondr','envelope','discussion'],
-    reply: `💬 **Messagerie SafeMatch**\n\nTous les messages sont **chiffrés de bout en bout** (E2E). Même SafeMatch ne peut pas lire vos échanges.\n\nLe chat est disponible dès que tu as un **match mutuel** avec un profil vérifié. Tu peux signaler tout message inapproprié via l'icône ⚠️.`
+    reply: `💬 **Messagerie Elpmis**\n\nTous les messages sont **chiffrés de bout en bout** (E2E). Même Elpmis ne peut pas lire vos échanges.\n\nLe chat est disponible dès que tu as un **match mutuel** avec un profil vérifié. Tu peux signaler tout message inapproprié via l'icône ⚠️.`
   },
   {
     keys: ['compte','profil','photo','modifier','changer','paramètr','réglage'],
-    reply: `👤 **Gestion de ton profil**\n\nAccède à tes paramètres depuis l'onglet **Profil** en bas de l'écran :\n\n• Modifier photos et bio\n• Gérer les préférences de rencontre\n• Paramètres de confidentialité\n• Mode discret (tu n'apparais pas dans les recherches)\n\nBesoin d'aide ? support@safematch.app`
+    reply: `👤 **Gestion de ton profil**\n\nAccède à tes paramètres depuis l'onglet **Profil** en bas de l'écran :\n\n• Modifier photos et bio\n• Gérer les préférences de rencontre\n• Paramètres de confidentialité\n• Mode discret (tu n'apparais pas dans les recherches)\n\nBesoin d'aide ? support@elpmis.app`
   },
   {
     keys: ['supprim compte','fermer compte','désinscrire','quitter','partir'],
@@ -3302,11 +3324,11 @@ const SG_RESPONSES = [
   },
   {
     keys: ['badge','vérifié','check','certif','authentif'],
-    reply: `✅ **Badge Vérifié SafeMatch**\n\nLe badge 🛡️ signifie que l'utilisateur a complété les 3 vérifications :\n\n• Téléphone confirmé\n• Pièce d'identité authentifiée\n• Selfie vidéo anti-deepfake validé\n\nC'est la garantie que la personne est **réelle et majeure**. Seuls les profils vérifiés peuvent accéder à toutes les fonctionnalités.`
+    reply: `✅ **Badge Vérifié Elpmis**\n\nLe badge 🛡️ signifie que l'utilisateur a complété les 3 vérifications :\n\n• Téléphone confirmé\n• Pièce d'identité authentifiée\n• Selfie vidéo anti-deepfake validé\n\nC'est la garantie que la personne est **réelle et majeure**. Seuls les profils vérifiés peuvent accéder à toutes les fonctionnalités.`
   },
 ];
 
-const SG_FALLBACK = `Je ne suis pas sûr de comprendre ta question 🤔\n\nJe peux t'aider avec :\n• La **vérification d'identité**\n• Le **signalement** d'un profil\n• Ton **abonnement**\n• Tes **données personnelles** et droits RGPD\n• Le **partage de position**\n• La **messagerie** chiffrée\n\nOu contacte directement notre équipe : **support@safematch.app** 💙`;
+const SG_FALLBACK = `Je ne suis pas sûr de comprendre ta question 🤔\n\nJe peux t'aider avec :\n• La **vérification d'identité**\n• Le **signalement** d'un profil\n• Ton **abonnement**\n• Tes **données personnelles** et droits RGPD\n• Le **partage de position**\n• La **messagerie** chiffrée\n\nOu contacte directement notre équipe : **support@elpmis.app** 💙`;
 
 function getSmartReply(msg) {
   const lower = msg.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
@@ -3381,7 +3403,7 @@ function renderConvList(){
           </div>
           <span style="font-size:11px;color:var(--teal);font-weight:600;">Toujours dispo</span>
         </div>
-        <p style="margin:0;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Assistant officiel SafeMatch · Répond en quelques secondes</p>
+        <p style="margin:0;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Assistant officiel Elpmis · Répond en quelques secondes</p>
       </div>
       ${SAFEGUARD.unread?'<div style="width:10px;height:10px;border-radius:50%;background:var(--teal);flex-shrink:0;"></div>':''}
     </button>
@@ -3462,7 +3484,6 @@ function openSafeGuard() {
 
 function openChat(id){
   currentConv=CONVS.find(c=>c.id===id);
-  // Marquer comme lu
   currentConv.unread = false;
   updateUnreadBadge();
   renderConvList();
@@ -3552,6 +3573,7 @@ function unblockUser(id) {
 function closeChat(){
   document.getElementById('chat-view').style.display='none';
   document.getElementById('conv-list').style.display='block';
+  currentConv = null;
 }
 
 function renderMsgs(){
@@ -3847,7 +3869,7 @@ function setAssistantMode(on) {
       e2eBanner.style.background = '#00e5b010';
       e2eBanner.innerHTML = `
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00e5b0" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        <span style="font-size:11px;color:#00e5b0;font-weight:700;">Assistant SafeMatch · IA · Disponible 24h/24 · 7j/7</span>`;
+        <span style="font-size:11px;color:#00e5b0;font-weight:700;">Assistant Elpmis · IA · Disponible 24h/24 · 7j/7</span>`;
     } else {
       e2eBanner.style.background = '#00e5b010';
       e2eBanner.innerHTML = `
@@ -4016,7 +4038,7 @@ function openSafetyModal(type) {
             </div>
           </div>`).join('')}
       <div style="padding:12px 14px;background:#ffb34712;border-radius:12px;border:1px solid #ffb34733;margin-top:12px;">
-        <p style="font-size:12px;color:var(--gold);line-height:1.6;margin:0;">🛡️ Chaque signalement est traité sous <strong>24h</strong>. En cas d'urgence : <strong>support@safematch.app</strong></p>
+        <p style="font-size:12px;color:var(--gold);line-height:1.6;margin:0;">🛡️ Chaque signalement est traité sous <strong>24h</strong>. En cas d'urgence : <strong>support@elpmis.app</strong></p>
       </div>`;
 
   } else if (type === 'block') {
@@ -4067,7 +4089,7 @@ function openSafetyModal(type) {
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
       </button>`).join('')}
       <div style="padding:14px;background:#00b89410;border-radius:12px;border:1px solid #00b89430;margin-top:8px;">
-        <p style="font-size:12px;color:var(--teal);line-height:1.6;margin:0;">🛡️ Conforme RGPD · DSA · DPO : <strong>privacy@safematch.app</strong></p>
+        <p style="font-size:12px;color:var(--teal);line-height:1.6;margin:0;">🛡️ Conforme RGPD · DSA · DPO : <strong>privacy@elpmis.app</strong></p>
       </div>`;
   }
 
@@ -4078,7 +4100,7 @@ function showDataToast(idx) {
   const labels = ['Téléchargement','Rectification','Suppression de compte','Retrait du consentement'];
   const label = labels[idx] || 'Demande';
   const toast = document.createElement('div');
-  toast.textContent = '📧 ' + label + ' — demande envoyée à privacy@safematch.app';
+  toast.textContent = '📧 ' + label + ' — demande envoyée à privacy@elpmis.app';
   toast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--teal);color:white;padding:10px 22px;border-radius:22px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 20px #00b89433;animation:fadeUp .3s ease;white-space:nowrap;';
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 2500);
@@ -4406,7 +4428,7 @@ function startFreeAccount() {
 }
 
 // Codes promo valides
-// Codes promo (obfusqués)
+// Codes promo Elpmis (obfusqués)
 const PROMO_CODES = (function() {
   var d = atob;
   var codes = {};
@@ -4792,9 +4814,9 @@ function copyReferralCode() {
 }
 
 function shareReferral() {
-  var text = 'Rejoins-moi sur SafeMatch — des rencontres vraies et sécurisées ! Utilise mon code ' + myReferralCode + ' pour 1 mois offert 🎁';
+  var text = 'Rejoins-moi sur Elpmis \u2014 \u00c0 l\u2019envers des autres. ! Utilise mon code ' + myReferralCode + ' pour 1 mois offert 🎁';
   if (navigator.share) {
-    navigator.share({ title: 'SafeMatch', text: text }).catch(function() {});
+    navigator.share({ title: 'Elpmis', text: text }).catch(function() {});
   } else if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(function() {
       showToast('✅ Message copié — partage-le !', 'var(--teal)');
@@ -4819,7 +4841,7 @@ function openAvatarPicker() {
     '<div style="display:flex;flex-direction:column;gap:10px;">' +
     '<button onclick="selectDemoPhoto()" style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--card2);border-radius:14px;border:1px solid var(--border);cursor:pointer;font-family:\'DM Sans\',sans-serif;">' +
     '<div style="width:40px;height:40px;border-radius:12px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:20px;">📷</div>' +
-    '<div style="text-align:left;"><p style="margin:0;font-size:14px;font-weight:700;">Choisir une photo de démo</p><p style="margin:2px 0 0;font-size:12px;color:var(--muted);">Photos exemples SafeMatch</p></div>' +
+    '<div style="text-align:left;"><p style="margin:0;font-size:14px;font-weight:700;">Choisir une photo de démo</p><p style="margin:2px 0 0;font-size:12px;color:var(--muted);">Photos exemples Elpmis</p></div>' +
     '</button>' +
     '<button onclick="pickEmoji()" style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--card2);border-radius:14px;border:1px solid var(--border);cursor:pointer;font-family:\'DM Sans\',sans-serif;">' +
     '<div style="width:40px;height:40px;border-radius:12px;background:#6b8aff18;display:flex;align-items:center;justify-content:center;font-size:20px;">😊</div>' +
@@ -4886,23 +4908,28 @@ function setProfileRealPhoto(input) {
 }
 
 function updateProfAvatarDisplay() {
-  var el = document.getElementById('prof-avatar');
+  var el      = document.getElementById('prof-avatar');
+  var img     = document.getElementById('prof-avatar-img');
+  var emojiEl = document.getElementById('prof-avatar-emoji');
   if (!el) return;
+
   if (MY_PROFILE.photo) {
-    el.style.backgroundImage = 'url(' + MY_PROFILE.photo + ')';
-    el.style.backgroundSize = 'cover';
-    el.style.backgroundPosition = 'center';
+    // Photo réelle
+    if (img)     { img.src = MY_PROFILE.photo; img.style.display = 'block'; }
+    if (emojiEl) emojiEl.style.display = 'none';
     el.style.fontSize = '0';
-    el.textContent = '';
   } else if (MY_PROFILE.avatarColor) {
+    // Avatar coloré avec initiale
+    if (img)     img.style.display = 'none';
+    if (emojiEl) { emojiEl.style.display = ''; emojiEl.textContent = MY_PROFILE.avatarInitial || MY_PROFILE.name.charAt(0); }
     el.style.background = 'linear-gradient(135deg,' + MY_PROFILE.avatarColor + 'cc,' + MY_PROFILE.avatarColor + '66)';
-    el.style.backgroundImage = 'none';
     el.style.fontSize = '28px';
-    el.textContent = MY_PROFILE.avatarInitial || MY_PROFILE.name.charAt(0);
   } else {
-    el.style.backgroundImage = 'none';
+    // Emoji par défaut
+    if (img)     img.style.display = 'none';
+    if (emojiEl) { emojiEl.style.display = ''; emojiEl.textContent = MY_PROFILE.avatar || '🙂'; }
+    el.style.background = 'var(--grad)';
     el.style.fontSize = '34px';
-    el.textContent = MY_PROFILE.avatar || '🙂';
   }
 }
 
@@ -5436,13 +5463,13 @@ function saveObStep() {
 
 function saveObData() {
   // Met à jour l'affichage du profil
-  document.getElementById('prof-avatar').textContent  = MY_PROFILE.avatar;
+  updateProfAvatarDisplay();
   document.getElementById('prof-name').textContent    = MY_PROFILE.name + (MY_PROFILE.age ? ', ' + MY_PROFILE.age + ' ans' : '');
   document.getElementById('prof-age-city').textContent = MY_PROFILE.city;
   document.getElementById('prof-bio-preview').textContent = MY_PROFILE.bio || 'Ta bio apparaît ici…';
   const tagsEl = document.getElementById('prof-tags-preview');
   if (tagsEl) tagsEl.innerHTML = MY_PROFILE.tags.map(t =>
-    `<span style="padding:4px 12px;border-radius:20px;background:var(--card2);border:1px solid var(--border);font-size:12px;color:var(--muted);font-weight:600;">#${t}</span>`
+    '<span style="padding:4px 12px;border-radius:20px;background:var(--card2);border:1px solid var(--border);font-size:12px;color:var(--muted);font-weight:600;">#' + t + '</span>'
   ).join('');
 }
 
@@ -5469,19 +5496,17 @@ function showDarkModeTooltip() {
   // Tooltip animé qui pointe sur le bouton dark mode dans le profil
   const tooltip = document.createElement('div');
   tooltip.id = 'dark-tooltip';
-  tooltip.innerHTML = `
-    <div style="position:fixed;bottom:160px;right:20px;z-index:9999;animation:fadeUp .4s ease;">
-      <div style="background:var(--text);color:var(--bg);padding:10px 14px;border-radius:14px;font-size:13px;font-weight:700;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.3);position:relative;">
-        🌙 Mode sombre ici !
-        <div style="position:absolute;bottom:-7px;right:18px;width:14px;height:14px;background:var(--text);transform:rotate(45deg);border-radius:2px;"></div>
-      </div>
-      <!-- Cercle pulsant sur le bouton -->
-      <div style="position:fixed;bottom:108px;right:16px;width:50px;height:50px;border-radius:50%;border:3px solid var(--accent);animation:pulse 1s ease-in-out infinite;pointer-events:none;"></div>
-    </div>`;
+  tooltip.innerHTML =
+    '<div style="position:fixed;bottom:160px;right:20px;z-index:9999;animation:fadeUp .4s ease;">' +
+    '<div style="background:var(--text);color:var(--bg);padding:10px 14px;border-radius:14px;font-size:13px;font-weight:700;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.3);position:relative;">' +
+    '🌙 Mode sombre ici !' +
+    '<div style="position:absolute;bottom:-7px;right:18px;width:14px;height:14px;background:var(--text);transform:rotate(45deg);border-radius:2px;"></div>' +
+    '</div>' +
+    '</div>';
   document.body.appendChild(tooltip);
-  setTimeout(() => {
-    if (tooltip) tooltip.remove();
-  }, 4000);
+  setTimeout(function() {
+    if (tooltip && tooltip.parentElement) tooltip.remove();
+  }, 3000);
 }
 
 function launchApp() {
@@ -5504,96 +5529,101 @@ function renderObStep() {
   if (backBtn) backBtn.style.display = obStep > 0 ? 'flex' : 'none';
 
   if (obStep === 0) {
-    // ── ÉTAPE 1 : Complète ton profil ──
     if (nextBtn) nextBtn.textContent = 'Continuer →';
-    content.innerHTML = `
-      <div style="text-align:center;margin-bottom:28px;">
-        <div style="font-size:44px;margin-bottom:10px;">👋</div>
-        <h2 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:6px;">Crée ton profil</h2>
-        <p style="color:var(--muted);font-size:14px;line-height:1.6;">Un profil complet reçoit <strong style="color:var(--accent);">3x plus de likes</strong>.<br>Ça prend 2 minutes !</p>
-      </div>
+    content.innerHTML =
+      '<div style="text-align:center;margin-bottom:24px;">' +
+      '<div style="font-size:44px;margin-bottom:10px;">👋</div>' +
+      '<h2 style="font-family:\'Syne\',sans-serif;font-size:24px;font-weight:800;margin-bottom:6px;">Crée ton profil</h2>' +
+      '<p style="color:var(--muted);font-size:14px;line-height:1.6;">Un profil complet reçoit <strong style="color:var(--accent);">3x plus de likes</strong>.<br>Ça prend 2 minutes !</p>' +
+      '</div>' +
 
-      <!-- Avatar -->
-      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Ton avatar</p>
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
-        <div id="ob-avatar-preview" style="width:72px;height:72px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:32px;border:3px solid var(--border);flex-shrink:0;">${MY_PROFILE.avatar}</div>
-        <div id="ob-avatar-picker" style="display:flex;flex-wrap:wrap;gap:8px;flex:1;">
-          ${['🙂','😊','😎','🥰','🤩','🧑','👩','👨','🧔','👱','🎤','🦰','🦱','🦳','🦲'].map(e =>
-            `<button data-emoji="${e}" onclick="obSelectAvatar(this)" style="width:36px;height:36px;border-radius:10px;border:2px solid var(--border);background:var(--card2);cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;transition:all .15s;" class="${MY_PROFILE.avatar===e?'ob-avatar-selected':''}" ${MY_PROFILE.avatar===e?'style="border-color:var(--accent);background:#ff3d6e18;"':''}>${e}</button>`
-          ).join('')}
-        </div>
-      </div>
+      // ── PHOTO DE PROFIL ──
+      '<div style="margin-bottom:24px;">' +
+      '<p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Ta photo de profil <span style="font-weight:400;color:var(--teal);">— recommandée</span></p>' +
+      '<div style="display:flex;align-items:center;gap:16px;">' +
+      '<div id="ob-photo-preview" onclick="document.getElementById(\'ob-photo-input\').click()" style="width:80px;height:80px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:32px;border:3px solid var(--border);flex-shrink:0;cursor:pointer;overflow:hidden;position:relative;">' +
+      '<span id="ob-photo-emoji" style="font-size:32px;">📷</span>' +
+      '<img id="ob-photo-img" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" draggable="false"/>' +
+      '</div>' +
+      '<div style="flex:1;">' +
+      '<p style="font-size:13px;font-weight:700;margin-bottom:4px;">Ajoute ta vraie photo</p>' +
+      '<p style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:10px;">Les profils avec photo reçoivent <strong>10x plus</strong> de matchs. Les gens préfèrent voir à qui ils parlent 😊</p>' +
+      '<button onclick="document.getElementById(\'ob-photo-input\').click()" style="padding:8px 16px;border-radius:20px;background:var(--grad);border:none;color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:\'DM Sans\',sans-serif;">📷 Choisir une photo</button>' +
+      '</div>' +
+      '</div>' +
+      '<input type="file" id="ob-photo-input" accept="image/*" style="display:none;" onchange="obSetPhoto(this)"/>' +
+      '<p style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;">Ou choisis un avatar ci-dessous si tu préfères rester anonyme pour l\'instant</p>' +
+      '</div>' +
 
-      <!-- Infos -->
-      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Tes infos</p>
-      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
-        <div>
-          <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">Prénom *</label>
-          <input type="text" id="ob-name" placeholder="Ton prénom" maxlength="30" value="${MY_PROFILE.name !== 'Moi' ? MY_PROFILE.name : ''}" style="width:100%;"/>
-        </div>
-        <div style="display:flex;gap:12px;">
-          <div style="flex:1;">
-            <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">Âge *</label>
-            <input type="number" id="ob-age" min="18" max="99" placeholder="25" value="${MY_PROFILE.age||''}" style="width:100%;"/>
-          </div>
-          <div style="flex:2;">
-            <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">Ville *</label>
-            <input type="text" id="ob-city" placeholder="Paris, Lyon, Bordeaux…" maxlength="40" value="${MY_PROFILE.city !== 'Paris' ? MY_PROFILE.city : ''}" style="width:100%;"/>
-          </div>
-        </div>
-        <div>
-          <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">Ta bio <span style="font-weight:400;color:var(--muted);">(optionnel)</span></label>
-          <textarea id="ob-bio" maxlength="200" placeholder="Décris-toi en quelques mots…" style="width:100%;min-height:80px;padding:13px 16px;border:1.5px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--card);resize:none;outline:none;line-height:1.5;">${MY_PROFILE.bio||''}</textarea>
-        </div>
-      </div>
+      // ── AVATAR ──
+      '<p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Avatar <span style="font-weight:400;">(si pas de photo)</span></p>' +
+      '<div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">' +
+      '<div id="ob-avatar-preview" style="width:72px;height:72px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:32px;border:3px solid var(--border);flex-shrink:0;">' + MY_PROFILE.avatar + '</div>' +
+      '<div id="ob-avatar-picker" style="display:flex;flex-wrap:wrap;gap:8px;flex:1;">' +
+      ['🙂','😊','😎','🥰','🤩','🧑','👩','👨','🧔','👱','🎤','🦰','🦱','🦳','🦲'].map(function(e) {
+        var sel = MY_PROFILE.avatar === e;
+        return '<button data-emoji="' + e + '" onclick="obSelectAvatar(this)" style="width:36px;height:36px;border-radius:10px;border:2px solid ' + (sel?'var(--accent)':'var(--border)') + ';background:' + (sel?'#ff3d6e18':'var(--card2)') + ';cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;transition:all .15s;">' + e + '</button>';
+      }).join('') +
+      '</div>' +
+      '</div>' +
 
-      <!-- Tags -->
-      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Centres d'intérêt <span style="font-weight:400;">(3 max)</span></p>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
-        ${OB_TAGS_LIST.map(tag => {
-          const sel = MY_PROFILE.tags.includes(tag);
-          return `<button onclick="obToggleTag('${tag}',this)" style="padding:6px 14px;border-radius:20px;border:1.5px solid ${sel?'var(--accent)':'var(--border)'};background:${sel?'#ff3d6e18':'var(--card2)'};color:${sel?'var(--accent)':'var(--muted)'};font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;">#${tag}</button>`;
-        }).join('')}
-      </div>
-      <p id="ob-tags-hint" style="font-size:11px;color:var(--muted);margin-bottom:4px;">Sélectionne jusqu'à 3 centres d'intérêt</p>
-    `;
+      // ── INFOS ──
+      '<p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Tes infos</p>' +
+      '<div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">' +
+      '<div><label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">Prénom *</label>' +
+      '<input type="text" id="ob-name" placeholder="Ton prénom" maxlength="30" value="' + (MY_PROFILE.name !== 'Moi' ? MY_PROFILE.name : '') + '" style="width:100%;"/></div>' +
+      '<div style="display:flex;gap:12px;">' +
+      '<div style="flex:1;"><label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">Âge *</label>' +
+      '<input type="number" id="ob-age" min="18" max="99" placeholder="25" value="' + (MY_PROFILE.age||'') + '" style="width:100%;"/></div>' +
+      '<div style="flex:2;"><label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">Ville *</label>' +
+      '<input type="text" id="ob-city" placeholder="Paris, Lyon, Bordeaux…" maxlength="40" value="' + (MY_PROFILE.city !== 'Paris' ? MY_PROFILE.city : '') + '" style="width:100%;"/></div>' +
+      '</div>' +
+      '<div><label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">Ta bio <span style="font-weight:400;color:var(--muted);">(optionnel)</span></label>' +
+      '<textarea id="ob-bio" maxlength="200" placeholder="Décris-toi en quelques mots…" style="width:100%;min-height:80px;padding:13px 16px;border:1.5px solid var(--border);border-radius:12px;font-family:\'DM Sans\',sans-serif;font-size:14px;color:var(--text);background:var(--card);resize:none;outline:none;line-height:1.5;">' + (MY_PROFILE.bio||'') + '</textarea></div>' +
+      '</div>' +
+
+      // ── TAGS ──
+      '<p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Centres d\'intérêt <span style="font-weight:400;">(3 max)</span></p>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;">' +
+      OB_TAGS_LIST.map(function(tag) {
+        var sel = MY_PROFILE.tags.includes(tag);
+        return '<button onclick="obToggleTag(\'' + tag + '\',this)" style="padding:6px 14px;border-radius:20px;border:1.5px solid ' + (sel?'var(--accent)':'var(--border)') + ';background:' + (sel?'#ff3d6e18':'var(--card2)') + ';color:' + (sel?'var(--accent)':'var(--muted)') + ';font-size:13px;font-weight:600;cursor:pointer;font-family:\'DM Sans\',sans-serif;transition:all .15s;">#' + tag + '</button>';
+      }).join('') +
+      '</div>' +
+      '<p id="ob-tags-hint" style="font-size:11px;color:var(--muted);margin-bottom:4px;">Sélectionne jusqu\'à 3 centres d\'intérêt</p>';
 
   } else if (obStep === 1) {
     // ── ÉTAPE 2 : Préférences de rencontre ──
     if (nextBtn) nextBtn.textContent = 'Continuer →';
-    const orients = (typeof getOrients === 'function') ? getOrients() : ['Hétérosexuel·le','Gay','Lesbienne','Bisexuel·le','Pansexuel·le','Asexuel·le'];
-    content.innerHTML = `
-      <div style="text-align:center;margin-bottom:28px;">
-        <div style="font-size:44px;margin-bottom:10px;">💫</div>
-        <h2 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:6px;">Tes préférences</h2>
-        <p style="color:var(--muted);font-size:14px;line-height:1.6;">On affine les profils qu'on te propose<br>selon ce que tu cherches.</p>
-      </div>
-
-      <!-- Type de recherche -->
-      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Je recherche</p>
-      <div id="ob-search-type-picker" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;">
-        ${OB_SEARCH_TYPES.map(([ic,lb],i) => {
-          const sel = MY_PROFILE.searchType === i;
-          return `<button data-idx="${i}" onclick="obSelectST(${i},this)" class="${sel?'ob-st-selected':''}" style="padding:14px 12px;border-radius:16px;border:1.5px solid ${sel?'var(--accent)':'var(--border)'};background:${sel?'#ff3d6e18':'var(--card2)'};cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif;transition:all .2s;">
-            <div style="font-size:26px;margin-bottom:8px;">${ic}</div>
-            <p style="font-size:13px;font-weight:600;margin:0;line-height:1.4;">${lb}</p>
-          </button>`;
-        }).join('')}
-      </div>
-
-      <!-- Orientation -->
-      <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Orientation</p>
-      <div id="ob-orient-picker" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-        ${ORIENT_KEYS.map((key,i) => {
-          const sel = MY_PROFILE.orient === key;
-          return `<button data-orient="${key}" onclick="obSelectOrient('${key}',this)" class="${sel?'ob-orient-selected':''}" style="padding:8px 16px;border-radius:20px;border:1.5px solid ${sel?'var(--accent)':'var(--border)'};background:${sel?'#ff3d6e18':'var(--card2)'};color:${sel?'var(--accent)':'var(--muted)'};font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;">${orients[i]}</button>`;
-        }).join('')}
-      </div>
-    `;
+    var orients = (typeof getOrients === 'function') ? getOrients() : ['Hétérosexuel·le','Gay','Lesbienne','Bisexuel·le','Pansexuel·le','Asexuel·le'];
+    content.innerHTML =
+      '<div style="text-align:center;margin-bottom:28px;">' +
+      '<div style="font-size:44px;margin-bottom:10px;">💫</div>' +
+      '<h2 style="font-family:\'Syne\',sans-serif;font-size:24px;font-weight:800;margin-bottom:6px;color:var(--text);">Tes préférences</h2>' +
+      '<p style="color:var(--muted);font-size:14px;line-height:1.6;">On affine les profils qu\'on te propose<br>selon ce que tu cherches.</p>' +
+      '</div>' +
+      '<p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Je recherche</p>' +
+      '<div id="ob-search-type-picker" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;">' +
+      OB_SEARCH_TYPES.map(function(item, i) {
+        var ic = item[0], lb = item[1];
+        var sel = MY_PROFILE.searchType === i;
+        return '<button data-idx="' + i + '" onclick="obSelectST(' + i + ',this)" style="padding:14px 12px;border-radius:16px;border:1.5px solid ' + (sel?'var(--accent)':'var(--border)') + ';background:' + (sel?'#ff3d6e18':'var(--card2)') + ';cursor:pointer;text-align:left;font-family:\'DM Sans\',sans-serif;transition:all .2s;">' +
+          '<div style="font-size:26px;margin-bottom:8px;">' + ic + '</div>' +
+          '<p style="font-size:13px;font-weight:600;margin:0;line-height:1.4;color:var(--text);">' + lb + '</p>' +
+          '</button>';
+      }).join('') +
+      '</div>' +
+      '<p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Orientation</p>' +
+      '<div id="ob-orient-picker" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;">' +
+      ORIENT_KEYS.map(function(key, i) {
+        var sel = MY_PROFILE.orient === key;
+        return '<button data-orient="' + key + '" onclick="obSelectOrient(\'' + key + '\',this)" style="padding:8px 16px;border-radius:20px;border:1.5px solid ' + (sel?'var(--accent)':'var(--border)') + ';background:' + (sel?'#ff3d6e18':'var(--card2)') + ';color:' + (sel?'var(--accent)':'var(--muted)') + ';font-size:13px;font-weight:600;cursor:pointer;font-family:\'DM Sans\',sans-serif;transition:all .15s;">' + orients[i] + '</button>';
+      }).join('') +
+      '</div>';
 
   } else if (obStep === 2) {
     // ── ÉTAPE 3 : Découverte SafeGuard ──
-    if (nextBtn) nextBtn.textContent = '🚀 Accéder à SafeMatch';
+    if (nextBtn) nextBtn.textContent = '🚀 Accéder à Elpmis';
     content.innerHTML = `
       <div style="text-align:center;margin-bottom:32px;">
         <div style="width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,#00e5b033,#00b4d822);border:2px solid #00e5b066;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 16px;">🛡️</div>
@@ -5625,12 +5655,12 @@ function renderObStep() {
 
   } else if (obStep === 3) {
     // ── ÉTAPE 4 : Personnalisation apparence ──
-    if (nextBtn) nextBtn.textContent = '🚀 Accéder à SafeMatch';
+    if (nextBtn) nextBtn.textContent = '🚀 Accéder à Elpmis';
     content.innerHTML = `
       <div style="text-align:center;margin-bottom:32px;">
         <div style="font-size:44px;margin-bottom:10px;">✨</div>
         <h2 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:8px;">Ton espace, tes règles</h2>
-        <p style="color:var(--muted);font-size:14px;line-height:1.7;">Ici on respecte les envies de chacun.<br>Personnalise SafeMatch comme tu veux.</p>
+        <p style="color:var(--muted);font-size:14px;line-height:1.7;">Ici on respecte les envies de chacun.<br>Personnalise Elpmis comme tu veux.</p>
       </div>
 
       <!-- Dark mode card -->
@@ -5686,6 +5716,24 @@ function renderObStep() {
 }
 
 // ── Helpers onboarding ──
+function obSetPhoto(input) {
+  if (!input.files || !input.files[0]) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    MY_PROFILE.photo = e.target.result;
+    // Met à jour la preview dans l'onboarding
+    var img = document.getElementById('ob-photo-img');
+    var emoji = document.getElementById('ob-photo-emoji');
+    if (img) { img.src = e.target.result; img.style.display = 'block'; }
+    if (emoji) emoji.style.display = 'none';
+    // Met à jour aussi le profil immédiatement
+    updateProfAvatarDisplay();
+    showToast('✅ Super ! Ta photo va attirer 10x plus de matchs 😊', 'var(--teal)');
+  };
+  reader.readAsDataURL(input.files[0]);
+  input.value = '';
+}
+
 function obSelectAvatar(btn) {
   MY_PROFILE.avatar = btn.dataset.emoji;
   document.getElementById('ob-avatar-preview').textContent = btn.dataset.emoji;
@@ -5838,11 +5886,11 @@ const DOCS = {
   cgu: {
     title: 'Conditions Générales d\'Utilisation',
     content: `
-      <h3 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:16px;color:var(--text);">CGU SafeMatch — v1.0</h3>
+      <h3 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:16px;color:var(--text);">CGU Elpmis — v1.0</h3>
       <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">Date d'entrée en vigueur : 2026</p>
 
       <p style="font-size:13px;font-weight:700;margin-bottom:6px;">1. Objet</p>
-      <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">SafeMatch est une plateforme de rencontres sécurisée réservée aux personnes majeures (18 ans et plus). L'inscription implique l'acceptation des présentes CGU.</p>
+      <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">Elpmis est une plateforme de rencontres sécurisée réservée aux personnes majeures (18 ans et plus). L'inscription implique l'acceptation des présentes CGU.</p>
 
       <p style="font-size:13px;font-weight:700;margin-bottom:6px;">2. Vérification d'identité</p>
       <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">Tout utilisateur doit vérifier son identité via pièce d'identité officielle, selfie vidéo en direct et numéro de téléphone. Les documents sont supprimés immédiatement après vérification.</p>
@@ -5854,7 +5902,7 @@ const DOCS = {
       <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">Les abonnements sont facturés selon la formule choisie (mensuel, trimestriel, annuel). Le renouvellement est automatique sauf résiliation 48h avant l'échéance. Droit de rétractation de 14 jours.</p>
 
       <p style="font-size:13px;font-weight:700;margin-bottom:6px;">5. Responsabilité</p>
-      <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">SafeMatch met en relation des personnes vérifiées mais ne peut garantir le comportement de ses membres lors de rencontres physiques. La fonctionnalité "Partager ma position" est un outil d'aide, non une garantie absolue.</p>
+      <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">Elpmis met en relation des personnes vérifiées mais ne peut garantir le comportement de ses membres lors de rencontres physiques. La fonctionnalité "Partager ma position" est un outil d'aide, non une garantie absolue.</p>
 
       <p style="font-size:13px;font-weight:700;margin-bottom:6px;">6. Droit applicable</p>
       <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:20px;">Les présentes CGU sont soumises au droit français. Tout litige relève de la compétence des tribunaux français.</p>
@@ -5869,7 +5917,7 @@ const DOCS = {
       <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">Conforme au RGPD (UE) 2016/679 · DSA 2022/2065</p>
 
       <p style="font-size:13px;font-weight:700;margin-bottom:6px;">Responsable de traitement</p>
-      <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">SafeMatch SAS — DPO joignable à privacy@safematch.app</p>
+      <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">Elpmis SAS — DPO joignable à privacy@elpmis.app</p>
 
       <p style="font-size:13px;font-weight:700;margin-bottom:6px;">Données collectées</p>
       <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">Numéro de téléphone (vérification), empreinte biométrique anonyme (liveness check), préférences de rencontre, position approximative. Aucun document d'identité n'est conservé.</p>
@@ -5881,7 +5929,7 @@ const DOCS = {
       <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">Documents d'identité : supprimés immédiatement. Données de profil : durée de l'abonnement + 30 jours. Sur demande d'effacement : sous 30 jours.</p>
 
       <p style="font-size:13px;font-weight:700;margin-bottom:6px;">Tes droits</p>
-      <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:20px;">Accès, rectification, effacement, portabilité, opposition, retrait du consentement. Contact : privacy@safematch.app. Réclamation auprès de la CNIL : cnil.fr</p>
+      <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:20px;">Accès, rectification, effacement, portabilité, opposition, retrait du consentement. Contact : privacy@elpmis.app. Réclamation auprès de la CNIL : cnil.fr</p>
 
       <button class="btn btn-primary" style="width:100%;" onclick="closeDoc()">Fermer ✓</button>
     `
@@ -6012,7 +6060,7 @@ const T = {
   msg_title:       { fr:'Messages',           en:'Messages',          es:'Mensajes',          it:'Messaggi',          de:'Nachrichten' },
   msg_sub:         { fr:'Conversations sécurisées', en:'Secure conversations', es:'Conversaciones seguras', it:'Conversazioni sicure', de:'Sichere Gespräche' },
   msg_e2e:         { fr:'Messages chiffrés de bout en bout', en:'End-to-end encrypted messages', es:'Mensajes cifrados de extremo a extremo', it:'Messaggi cifrati end-to-end', de:'Ende-zu-Ende verschlüsselte Nachrichten' },
-  msg_e2e_desc:    { fr:'Tes messages sont chiffrés de bout en bout. Même SafeMatch ne peut pas les lire.', en:'Your messages are end-to-end encrypted. Even SafeMatch cannot read them.', es:'Tus mensajes están cifrados de extremo a extremo. Ni SafeMatch puede leerlos.', it:'I tuoi messaggi sono cifrati end-to-end. Nemmeno SafeMatch può leggerli.', de:'Deine Nachrichten sind Ende-zu-Ende verschlüsselt. Selbst SafeMatch kann sie nicht lesen.' },
+  msg_e2e_desc:    { fr:'Tes messages sont chiffrés de bout en bout. Même Elpmis ne peut pas les lire.', en:'Your messages are end-to-end encrypted. Even Elpmis cannot read them.', es:'Tus mensajes están cifrados de extremo a extremo. Ni Elpmis puede leerlos.', it:'I tuoi messaggi sono cifrati end-to-end. Nemmeno Elpmis può leggerli.', de:'Deine Nachrichten sind Ende-zu-Ende verschlüsselt. Selbst Elpmis kann sie nicht lesen.' },
   msg_online:      { fr:'En ligne',           en:'Online',            es:'En línea',          it:'Online',            de:'Online' },
   msg_placeholder: { fr:'Écrire un message…', en:'Write a message…',  es:'Escribe un mensaje…', it:'Scrivi un messaggio…', de:'Nachricht schreiben…' },
   msg_loc_btn:     { fr:'📍 Partager ma position', en:'📍 Share my location', es:'📍 Compartir mi ubicación', it:'📍 Condividi posizione', de:'📍 Position teilen' },
@@ -6067,7 +6115,7 @@ const T = {
 
   // ── SUCCESS ─────────────────────────────────────────────
   success_title:   { fr:'Paiement confirmé !', en:'Payment confirmed!', es:'¡Pago confirmado!', it:'Pagamento confermato!', de:'Zahlung bestätigt!' },
-  success_sub:     { fr:'Un reçu a été envoyé à ton adresse e-mail.<br>Bienvenue dans la communauté SafeMatch 🎉', en:'A receipt has been sent to your email.<br>Welcome to the SafeMatch community 🎉', es:'Se ha enviado un recibo a tu correo.<br>¡Bienvenido a la comunidad SafeMatch 🎉', it:'Una ricevuta è stata inviata alla tua email.<br>Benvenuto nella community SafeMatch 🎉', de:'Eine Quittung wurde an deine E-Mail gesendet.<br>Willkommen in der SafeMatch-Community 🎉' },
+  success_sub:     { fr:'Un reçu a été envoyé à ton adresse e-mail.<br>Bienvenue dans la communauté Elpmis 🎉', en:'A receipt has been sent to your email.<br>Welcome to the Elpmis community 🎉', es:'Se ha enviado un recibo a tu correo.<br>¡Bienvenido a la comunidad Elpmis 🎉', it:'Una ricevuta è stata inviata alla tua email.<br>Benvenuto nella community Elpmis 🎉', de:'Eine Quittung wurde an deine E-Mail gesendet.<br>Willkommen in der Elpmis-Community 🎉' },
   success_enter:   { fr:'Accéder à l\'application →', en:'Enter the app →', es:'Acceder a la app →', it:'Accedi all\'app →', de:'Zur App →' },
 
   // ── FILTERS ─────────────────────────────────────────────
