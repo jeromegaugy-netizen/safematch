@@ -348,10 +348,16 @@
   .pay-btn:hover { transform: translateY(-2px); }
   .pay-apple { background:#000; color:white; }
   .pay-apple:hover { background:#1a1a1a; }
-  .pay-google { background:white; color:#000; border:1.5px solid #e0e0e0; }
+  .pay-google { background:white; color:#000 !important; border:1.5px solid #e0e0e0; }
   .pay-google:hover { background:#f5f5f5; }
-  .card-inp { background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:15px; padding:13px 16px; outline:none; width:100%; transition:border-color .2s; }
+  body.dark-mode .pay-google { background:#ffffff !important; color:#000000 !important; border-color:#e0e0e0 !important; }
+  .pay-card { background:var(--grad); color:white !important; }
+  .card-inp { background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--text) !important; font-family:'DM Sans',sans-serif; font-size:15px; padding:13px 16px; outline:none; width:100%; transition:border-color .2s; }
+  .card-inp::placeholder { color:var(--muted); }
   .card-inp:focus { border-color:var(--accent); }
+  /* Bouton payer CB — texte toujours blanc */
+  body.dark-mode .pay-card { color:white !important; }
+  body.dark-mode .pay-card span { color:white !important; }
   @keyframes checkPop { 0%{transform:scale(0)} 70%{transform:scale(1.3)} 100%{transform:scale(1)} }
   @keyframes confetti { 0%{transform:translateY(0) rotate(0);opacity:1} 100%{transform:translateY(-160px) rotate(720deg);opacity:0} }
   .confetti-piece { position:absolute; border-radius:3px; animation:confetti 1.2s ease-out forwards; }
@@ -1479,11 +1485,11 @@
         </div>
 
         <!-- CGU & Confidentialité -->
-        <button onclick="document.getElementById('cgu-modal').classList.add('open')" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--card2);border-radius:12px;border:1px solid var(--border);cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:8px;">
+        <button onclick="openModal('cgu-modal')" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--card2);border-radius:12px;border:1px solid var(--border);cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:8px;">
           <span style="font-size:13px;font-weight:600;">📄 Conditions Générales d'Utilisation</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
         </button>
-        <button onclick="document.getElementById('privacy-modal').classList.add('open')" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--card2);border-radius:12px;border:1px solid var(--border);cursor:pointer;font-family:'DM Sans',sans-serif;">
+        <button onclick="openModal('privacy-modal')" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--card2);border-radius:12px;border:1px solid var(--border);cursor:pointer;font-family:'DM Sans',sans-serif;">
           <span style="font-size:13px;font-weight:600;">🛡️ Politique de Confidentialité</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
         </button>
@@ -1920,7 +1926,7 @@
       <h3 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;">Filtres de recherche</h3>
       <button onclick="resetFilters()" style="background:none;border:none;font-size:13px;color:var(--accent);font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">Réinitialiser</button>
     </div>
-    <div style="flex:1;overflow-y:auto;padding-bottom:8px;">
+    <div id="filters-scroll" style="flex:1;overflow-y:auto;padding-bottom:8px;">
 
       <!-- Genre recherché -->
       <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Je recherche</p>
@@ -2067,6 +2073,28 @@ const PROFILES = [
   { id:100, name:"Lou", age:28, city:"Lyon", bio:"Danseur contemporain en quete de connexions authentiques ✨", tags:["Jeux","BD","Cuisine"], verified:true, match:88, color:"#ffb347", emoji:"🎵", orient:"Gay", gender:"Non-binaire" },
   { id:101, name:"Bilal", age:36, city:"Saint-Etienne", bio:"Game designer qui croit que les jeux peuvent changer le monde ✨", tags:["Jeux","BD","Cuisine"], verified:false, match:91, color:"#ff6b6b", emoji:"🌿", orient:"Bi", gender:"Non-binaire" },
   { id:102, name:"Alex", age:29, city:"Metz", bio:"Graphiste, cycliste, fan de SF. Je cherche quelqu'un d'aussi curieux ✨", tags:["Art","Musique","Lecture"], verified:true, match:85, color:"#6bc5ff", emoji:"🌈", orient:"Gay", gender:"Non-binaire" },
+  // ── Rhône-Alpes & Suisse ──
+  { id:103, name:"Léa", age:27, city:"Lyon", bio:"Chercheuse en neurologie le jour, grimpeuse le week-end. J'aime les gens qui ont une passion qui les dépasse 🧗", tags:["Sport","Nature","Lecture"], verified:true, match:93, color:"#ff6b8a", emoji:"🌸", orient:"Hétéro", gender:"Femme" },
+  { id:104, name:"Thomas", age:32, city:"Grenoble", bio:"Ingénieur en montagne, passionné d'alpinisme et de photographie. Les sommets m'ont appris la patience 🏔️", tags:["Sport","Photo","Nature"], verified:true, match:87, color:"#6b8aff", emoji:"⛰️", orient:"Hétéro", gender:"Homme" },
+  { id:105, name:"Manon", age:25, city:"Annecy", bio:"Kiné de métier, paddle et yoga de cœur. Lac d'Annecy mon terrain de jeu quotidien 🏄‍♀️", tags:["Sport","Yoga","Nature"], verified:true, match:91, color:"#ff8a6b", emoji:"🌊", orient:"Bi", gender:"Femme" },
+  { id:106, name:"Julien", age:35, city:"Chambéry", bio:"Professeur de ski l'hiver, randonneur l'été. Je cherche quelqu'un pour partager ces deux vies 🎿", tags:["Ski","Randonnée","Nature"], verified:true, match:84, color:"#6bffb8", emoji:"🎿", orient:"Hétéro", gender:"Homme" },
+  { id:107, name:"Camille", age:29, city:"Annecy", bio:"Architecte passionnée de design bioclimatique. Je construis des maisons qui respirent 🌿", tags:["Art","Nature","Voyage"], verified:true, match:89, color:"#c56bff", emoji:"🏛️", orient:"Hétéro", gender:"Femme" },
+  { id:108, name:"Romain", age:31, city:"Lyon", bio:"Chef cuisinier dans un bistrot lyonnais. La bonne chère et les bons moments, c'est tout ce qui compte 🍷", tags:["Cuisine","Musique","Voyage"], verified:true, match:86, color:"#ffb347", emoji:"🍽️", orient:"Hétéro", gender:"Homme" },
+  { id:109, name:"Sarah", age:26, city:"Valence", bio:"Ostéopathe et danseuse de salsa. Corps et âme en mouvement permanent 💃", tags:["Danse","Sport","Musique"], verified:true, match:92, color:"#ff6b6b", emoji:"💃", orient:"Bi", gender:"Femme" },
+  { id:110, name:"Antoine", age:38, city:"Grenoble", bio:"Médecin urgentiste reconverti en ultra-traileur. La montagne m'a sauvé la vie 🏃‍♂️", tags:["Sport","Nature","Randonnée"], verified:true, match:83, color:"#6bc5ff", emoji:"🌄", orient:"Hétéro", gender:"Homme" },
+  { id:111, name:"Inès", age:28, city:"Lyon", bio:"Journaliste culturelle. Je couvre les festivals, les expos, les concerts. Ma vie ressemble à un agenda culturel 🎭", tags:["Art","Musique","Cinéma"], verified:true, match:90, color:"#ff6b8a", emoji:"🎭", orient:"Hétéro", gender:"Femme" },
+  { id:112, name:"Hugo", age:33, city:"Saint-Étienne", bio:"Designer de mobilier, fan de Bauhaus. Je fabrique des objets qui durent 🪑", tags:["Art","Vélo","Lecture"], verified:false, match:81, color:"#6b8aff", emoji:"🪑", orient:"Gay", gender:"Homme" },
+  { id:113, name:"Lucie", age:24, city:"Annecy", bio:"Guide de haute montagne en formation. Je vis pour les aurores en altitude ⛰️", tags:["Ski","Randonnée","Photo"], verified:true, match:95, color:"#ff8a6b", emoji:"🗻", orient:"Bi", gender:"Femme" },
+  { id:114, name:"Maxime", age:30, city:"Lyon", bio:"Développeur freelance le matin, boulanger amateur le soir. Je code et je pétris avec la même passion 🥖", tags:["Tech","Cuisine","Vélo"], verified:true, match:88, color:"#6bffb8", emoji:"🥖", orient:"Hétéro", gender:"Homme" },
+  // ── Suisse romande ──
+  { id:115, name:"Chloé", age:27, city:"Genève", bio:"Travaille pour une ONG internationale. Je vois le monde, j'essaie de le rendre meilleur ✈️", tags:["Voyage","Lecture","Yoga"], verified:true, match:94, color:"#c56bff", emoji:"🌍", orient:"Hétéro", gender:"Femme" },
+  { id:116, name:"Nicolas", age:34, city:"Lausanne", bio:"Chercheur au CERN. Je cherche des particules le jour et quelqu'un d'exceptionnel le soir ⚛️", tags:["Tech","Lecture","Musique"], verified:true, match:87, color:"#ffb347", emoji:"⚛️", orient:"Hétéro", gender:"Homme" },
+  { id:117, name:"Emma", age:26, city:"Genève", bio:"Diplomate junior, polyglotte (4 langues). J'aime les gens qui ont des convictions 🌐", tags:["Voyage","Lecture","Art"], verified:true, match:91, color:"#ff6b6b", emoji:"🌐", orient:"Bi", gender:"Femme" },
+  { id:118, name:"Raphaël", age:31, city:"Lausanne", bio:"Pianiste classique à l'HEMU. La musique est ma langue maternelle 🎹", tags:["Musique","Jazz","Art"], verified:true, match:89, color:"#6bc5ff", emoji:"🎹", orient:"Gay", gender:"Homme" },
+  { id:119, name:"Zoé", age:25, city:"Fribourg", bio:"Chocolatière artisanale. Je transforme le cacao en émotions, cherche quelqu'un pour les partager 🍫", tags:["Cuisine","Voyage","Randonnée"], verified:true, match:93, color:"#ff6b8a", emoji:"🍫", orient:"Hétéro", gender:"Femme" },
+  { id:120, name:"Adrien", age:36, city:"Genève", bio:"Banquier le lundi, alpiniste le vendredi. Deux vies qui se complètent parfaitement ⛏️", tags:["Sport","Ski","Randonnée"], verified:true, match:82, color:"#6b8aff", emoji:"⛏️", orient:"Hétéro", gender:"Homme" },
+  { id:121, name:"Léonie", age:29, city:"Sion", bio:"Vigneronne dans le Valais. Je cultive les vignes et les liens humains avec le même soin 🍇", tags:["Nature","Cuisine","Randonnée"], verified:true, match:90, color:"#ff8a6b", emoji:"🍇", orient:"Hétéro", gender:"Femme" },
+  { id:122, name:"Baptiste", age:28, city:"Annecy", bio:"Guide kayak sur le lac. L'eau comme maison, la montagne comme horizon 🚣", tags:["Sport","Nature","Voyage"], verified:true, match:86, color:"#6bffb8", emoji:"🚣", orient:"Hétéro", gender:"Homme" },
 ];
 
 const CONVS = [
@@ -2543,7 +2571,7 @@ function openEditProfile() {
     b.style.color       = sel ? 'var(--accent)' : 'var(--muted)';
   });
 
-  document.getElementById('edit-profile-modal').classList.add('open');
+  openModal('edit-profile-modal');
 }
 
 // Retourne le libellé traduit d'une orientation à partir de sa clé
@@ -2839,7 +2867,7 @@ function openLikesPanel() {
   newLikesCount = 0;
   updateLikesBadge();
   showLikesTab(likesTabActive);
-  document.getElementById('likes-modal').classList.add('open');
+  openModal('likes-modal');
 }
 
 function showLikesTab(tab) {
@@ -2979,9 +3007,32 @@ function buildFiltersModal() {
   }
 }
 
+function openModal(id) {
+  var modal = document.getElementById(id);
+  if (!modal) return;
+  modal.classList.add('open');
+  // Remet le scroll en haut sur tous les éléments scrollables
+  setTimeout(function() {
+    // Cibles directes connues
+    var targets = ['visitors-list','filters-scroll','likes-content','boost-modal-content','stat-modal-content','safety-modal-content'];
+    targets.forEach(function(tid) {
+      var el = document.getElementById(tid);
+      if (el) el.scrollTop = 0;
+    });
+    // Fallback : tous les enfants overflow-y:auto du modal
+    var inner = modal.querySelector('.modal');
+    if (inner) {
+      inner.scrollTop = 0;
+      inner.querySelectorAll('*').forEach(function(el) {
+        if (el.scrollTop > 0) el.scrollTop = 0;
+      });
+    }
+  }, 50);
+}
+
 function openFilters() {
   buildFiltersModal();
-  document.getElementById('filters-modal').classList.add('open');
+  openModal('filters-modal');
 }
 function closeFilters(){ document.getElementById('filters-modal').classList.remove('open'); }
 
@@ -3022,10 +3073,7 @@ function updateBellBadge() {
 function openVisitorsPanel() {
   const list = document.getElementById('visitors-list');
   if (!visitors.length) {
-    list.innerHTML = `<div style="text-align:center;padding:32px;color:var(--muted);">
-      <div style="font-size:40px;margin-bottom:12px;">👀</div>
-      <p style="font-size:14px;">Personne n'a encore visité ton profil.<br>Continue à swiper pour te faire remarquer !</p>
-    </div>`;
+    list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);"><div style="font-size:40px;margin-bottom:12px;">👀</div><p style="font-size:14px;">Personne n\'a encore visité ton profil.<br>Continue à swiper pour te faire remarquer !</p></div>';
   } else {
     const unseen = visitors.filter(v => !v.seen);
     const seen   = visitors.filter(v =>  v.seen);
@@ -3073,7 +3121,7 @@ function openVisitorsPanel() {
   visitors.forEach(v => v.seen = true);
   updateBellBadge();
   updateDiscNotifBadge();
-  document.getElementById('visitors-modal').classList.add('open');
+  openModal('visitors-modal');
 }
 
 function markVisitorSeen(id) {
@@ -3167,7 +3215,7 @@ function openProfileSheet(id, fallback) {
       ${isBlocked ? '🔓 Débloquer ce profil' : '🚫 Bloquer ce profil'}
     </button>
   `;
-  document.getElementById('profile-sheet').classList.add('open');
+  openModal('profile-sheet');
 }
 
 function profileSheetAction(action, profileId) {
@@ -3743,7 +3791,7 @@ function openBlockModal() {
   document.getElementById('block-username').textContent =
     'Bloquer ' + currentConv.name + ' · Action discrète et réversible';
   document.getElementById('block-name-btn').textContent = currentConv.name;
-  document.getElementById('block-modal').classList.add('open');
+  openModal('block-modal');
 }
 
 function closeBlockModal() {
@@ -3786,7 +3834,7 @@ function openReportModal() {
   if (currentConv && !currentConv.isAssistant) {
     document.getElementById('report-username').textContent = 'Signaler ' + currentConv.name;
   }
-  document.getElementById('report-modal').classList.add('open');
+  openModal('report-modal');
 }
 
 function closeReportModal() {
@@ -4147,48 +4195,50 @@ function toggleIncognito() {
   renderSafetyMenu();
 }
 function openLocationModal(){
-  document.getElementById('loc-content').innerHTML=renderLocContent();
-  document.getElementById('loc-modal').classList.add('open');
+  document.getElementById('loc-content').innerHTML = renderLocContent();
+  openModal('loc-modal');
 }
-function closeLocModal(){ document.getElementById('loc-modal').classList.remove('open'); }
 
-let selDur=30;
 function renderLocContent(){
-  return `
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
-      <div style="width:52px;height:52px;border-radius:16px;background:#ff3d6e18;display:flex;align-items:center;justify-content:center;">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-      </div>
-      <div><h3 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:2px;color:var(--text);">${t('loc_title')}</h3><p style="font-size:12px;color:var(--muted);">${t('loc_sub')}</p></div>
-    </div>
-    <div style="background:#00e5b010;border-radius:14px;padding:14px;margin-bottom:20px;border:1px solid #00e5b030;">
-      <p style="font-size:12px;color:var(--teal);line-height:1.7;margin:0;">🛡️ ${t('loc_safe')}</p>
-    </div>
-    <!-- Fake mini-map -->
-    <div style="height:130px;border-radius:16px;overflow:hidden;margin-bottom:20px;background:linear-gradient(135deg,#0a1a0a,#0d0d1a);position:relative;border:1px solid var(--border);">
-      <div style="position:absolute;inset:0;opacity:.15;background:repeating-linear-gradient(0deg,transparent,transparent 19px,#fff 19px,#fff 20px),repeating-linear-gradient(90deg,transparent,transparent 39px,#fff 39px,#fff 40px);"></div>
-      <div style="position:absolute;top:45%;left:0;right:0;height:6px;background:#ffffff18;border-radius:2px;"></div>
-      <div style="position:absolute;top:0;bottom:0;left:40%;width:6px;background:#ffffff14;border-radius:2px;"></div>
-      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;background:#ff3d6e22;border:2px solid #ff3d6e66;animation:ripple 2s ease-out infinite;"></div>
-      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:50%;background:var(--accent);border:3px solid white;box-shadow:0 0 0 4px #ff3d6e44;"></div>
-      <div style="position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,.7);border-radius:8px;padding:4px 10px;font-size:11px;color:var(--muted);">Zone ±500m · Paris</div>
-    </div>
-    <p style="font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">${t('loc_duration')}</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
-      ${[15,30,60,120].map(d=>`<button onclick="selDur=${d};document.getElementById('loc-content').innerHTML=renderLocContent();" style="padding:14px;border-radius:14px;border:2px solid ${selDur===d?'var(--accent)':'var(--border)'};background:${selDur===d?'#ff3d6e18':'var(--card2)'};color:${selDur===d?'var(--accent)':'var(--muted)'};font-weight:700;font-size:15px;cursor:pointer;">${d<60?d+' min':d/60+'h'}</button>`).join('')}
-    </div>
-    <div style="margin-bottom:20px;">
-      ${[[t('loc_share_yes'),true],[t('loc_share_yes2'),true],[t('loc_share_no'),false],[t('loc_share_no2'),false]].map(([l,ok])=>`
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
-          <div style="width:20px;height:20px;border-radius:50%;background:${ok?'#00e5b018':'#ff3d6e18'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="${ok?'var(--teal)':'var(--accent)'}" stroke-width="3">${ok?'<path d="M20 6L9 17l-5-5"/>':'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'}</svg>
-          </div>
-          <span style="font-size:13px;color:${ok?'var(--text)':'var(--muted)'};">${l}</span>
-        </div>`).join('')}
-    </div>
-    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="activateLocation()">📍 ${t('loc_title')} · ${selDur<60?selDur+' min':selDur/60+'h'}</button>
-    <button class="btn btn-ghost" style="width:100%;" onclick="closeLocModal()">${t('loc_cancel')}</button>
-  `;
+  // Si position déjà active — affiche option arrêter
+  if (locActive) {
+    return '<div style="text-align:center;padding:20px 0;">' +
+      '<div style="font-size:48px;margin-bottom:16px;">📍</div>' +
+      '<h3 style="font-family:\'Syne\',sans-serif;font-size:20px;font-weight:800;margin-bottom:8px;color:var(--text);">Position en cours de partage</h3>' +
+      '<p style="color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:24px;">Ta zone approximative est actuellement visible par ton match.</p>' +
+      '<div style="padding:12px 16px;background:#ff3d6e18;border-radius:14px;border:1px solid #ff3d6e33;display:flex;align-items:center;gap:12px;margin-bottom:24px;">' +
+      '<div style="width:10px;height:10px;border-radius:50%;background:var(--accent);animation:pulse 1.5s infinite;flex-shrink:0;"></div>' +
+      '<span style="font-size:13px;color:var(--accent);font-weight:700;">Partage actif</span>' +
+      '</div>' +
+      '<button class="btn btn-primary" style="width:100%;margin-bottom:10px;background:linear-gradient(135deg,#ff6b6b,#ff3d3d);" onclick="stopLocation();closeLocModal();">✕ Arrêter le partage maintenant</button>' +
+      '<button class="btn btn-ghost" style="width:100%;" onclick="closeLocModal();">Fermer</button>' +
+      '</div>';
+  }
+  // Partage non actif — affiche le formulaire normal
+  return '<div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">' +
+    '<div style="width:52px;height:52px;border-radius:16px;background:#ff3d6e18;display:flex;align-items:center;justify-content:center;">' +
+    '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
+    '</div>' +
+    '<div><h3 style="font-family:\'Syne\',sans-serif;font-size:18px;font-weight:800;margin-bottom:2px;color:var(--text);">' + t('loc_title') + '</h3>' +
+    '<p style="font-size:12px;color:var(--muted);">' + t('loc_sub') + '</p></div>' +
+    '</div>' +
+    '<div style="background:#00e5b010;border-radius:14px;padding:14px;margin-bottom:20px;border:1px solid #00e5b030;">' +
+    '<p style="font-size:12px;color:var(--teal);line-height:1.7;margin:0;">🛡️ ' + t('loc_safe') + '</p>' +
+    '</div>' +
+    '<div style="height:130px;border-radius:16px;overflow:hidden;margin-bottom:20px;background:linear-gradient(135deg,#0a1a0a,#0d0d1a);position:relative;border:1px solid var(--border);">' +
+    '<div style="position:absolute;inset:0;opacity:.15;background:repeating-linear-gradient(0deg,transparent,transparent 19px,#fff 19px,#fff 20px),repeating-linear-gradient(90deg,transparent,transparent 39px,#fff 39px,#fff 40px);"></div>' +
+    '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;background:#ff3d6e22;border:2px solid #ff3d6e66;animation:ripple 2s ease-out infinite;"></div>' +
+    '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:50%;background:var(--accent);border:3px solid white;box-shadow:0 0 0 4px #ff3d6e44;"></div>' +
+    '<div style="position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,.7);border-radius:8px;padding:4px 10px;font-size:11px;color:var(--muted);">Zone ±500m</div>' +
+    '</div>' +
+    '<p style="font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">' + t('loc_duration') + '</p>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">' +
+    [15,30,60,120].map(function(d) {
+      return '<button onclick="selDur=' + d + ';document.getElementById(\'loc-content\').innerHTML=renderLocContent();" style="padding:14px;border-radius:14px;border:2px solid ' + (selDur===d?'var(--accent)':'var(--border)') + ';background:' + (selDur===d?'#ff3d6e18':'var(--card2)') + ';color:' + (selDur===d?'var(--accent)':'var(--muted)') + ';font-weight:700;font-size:15px;cursor:pointer;">' + (d<60?d+' min':d/60+'h') + '</button>';
+    }).join('') +
+    '</div>' +
+    '<button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="activateLocation()">📍 ' + t('loc_title') + ' · ' + (selDur<60?selDur+' min':selDur/60+'h') + '</button>' +
+    '<button class="btn btn-ghost" style="width:100%;" onclick="closeLocModal()">' + t('loc_cancel') + '</button>';
 }
 
 function activateLocation(){
@@ -4728,25 +4778,43 @@ function renderCardIcebreaker(p) {
 }
 
 function useIcebreaker(question) {
-  // Ouvre le chat avec le message pré-rempli
   var filteredP = getFilteredProfiles();
   if (!filteredP.length) return;
   var p = filteredP[filteredIdx % filteredP.length];
-  // Vérifie s'il y a un match/conv existant
   var conv = CONVS.find(function(c) { return c.name === p.name; });
-  if (!conv) {
-    // Swipe right pour créer le match
+
+  if (conv) {
+    var hasMyMsg = conv.msgs.some(function(m) { return m.from === 'me'; });
+    if (hasMyMsg) {
+      showToast('🧊 La glace a déjà commencé à fondre avec ' + p.name + ' ! Continue sur ta lancée 😊', 'var(--teal)');
+      switchTab('messages');
+      setTimeout(function() { openChat(conv.id); }, 200);
+    } else {
+      switchTab('messages');
+      setTimeout(function() {
+        openChat(conv.id);
+        setTimeout(function() {
+          var inp = document.getElementById('msg-input');
+          if (inp) { inp.value = question; inp.focus(); }
+        }, 300);
+      }, 200);
+    }
+  } else {
+    // Pas de conv — crée le match et ouvre le chat
     swipe('right');
     setTimeout(function() {
-      var inp = document.getElementById('msg-input');
-      if (inp) inp.value = question;
-    }, 1200);
-  } else {
-    openChat(conv.id);
-    setTimeout(function() {
-      var inp = document.getElementById('msg-input');
-      if (inp) inp.value = question;
-    }, 300);
+      var newConv = CONVS.find(function(c) { return c.name === p.name; });
+      if (newConv) {
+        switchTab('messages');
+        setTimeout(function() {
+          openChat(newConv.id);
+          setTimeout(function() {
+            var inp = document.getElementById('msg-input');
+            if (inp) { inp.value = question; inp.focus(); }
+          }, 300);
+        }, 200);
+      }
+    }, 1500);
   }
 }
 
@@ -5204,7 +5272,7 @@ function openBoostModal() {
       </div>`;
     if (btn) { btn.textContent = '⚡ Booster maintenant — Gratuit'; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; btn.onclick = activateBoost; }
   }
-  document.getElementById('boost-modal').classList.add('open');
+  openModal('boost-modal');
 }
 
 function activateBoost() {
@@ -5541,8 +5609,8 @@ function renderObStep() {
       '<div style="margin-bottom:24px;">' +
       '<p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Ta photo de profil <span style="font-weight:400;color:var(--teal);">— recommandée</span></p>' +
       '<div style="display:flex;align-items:center;gap:16px;">' +
-      '<div id="ob-photo-preview" onclick="document.getElementById(\'ob-photo-input\').click()" style="width:80px;height:80px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:32px;border:3px solid var(--border);flex-shrink:0;cursor:pointer;overflow:hidden;position:relative;">' +
-      '<span id="ob-photo-emoji" style="font-size:32px;">📷</span>' +
+      '<div id="ob-photo-preview" onclick="document.getElementById(\'ob-photo-input\').click()" style="width:80px;height:80px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;border:3px solid var(--border);flex-shrink:0;cursor:pointer;overflow:hidden;position:relative;">' +
+      '<span id="ob-photo-emoji" style="font-size:28px;line-height:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%;">📷</span>' +
       '<img id="ob-photo-img" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" draggable="false"/>' +
       '</div>' +
       '<div style="flex:1;">' +
