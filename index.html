@@ -60,7 +60,7 @@
     --glow:    0 8px 32px #ff3d6e40;
   }
   body.dark-mode .screen { background: var(--bg); color: var(--text); }
-  body.dark-mode #s-splash, body.dark-mode #s-pwd { background: linear-gradient(160deg, #1a0f08 0%, #0f0a05 100%); }
+  body.dark-mode #s-splash, body.dark-mode #s-auth { background: linear-gradient(160deg, #1a0f08 0%, #0f0a05 100%); }
   body.dark-mode #s-app, body.dark-mode #s-consent, body.dark-mode #s-verify, body.dark-mode #s-pay { background: var(--bg); }
   body.dark-mode #nav { background: rgba(15,10,8,0.97) !important; border-color: var(--border); }
   body.dark-mode #match-overlay { background: rgba(10,6,3,.97) !important; }
@@ -118,7 +118,7 @@
   /* Empêche le zoom sur tous les inputs */
   input, textarea, select { font-size: 16px !important; touch-action: manipulation; }
   /* Toutes les pages ont la même largeur que Découvrir */
-  .screen > div, #s-pay > div, #s-consent > div, #s-verify > div, #s-onboarding > div, #s-splash > div, #s-pwd > div {
+  .screen > div, #s-pay > div, #s-consent > div, #s-verify > div, #s-onboarding > div, #s-splash > div, #s-auth > div {
     max-width: 430px;
     margin-left: auto;
     margin-right: auto;
@@ -188,7 +188,7 @@
     /* Scroll souris activé dans le simulateur */
     .screen * { scrollbar-width: none; }
     .screen *::-webkit-scrollbar { display: none; }
-    [id^="tab-"], #s-pay > div, #s-consent > div, #s-verify > div, #s-pwd > div {
+    [id^="tab-"], #s-pay > div, #s-consent > div, #s-verify > div, #s-auth > div {
       overflow-y: auto !important;
       -webkit-overflow-scrolling: touch;
     }
@@ -227,7 +227,7 @@
   .screen.hidden { opacity: 0; pointer-events: none; transform: translateX(30px); }
 
   /* Dégradé warm subtil sur les écrans principaux */
-  #s-splash, #s-pwd  { background: linear-gradient(160deg, #fff0eb 0%, #fdf5f0 50%, #fef0f5 100%); }
+  #s-splash, #s-auth  { background: linear-gradient(160deg, #fff0eb 0%, #fdf5f0 50%, #fef0f5 100%); }
   #s-consent, #s-verify { background: linear-gradient(160deg, #fdf5f0 0%, #fff5f0 100%); }
   #s-pay     { background: linear-gradient(160deg, #fef0f5 0%, #fdf5f0 60%, #fff5eb 100%); }
   #s-app     { background: linear-gradient(180deg, #fdf5f0 0%, #fdf8f5 100%); }
@@ -379,7 +379,7 @@
   #consent-proceed:disabled { opacity:.45; cursor:not-allowed; transform:none !important; box-shadow:none !important; }
 
   /* ── PASSWORD SCREEN ── */
-  #s-pwd { background: var(--bg); z-index: 9999; }
+  #s-auth { background: var(--bg); z-index: 9999; }
   #pwd-input-wrap { position:relative; }
   #pwd-input { padding-right:48px; letter-spacing:3px; font-size:18px; font-weight:700; text-align:center; }
   #pwd-toggle { position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--muted); }
@@ -388,71 +388,139 @@
   @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)} }
   .shake { animation:shake .4s ease; }
   @keyframes unlockPop { 0%{transform:scale(1)} 50%{transform:scale(1.2)} 100%{transform:scale(1)} }
+  /* ── AUTH SUPABASE ── */
+  #s-auth .auth-tab-btn { background:none;border:none;padding:10px 16px;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;border-radius:12px; }
+  #s-auth .auth-tab-btn.active { color:var(--accent);background:white;box-shadow:0 2px 8px rgba(255,61,110,0.15); }
+  #s-auth .auth-input-group { position:relative;margin-bottom:16px; }
+  #s-auth .auth-input-group label { display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px; }
+  #s-auth input[type=email],
+  #s-auth input[type=password],
+  #s-auth input[type=text] {
+    background: rgba(255,100,100,0.06);
+    border: none;
+    border-radius: 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    padding: 15px 18px;
+    outline: none;
+    width: 100%;
+    transition: background .2s, box-shadow .2s;
+    box-shadow: inset 0 1px 3px rgba(255,80,80,0.06);
+  }
+  #s-auth input[type=email]:focus,
+  #s-auth input[type=password]:focus,
+  #s-auth input[type=text]:focus {
+    background: rgba(255,61,110,0.09);
+    box-shadow: inset 0 1px 3px rgba(255,80,80,0.08), 0 0 0 2px rgba(255,61,110,0.18);
+  }
+  #s-auth input::placeholder { color: rgba(160,112,96,0.5); }
+  #s-auth .auth-divider { display:flex;align-items:center;gap:12px;margin:20px 0; }
+  #s-auth .auth-divider span { font-size:12px;color:var(--muted);white-space:nowrap; }
+  #s-auth .auth-divider::before, #s-auth .auth-divider::after { content:'';flex:1;height:1px;background:var(--border); }
+  #s-auth .auth-msg { padding:12px 16px;border-radius:14px;font-size:13px;font-weight:600;margin-bottom:16px;display:none; }
+  #s-auth .auth-msg.success { background:#00e5b015;color:#00c896;border:1px solid #00e5b030;display:block; }
+  #s-auth .auth-msg.error   { background:#ff3d6e15;color:var(--accent);border:1px solid #ff3d6e30;display:block; }
+  .auth-spinner { width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:8px; }
 </style>
+<!-- SDK Supabase chargé en tête pour disponibilité immédiate -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 
 <!-- ═══════════════════════════════════════════════════════════
-     SCREEN 0 — MOT DE PASSE (Protection accès démo)
+     SCREEN 0 — AUTHENTIFICATION SUPABASE
 ═══════════════════════════════════════════════════════════ -->
-<div class="screen" id="s-pwd">
+<div class="screen hidden" id="s-auth">
   <div style="width:100%;max-width:430px;margin:0 auto;padding:0 24px;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;">
 
-    <!-- Orbs déco -->
-    <div style="position:absolute;width:280px;height:280px;border-radius:50%;background:radial-gradient(#ff3d6e18,transparent);top:-60px;right:-80px;pointer-events:none;"></div>
-    <div style="position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(#00e5b012,transparent);bottom:80px;left:-60px;pointer-events:none;"></div>
+    <!-- Orbs déco dans l'esprit splash -->
+    <div style="position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(#ff3d6e22,transparent);top:-80px;right:-80px;pointer-events:none;"></div>
+    <div style="position:absolute;width:220px;height:220px;border-radius:50%;background:radial-gradient(#ffb34722,transparent);top:60px;left:-60px;pointer-events:none;"></div>
+    <div style="position:absolute;width:180px;height:180px;border-radius:50%;background:radial-gradient(#00e5b015,transparent);bottom:60px;right:-40px;pointer-events:none;"></div>
 
     <div class="fade-up" style="width:100%;text-align:center;">
 
-      <!-- Logo animé -->
-      <div id="pwd-logo" class="float" style="width:80px;height:80px;border-radius:24px;background:var(--grad);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;box-shadow:var(--glow);">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <!-- Logo -->
+      <div class="float" style="width:80px;height:80px;border-radius:24px;background:var(--grad);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:var(--glow);">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </div>
 
-      <h1 style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;letter-spacing:-1px;margin-bottom:6px;color:var(--text);">Accès protégé</h1>
-      <p style="color:var(--muted);font-size:14px;margin-bottom:36px;line-height:1.6;">Cette démo Elpmis est réservée<br>aux personnes autorisées.</p>
+      <h1 style="font-family:'Syne',sans-serif;font-size:30px;font-weight:800;letter-spacing:-1px;margin-bottom:4px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Elpmis</h1>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:28px;font-style:italic;">À l'envers des autres.</p>
 
-      <!-- Indicateurs de points -->
-      <div id="pwd-dots" style="display:flex;justify-content:center;gap:10px;margin-bottom:28px;">
-        <div class="pwd-dot" id="dot-0"></div>
-        <div class="pwd-dot" id="dot-1"></div>
-        <div class="pwd-dot" id="dot-2"></div>
-        <div class="pwd-dot" id="dot-3"></div>
+      <!-- Onglets -->
+      <!-- Carte formulaire -->
+      <div style="background:rgba(255,255,255,0.85);backdrop-filter:blur(12px);border-radius:28px;padding:24px 20px;box-shadow:0 8px 40px rgba(255,80,80,0.10),0 2px 12px rgba(0,0,0,0.06);margin-top:8px;">
+
+        <!-- Onglets redessinés -->
+        <div style="display:flex;background:rgba(255,100,100,0.07);border-radius:16px;padding:4px;margin-bottom:24px;gap:4px;">
+          <button class="auth-tab-btn active" id="tab-login" onclick="authSwitchTab('login')" style="flex:1;border-radius:12px;transition:all .2s;">Connexion</button>
+          <button class="auth-tab-btn" id="tab-signup" onclick="authSwitchTab('signup')" style="flex:1;border-radius:12px;transition:all .2s;">Créer un compte</button>
+        </div>
+
+        <!-- Message succès/erreur -->
+        <div id="auth-msg" class="auth-msg"></div>
+
+        <!-- ── FORMULAIRE CONNEXION ── -->
+        <div id="form-login">
+          <div class="auth-input-group">
+            <label>Email</label>
+            <input type="email" id="login-email" placeholder="ton@email.com" autocomplete="email" style="width:100%;" onkeydown="if(event.key==='Enter')authLogin()"/>
+          </div>
+          <div class="auth-input-group">
+            <label>Mot de passe</label>
+            <div style="position:relative;">
+              <input type="password" id="login-pwd" placeholder="••••••••" autocomplete="current-password" style="width:100%;padding-right:44px;" onkeydown="if(event.key==='Enter')authLogin()"/>
+              <button onclick="authToggleEye('login-pwd','eye-login')" tabindex="-1" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);">
+                <svg id="eye-login" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <button class="btn btn-ghost" style="font-size:12px;color:var(--muted);padding:0;margin-bottom:20px;text-decoration:underline;" onclick="authForgotPassword()">Mot de passe oublié ?</button>
+          <button class="btn btn-primary" id="btn-login" style="width:100%;font-size:16px;" onclick="authLogin()">Se connecter →</button>
+        </div>
+
+        <!-- ── FORMULAIRE INSCRIPTION ── -->
+        <div id="form-signup" style="display:none;">
+          <div class="auth-input-group">
+            <label>Email</label>
+            <input type="email" id="signup-email" placeholder="ton@email.com" autocomplete="email" style="width:100%;"/>
+          </div>
+          <div class="auth-input-group">
+            <label>Mot de passe</label>
+            <div style="position:relative;">
+              <input type="password" id="signup-pwd" placeholder="Majuscule, chiffre, symbole…" autocomplete="new-password" style="width:100%;padding-right:44px;"/>
+              <button onclick="authToggleEye('signup-pwd','eye-signup')" tabindex="-1" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);">
+                <svg id="eye-signup" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="auth-input-group">
+            <label>Confirmer le mot de passe</label>
+            <input type="password" id="signup-pwd2" placeholder="••••••••" autocomplete="new-password" style="width:100%;" onkeydown="if(event.key==='Enter')authSignup()"/>
+          </div>
+          <!-- Indicateur force mot de passe -->
+          <div id="pwd-strength-bar" style="height:4px;border-radius:4px;background:var(--border);margin-bottom:16px;overflow:hidden;">
+          <div id="pwd-strength-fill" style="height:100%;width:0;border-radius:4px;transition:all .3s;background:var(--accent);"></div>
+        </div>
+        <p id="pwd-strength-label" style="font-size:11px;color:var(--muted);text-align:left;margin-bottom:16px;"></p>
+        <!-- Consentement RGPD -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:16px;text-align:left;">
+          <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:var(--text);">
+            <input type="checkbox" id="signup-cgu" style="margin-top:2px;accent-color:var(--accent);"/>
+            <span>J'accepte les <button onclick="openModal('cgu-modal')" style="background:none;border:none;color:var(--accent);text-decoration:underline;cursor:pointer;font-size:13px;padding:0;">CGU</button> et la <button onclick="openModal('privacy-modal')" style="background:none;border:none;color:var(--accent);text-decoration:underline;cursor:pointer;font-size:13px;padding:0;">Politique de confidentialité</button> d'Elpmis. Je confirme avoir 18 ans ou plus.</span>
+          </label>
+        </div>
+        <button class="btn btn-primary" id="btn-signup" style="width:100%;font-size:16px;" onclick="authSignup()">Créer mon compte →</button>
       </div>
 
-      <!-- Champ mot de passe -->
-      <div id="pwd-input-wrap" style="margin-bottom:16px;">
-        <input
-          type="password"
-          id="pwd-input"
-          placeholder="Mot de passe"
-          maxlength="20"
-          autocomplete="off"
-          style="width:100%;"
-          oninput="onPwdInput(this)"
-          onkeydown="if(event.key==='Enter')checkPassword()"
-        />
-        <button id="pwd-toggle" onclick="togglePwdVisibility()" tabindex="-1">
-          <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-        </button>
-      </div>
+      </div><!-- fin carte blanche -->
 
-      <!-- Message d'erreur -->
-      <p id="pwd-error" style="color:var(--accent);font-size:13px;font-weight:600;min-height:20px;margin-bottom:16px;opacity:0;transition:opacity .2s;"></p>
-
-      <!-- Bouton -->
-      <button class="btn btn-primary" style="width:100%;font-size:16px;" onclick="checkPassword()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        Accéder à la démo
-      </button>
-
-      <!-- Tentatives restantes -->
-      <p id="pwd-attempts" style="color:var(--muted);font-size:12px;margin-top:16px;min-height:18px;"></p>
-
-      <!-- Badge démo -->
-      <div style="margin-top:40px;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--card);border:1px solid var(--border);border-radius:20px;">
-        <div style="width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite;"></div>
-        <span style="font-size:11px;color:var(--muted);font-weight:600;">Prototype confidentiel · Elpmis 2026</span>
+      <!-- Badge sécurité sous la carte -->
+      <div style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;margin-top:16px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span style="font-size:11px;color:var(--muted);font-weight:600;">Vérification d'identité · Données chiffrées · RGPD</span>
       </div>
 
     </div>
@@ -462,7 +530,7 @@
 <!-- ═══════════════════════════════════════════════════════════
      SCREEN 1 — SPLASH
 ═══════════════════════════════════════════════════════════ -->
-<div class="screen hidden" id="s-splash">
+<div class="screen" id="s-splash">
   <div id="shell" style="justify-content:center;padding:32px 24px;min-height:100vh;position:relative;overflow:hidden;">
     <!-- Orbs -->
     <div style="position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(#ff7043,transparent,transparent);top:-80px;right:-80px;pointer-events:none;"></div>
@@ -494,7 +562,7 @@
         </div>
       </div>
 
-      <button id="splash-cta" class="btn btn-primary" style="width:100%;font-size:17px;" onclick="goto('s-consent')">Commencer →</button>
+      <button id="splash-cta" class="btn btn-primary" style="width:100%;font-size:17px;" onclick="goto('s-auth')">Commencer →</button>
       <p id="splash-legal" style="color:var(--muted);font-size:11px;margin-top:14px;">CGU · Politique de confidentialité · RGPD</p>
     </div>
   </div>
@@ -6417,138 +6485,210 @@ function buildLangPicker() {
 }
 
 // ════════════════════════════════════════════════════════════
-// 🔐 PROTECTION MOT DE PASSE
+// ════════════════════════════════════════════════════════════
+// 🔐 AUTHENTIFICATION SUPABASE
 // ════════════════════════════════════════════════════════════
 
-// ⚙️ CONFIGURATION — Change le mot de passe ici
-const DEMO_PASSWORD = atob('U2FmZU1hdGNoMjAyNkxDTC4r');
-const MAX_ATTEMPTS  = 5;
+const SUPABASE_URL = 'https://vuhjxxloenlmojxoxlyl.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_d64L6U5HNLZkhGRfhS0zhQ_cyCNV5F0';
 
-let pwdAttempts = 0;
-let pwdLocked   = false;
-let lockTimer   = null;
+let elpmisClient = null;
+let currentUser = null;
 
-function onPwdInput(inp) {
-  // Mise à jour des points visuels
-  const len = inp.value.length;
-  for (let i = 0; i < 4; i++) {
-    const dot = document.getElementById('dot-' + i);
-    if (dot) dot.classList.toggle('filled', i < Math.min(len, 4));
+function initSupabase() {
+  try {
+    elpmisClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  } catch(e) {
+    console.warn('Supabase init error:', e);
   }
-  // Efface l'erreur dès que l'utilisateur retape
-  const err = document.getElementById('pwd-error');
-  if (err) { err.style.opacity = '0'; }
 }
 
-function togglePwdVisibility() {
-  const inp  = document.getElementById('pwd-input');
-  const icon = document.getElementById('eye-icon');
+// ── Utilitaires UI ──
+function authShowMsg(msg, type) {
+  const el = document.getElementById('auth-msg');
+  if (!el) return;
+  el.className = 'auth-msg ' + type;
+  el.textContent = msg;
+  setTimeout(() => { el.className = 'auth-msg'; }, 6000);
+}
+
+function authSetLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+  if (loading) {
+    btn.disabled = true;
+    btn.innerHTML = '<span class="auth-spinner"></span>Chargement…';
+  } else {
+    btn.disabled = false;
+    if (btnId === 'btn-login')  btn.innerHTML = 'Se connecter →';
+    if (btnId === 'btn-signup') btn.innerHTML = 'Créer mon compte →';
+  }
+}
+
+function authToggleEye(inputId, iconId) {
+  const inp  = document.getElementById(inputId);
+  const icon = document.getElementById(iconId);
+  if (!inp) return;
   if (inp.type === 'password') {
     inp.type = 'text';
-    inp.style.letterSpacing = '1px';
-    icon.innerHTML = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`;
+    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
   } else {
     inp.type = 'password';
-    inp.style.letterSpacing = '3px';
-    icon.innerHTML = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+    icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
   }
 }
 
-function showPwdError(msg) {
-  const err  = document.getElementById('pwd-error');
-  const wrap = document.getElementById('pwd-input-wrap');
-  if (err)  { err.textContent = msg; err.style.opacity = '1'; }
-  if (wrap) { wrap.classList.add('shake'); setTimeout(() => wrap.classList.remove('shake'), 400); }
-  // Reset dots
-  for (let i = 0; i < 4; i++) {
-    const dot = document.getElementById('dot-' + i);
-    if (dot) { dot.classList.remove('filled'); dot.style.background = '#ff3d6e'; }
-    setTimeout(() => { if (dot) dot.style.background = ''; }, 600);
-  }
-  // Clear input
-  const inp = document.getElementById('pwd-input');
-  if (inp) { inp.value = ''; inp.focus(); }
+function authSwitchTab(tab) {
+  document.getElementById('form-login').style.display  = tab === 'login'  ? '' : 'none';
+  document.getElementById('form-signup').style.display = tab === 'signup' ? '' : 'none';
+  document.getElementById('tab-login').classList.toggle('active',  tab === 'login');
+  document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+  const el = document.getElementById('auth-msg');
+  if (el) el.className = 'auth-msg';
 }
 
-function checkPassword() {
-  if (pwdLocked) return;
+// ── Force du mot de passe ──
+function checkPwdStrength(pwd) {
+  const fill  = document.getElementById('pwd-strength-fill');
+  const label = document.getElementById('pwd-strength-label');
+  if (!fill || !label) return;
+  let score = 0;
+  if (pwd.length >= 8)  score++;
+  if (/[A-Z]/.test(pwd)) score++;
+  if (/[0-9]/.test(pwd)) score++;
+  if (/[^A-Za-z0-9]/.test(pwd)) score++;
+  const levels = [
+    { pct:'0%',   color:'var(--border)', txt:'' },
+    { pct:'25%',  color:'#ff3d6e',       txt:'Trop faible' },
+    { pct:'50%',  color:'#ff9800',       txt:'Moyen' },
+    { pct:'75%',  color:'#ffeb3b',       txt:'Bon' },
+    { pct:'100%', color:'#00e5b0',       txt:'Excellent ✓' },
+  ];
+  const lv = levels[score];
+  fill.style.width    = lv.pct;
+  fill.style.background = lv.color;
+  label.textContent   = lv.txt;
+  label.style.color   = lv.color;
+}
 
-  const inp = document.getElementById('pwd-input');
-  const val = inp ? inp.value.trim() : '';
+// ── Connexion ──
+async function authLogin() {
+  if (!elpmisClient) { authShowMsg('Connexion au serveur impossible. Réessaie.', 'error'); return; }
+  const email = (document.getElementById('login-email')?.value || '').trim();
+  const pwd   = (document.getElementById('login-pwd')?.value   || '').trim();
+  if (!email || !pwd) { authShowMsg('Remplis tous les champs.', 'error'); return; }
+  authSetLoading('btn-login', true);
+  try {
+    const { data, error } = await elpmisClient.auth.signInWithPassword({ email, password: pwd });
+    if (error) throw error;
+    currentUser = data.user;
+    authOnSuccess();
+  } catch(e) {
+    const msg = e.message?.includes('Invalid login') ? 'Email ou mot de passe incorrect.' :
+                e.message?.includes('Email not confirmed') ? 'Confirme ton email avant de te connecter.' :
+                e.message || 'Une erreur est survenue.';
+    authShowMsg(msg, 'error');
+    authSetLoading('btn-login', false);
+  }
+}
 
-  if (!val) {
-    showPwdError('Saisis le mot de passe.');
+// ── Inscription ──
+async function authSignup() {
+  if (!elpmisClient) { authShowMsg('Connexion au serveur impossible. Réessaie.', 'error'); return; }
+  const email = (document.getElementById('signup-email')?.value || '').trim();
+  const pwd   = (document.getElementById('signup-pwd')?.value  || '').trim();
+  const pwd2  = (document.getElementById('signup-pwd2')?.value || '').trim();
+  const cgu   = document.getElementById('signup-cgu')?.checked;
+  if (!email || !pwd || !pwd2) { authShowMsg('Remplis tous les champs.', 'error'); return; }
+  if (pwd !== pwd2)             { authShowMsg('Les mots de passe ne correspondent pas.', 'error'); return; }
+  if (!cgu)                     { authShowMsg('Accepte les CGU pour continuer.', 'error'); return; }
+  // Validation force mdp
+  const hasUpper  = /[A-Z]/.test(pwd);
+  const hasDigit  = /[0-9]/.test(pwd);
+  const hasSymbol = /[^A-Za-z0-9]/.test(pwd);
+  if (pwd.length < 8 || !hasUpper || !hasDigit || !hasSymbol) {
+    authShowMsg('Mot de passe trop faible. Min. 8 caractères, 1 majuscule, 1 chiffre, 1 symbole.', 'error');
     return;
   }
-
-  if (val === DEMO_PASSWORD) {
-    // ✅ Succès
-    const logo = document.getElementById('pwd-logo');
-    if (logo) logo.style.animation = 'unlockPop .4s ease, float 4s ease-in-out infinite';
-
-    // Enregistre l'accès en session
-    try { sessionStorage.setItem('sm_auth', '1'); } catch(e) {}
-
-    setTimeout(() => {
-      document.getElementById('s-pwd').classList.add('hidden');
-      document.getElementById('s-splash').classList.remove('hidden');
-    }, 500);
-
-  } else {
-    // ❌ Échec
-    pwdAttempts++;
-    const remaining = MAX_ATTEMPTS - pwdAttempts;
-    const attemptsEl = document.getElementById('pwd-attempts');
-
-    if (pwdAttempts >= MAX_ATTEMPTS) {
-      // Blocage temporaire 60 secondes
-      pwdLocked = true;
-      const inp2 = document.getElementById('pwd-input');
-      if (inp2) { inp2.disabled = true; }
-      showPwdError('Trop de tentatives. Réessaie dans 60 secondes.');
-      if (attemptsEl) attemptsEl.textContent = '⏳ Accès temporairement bloqué';
-
-      let countdown = 60;
-      lockTimer = setInterval(() => {
-        countdown--;
-        if (attemptsEl) attemptsEl.textContent = `⏳ Réessaie dans ${countdown}s`;
-        if (countdown <= 0) {
-          clearInterval(lockTimer);
-          pwdLocked   = false;
-          pwdAttempts = 0;
-          if (inp2) { inp2.disabled = false; inp2.focus(); }
-          if (attemptsEl) attemptsEl.textContent = '';
-          const err = document.getElementById('pwd-error');
-          if (err) err.style.opacity = '0';
-        }
-      }, 1000);
-    } else {
-      showPwdError('Mot de passe incorrect.');
-      if (attemptsEl) {
-        attemptsEl.textContent = remaining > 0
-          ? `⚠️ ${remaining} tentative${remaining > 1 ? 's' : ''} restante${remaining > 1 ? 's' : ''}`
-          : '';
-      }
-    }
+  authSetLoading('btn-signup', true);
+  try {
+    const { data, error } = await elpmisClient.auth.signUp({
+      email,
+      password: pwd,
+      options: { emailRedirectTo: 'https://elpmis.app' }
+    });
+    if (error) throw error;
+    authShowMsg('🎉 Compte créé ! Vérifie ta boîte email pour confirmer ton adresse.', 'success');
+    authSwitchTab('login');
+  } catch(e) {
+    const msg = e.message?.includes('already registered') ? 'Cet email est déjà utilisé.' :
+                e.message || 'Une erreur est survenue.';
+    authShowMsg(msg, 'error');
+  } finally {
+    authSetLoading('btn-signup', false);
   }
 }
+
+// ── Mot de passe oublié ──
+async function authForgotPassword() {
+  if (!elpmisClient) return;
+  const email = (document.getElementById('login-email')?.value || '').trim();
+  if (!email) { authShowMsg('Entre ton email pour réinitialiser ton mot de passe.', 'error'); return; }
+  try {
+    const { error } = await elpmisClient.auth.resetPasswordForEmail(email, {
+      redirectTo: 'https://elpmis.app'
+    });
+    if (error) throw error;
+    authShowMsg('📧 Email envoyé ! Vérifie ta boîte mail.', 'success');
+  } catch(e) {
+    authShowMsg(e.message || 'Erreur lors de l\'envoi.', 'error');
+  }
+}
+
+// ── Succès auth → entrée dans l'app ──
+function authOnSuccess() {
+  // Après connexion/inscription → consentements RGPD
+  goto('s-consent');
+}
+
+// ── Vérification session au chargement ──
+async function checkAuthSession() {
+  if (!elpmisClient) return; // Pas de Supabase → on reste sur le splash
+  try {
+    const { data: { session } } = await elpmisClient.auth.getSession();
+    if (session?.user) {
+      currentUser = session.user;
+      // Déjà connecté → on saute le splash et l'auth, on va directement dans l'app
+      document.getElementById('s-splash').classList.add('hidden');
+      goto('s-app');
+      initApp();
+    }
+    // Sinon → on reste sur le splash, l'utilisateur clique "Commencer"
+  } catch(e) {
+    // Erreur réseau → on reste sur le splash normalement
+  }
+}
+
+function showAuthScreen() {
+  goto('s-auth');
+}
+
+// Listener force mdp en temps réel
+document.addEventListener('DOMContentLoaded', function() {
+  const pwdInp = document.getElementById('signup-pwd');
+  if (pwdInp) pwdInp.addEventListener('input', () => checkPwdStrength(pwdInp.value));
+});
 
 // ── INIT on page load
 window.addEventListener('DOMContentLoaded', function() {
 
-  // Si déjà authentifié dans cette session, sauter l'écran mot de passe
-  try {
-    if (sessionStorage.getItem('sm_auth') === '1') {
-      document.getElementById('s-pwd').classList.add('hidden');
-      document.getElementById('s-splash').classList.remove('hidden');
-    }
-  } catch(e) {}
+  // Init Supabase et vérification de session
+  initSupabase();
+  checkAuthSession();
 
-  // Focus auto sur le champ mot de passe
-  const pwdInp = document.getElementById('pwd-input');
-  if (pwdInp && !document.getElementById('s-pwd').classList.contains('hidden')) {
-    setTimeout(() => pwdInp.focus(), 300);
-  }
+  // Listener force mdp
+  const pwdInp = document.getElementById('signup-pwd');
+  if (pwdInp) pwdInp.addEventListener('input', () => checkPwdStrength(pwdInp.value));
   // Fermeture des modales au clic en dehors
   ['loc-modal','filters-modal','doc-modal','report-modal','block-modal','visitors-modal','profile-sheet','edit-profile-modal','stat-modal','safety-modal','likes-modal','boost-modal','cgu-modal','privacy-modal'].forEach(id => {
     const el = document.getElementById(id);
