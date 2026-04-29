@@ -1592,7 +1592,7 @@
         </div>
       </div>
 
-      <button id="prof-logout" class="btn btn-ghost" style="width:100%;color:var(--accent);border-color:#ff3d6e44;">Se déconnecter</button>
+      <button id="prof-logout" class="btn btn-ghost" style="width:100%;color:var(--accent);border-color:#ff3d6e44;" onclick="authLogout()">Se déconnecter</button>
     </div>
   </div>
 
@@ -6629,7 +6629,18 @@ async function authSignup() {
   }
 }
 
-// ── Écran de confirmation email post-inscription ──
+// ── Déconnexion ──
+async function authLogout() {
+  try {
+    if (elpmisClient) await elpmisClient.auth.signOut();
+  } catch(e) {
+    console.warn('Logout error:', e);
+  } finally {
+    currentUser = null;
+    // Retour au splash
+    goto('s-splash');
+  }
+}
 function showEmailConfirmScreen(email) {
   const card = document.querySelector('#s-auth .fade-up');
   if (!card) return;
