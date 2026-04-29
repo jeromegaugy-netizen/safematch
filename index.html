@@ -6631,14 +6631,17 @@ async function authSignup() {
 
 // ── Déconnexion ──
 async function authLogout() {
+  // Confirmation avant de déconnecter
+  if (!confirm('Tu vas être déconnecté(e) de ton compte Elpmis. Confirmes-tu ?')) return;
   try {
     if (elpmisClient) await elpmisClient.auth.signOut();
   } catch(e) {
     console.warn('Logout error:', e);
   } finally {
     currentUser = null;
-    // Retour au splash
-    goto('s-splash');
+    // Recharge la page complètement — c'est la façon la plus propre
+    // pour réinitialiser tous les états et forcer le retour au splash
+    window.location.reload();
   }
 }
 function showEmailConfirmScreen(email) {
