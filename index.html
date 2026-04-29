@@ -6618,14 +6618,61 @@ async function authSignup() {
       options: { emailRedirectTo: 'https://elpmis.app' }
     });
     if (error) throw error;
-    authShowMsg('🎉 Compte créé ! Vérifie ta boîte email pour confirmer ton adresse.', 'success');
-    authSwitchTab('login');
+    // ✅ Succès — afficher l'écran de confirmation email
+    showEmailConfirmScreen(email);
   } catch(e) {
     const msg = e.message?.includes('already registered') ? 'Cet email est déjà utilisé.' :
                 e.message || 'Une erreur est survenue.';
     authShowMsg(msg, 'error');
   } finally {
     authSetLoading('btn-signup', false);
+  }
+}
+
+// ── Écran de confirmation email post-inscription ──
+function showEmailConfirmScreen(email) {
+  const card = document.querySelector('#s-auth .fade-up');
+  if (!card) return;
+  card.innerHTML = `
+    <div class="float" style="width:80px;height:80px;border-radius:24px;background:var(--grad);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:var(--glow);">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+    </div>
+    <h1 style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;letter-spacing:-1px;margin-bottom:8px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Vérifie ta boîte mail !</h1>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:8px;font-style:italic;">À l'envers des autres.</p>
+    <div style="background:rgba(255,255,255,0.85);backdrop-filter:blur(12px);border-radius:28px;padding:28px 20px;box-shadow:0 8px 40px rgba(255,80,80,0.10);margin-top:16px;text-align:left;">
+      <div style="text-align:center;font-size:48px;margin-bottom:16px;">📧</div>
+      <p style="color:var(--text);font-size:15px;line-height:1.7;margin-bottom:8px;text-align:center;">
+        Un email de confirmation a été envoyé à<br>
+        <strong style="color:var(--accent);">${email}</strong>
+      </p>
+      <p style="color:var(--muted);font-size:13px;line-height:1.6;text-align:center;margin-bottom:24px;">
+        Clique sur le lien dans l'email pour activer ton compte, puis reviens ici pour te connecter.
+      </p>
+      <button class="btn btn-primary" style="width:100%;font-size:16px;" onclick="showLoginOnly()">
+        J'ai confirmé mon email →
+      </button>
+      <p style="color:var(--muted);font-size:12px;text-align:center;margin-top:12px;">
+        Tu n'as pas reçu l'email ? Vérifie tes spams ou 
+        <button onclick="authResendConfirmation('${email}')" style="background:none;border:none;color:var(--accent);text-decoration:underline;cursor:pointer;font-size:12px;padding:0;">renvoie-le</button>
+      </p>
+    </div>
+  `;
+}
+
+// ── Afficher uniquement l'onglet connexion (après confirmation) ──
+function showLoginOnly() {
+  // Recharge l'écran auth complet en mode connexion uniquement
+  location.reload();
+}
+
+// ── Renvoyer l'email de confirmation ──
+async function authResendConfirmation(email) {
+  if (!elpmisClient || !email) return;
+  try {
+    await elpmisClient.auth.resend({ type: 'signup', email });
+    alert('Email renvoyé ! Vérifie ta boîte mail 📧');
+  } catch(e) {
+    alert('Erreur lors du renvoi. Réessaie dans quelques minutes.');
   }
 }
 
@@ -6653,19 +6700,36 @@ function authOnSuccess() {
 
 // ── Vérification session au chargement ──
 async function checkAuthSession() {
-  if (!elpmisClient) return; // Pas de Supabase → on reste sur le splash
+  if (!elpmisClient) return;
   try {
+    // Cas 1 — retour depuis le lien de confirmation email (hash dans l'URL)
+    const hash = window.location.hash;
+    if (hash && hash.includes('access_token')) {
+      // Supabase gère automatiquement le token — on attend la session
+      const { data: { session } } = await elpmisClient.auth.getSession();
+      if (session?.user) {
+        currentUser = session.user;
+        // Nettoyer l'URL
+        window.history.replaceState(null, '', window.location.pathname);
+        // Afficher l'écran connexion seul avec message succès
+        document.getElementById('s-splash').classList.add('hidden');
+        document.getElementById('s-auth').classList.remove('hidden');
+        authSwitchTab('login');
+        authShowMsg('✅ Email confirmé ! Tu peux maintenant te connecter.', 'success');
+        return;
+      }
+    }
+    // Cas 2 — session déjà active (utilisateur déjà connecté)
     const { data: { session } } = await elpmisClient.auth.getSession();
     if (session?.user) {
       currentUser = session.user;
-      // Déjà connecté → on saute le splash et l'auth, on va directement dans l'app
       document.getElementById('s-splash').classList.add('hidden');
       goto('s-app');
       initApp();
     }
-    // Sinon → on reste sur le splash, l'utilisateur clique "Commencer"
+    // Cas 3 — pas de session → on reste sur le splash
   } catch(e) {
-    // Erreur réseau → on reste sur le splash normalement
+    // Erreur réseau → splash normal
   }
 }
 
