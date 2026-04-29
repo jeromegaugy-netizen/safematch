@@ -1262,12 +1262,6 @@
         <span style="font-size:12px;color:#ff6b6b;font-weight:700;flex:1;">Tu as bloqué ce profil — la conversation est archivée</span>
         <button onclick="unblockUser(currentConv.id)" style="background:none;border:1px solid #ff6b6b44;border-radius:8px;color:#ff6b6b;cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;white-space:nowrap;">Débloquer</button>
       </div>
-      <!-- Location active banner -->
-      <div id="loc-banner" style="display:none;margin:8px 16px 0;padding:7px 14px;background:#ff3d6e18;border-radius:10px;border:1px solid #ff3d6e33;align-items:center;gap:8px;">
-        <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.5s infinite;flex-shrink:0;"></div>
-        <span id="loc-active-txt" style="font-size:11px;color:var(--accent);font-weight:700;flex:1;">📍 Position partagée en cours</span>
-        <button id="loc-stop-btn" onclick="stopLocation()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:11px;font-weight:800;">✕ Arrêter</button>
-      </div>
       <!-- Messages + bannière E2E incluse dans la zone scrollable -->
       <div id="chat-messages" style="position:absolute;top:62px;bottom:130px;left:0;right:0;overflow-y:auto;padding:8px 16px 4px;display:flex;flex-direction:column;gap:10px;">
         <div id="chat-e2e-banner" style="margin:0 0 4px;padding:7px 14px;background:#00e5b010;border-radius:10px;display:flex;align-items:center;gap:8px;flex-shrink:0;">
@@ -1295,7 +1289,19 @@
         </div>
       </div>
       <!-- Input bar — toujours visible en bas -->
-      <div style="position:absolute;bottom:0;left:0;right:0;z-index:10;padding:10px 16px;padding-bottom:max(16px,env(safe-area-inset-bottom));border-top:1px solid var(--border);background:var(--bg);">
+      <div style="position:absolute;bottom:0;left:0;right:0;z-index:10;background:var(--bg);">
+        <!-- Bannière position active -->
+        <div id="loc-banner" style="display:none;padding:8px 16px 0;">
+          <div style="padding:8px 14px;background:linear-gradient(135deg,#ff3d6e18,#ff704318);border-radius:12px;border:1.5px solid #ff3d6e44;display:flex;align-items:center;gap:10px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.5s infinite;flex-shrink:0;"></div>
+            <div style="flex:1;min-width:0;">
+              <span style="font-size:12px;font-weight:800;color:var(--accent);">📍 </span>
+              <span id="loc-active-txt" style="font-size:12px;color:var(--accent);font-weight:700;">Position partagée</span>
+            </div>
+            <button onclick="stopLocationFromChat()" style="padding:5px 12px;background:#ff3d6e22;border:1px solid #ff3d6e55;border-radius:8px;color:var(--accent);cursor:pointer;font-size:11px;font-weight:800;font-family:'DM Sans',sans-serif;white-space:nowrap;">✕ Arrêter</button>
+          </div>
+        </div>
+        <div style="padding:10px 16px;padding-bottom:max(16px,env(safe-area-inset-bottom));border-top:1px solid var(--border);">
         <div id="chat-loc-btn-wrap" style="display:none;"></div>
         <!-- SafeGuard quick suggestions -->
         <div id="sg-suggestions" style="display:none;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
@@ -1334,7 +1340,8 @@
             <button onclick="sendDemoPhoto('food');closePhotoMenu();" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">🍕 Food</button>
             <button onclick="sendDemoPhoto('sport');closePhotoMenu();" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">🏄 Sport</button>
           </div>
-      </div>
+        </div><!-- fin padding input -->
+      </div><!-- fin wrapper input+bannière -->
     </div>
   </div>
 
@@ -3674,19 +3681,25 @@ function renderMsgs(){
     }
 
     // Location message
-    if(m.type==='location') return `
-      <div style="display:flex;justify-content:flex-end;">
-        <div style="max-width:78%;border-radius:16px;overflow:hidden;border:1.5px solid #ff3d6e55;background:#ff3d6e12;">
-          <div style="height:70px;background:linear-gradient(135deg,#0d0d1a,#1a0d0d);position:relative;overflow:hidden;">
-            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:#ff3d6e22;border:1.5px solid #ff3d6e66;"></div>
-            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid white;"></div>
-          </div>
-          <div style="padding:10px 14px;">
-            <p style="margin:0;font-size:13px;font-weight:700;color:var(--accent);">📍 Partager ma position</p>
-            <p style="margin:2px 0 0;font-size:11px;color:var(--muted);">${m.text}</p>
-          </div>
-        </div>
-      </div>`;
+    // Message système (arrêt position, etc.)
+    if (m.from === 'system') {
+      return '<div style="display:flex;justify-content:center;padding:4px 0;">' +
+        '<span style="font-size:11px;color:var(--muted);background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-weight:600;">' + m.text + '</span>' +
+        '</div>';
+    }
+
+    if(m.type==='location') return (
+      '<div style="display:flex;justify-content:flex-end;">' +
+      '<div style="max-width:78%;border-radius:16px;overflow:hidden;border:1.5px solid #ff3d6e55;background:#ff3d6e12;">' +
+      '<div style="height:70px;background:linear-gradient(135deg,#0d0d1a,#1a0d0d);position:relative;overflow:hidden;">' +
+      '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:#ff3d6e22;border:1.5px solid #ff3d6e66;"></div>' +
+      '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid white;"></div>' +
+      '</div>' +
+      '<div style="padding:10px 14px;">' +
+      '<p style="margin:0;font-size:13px;font-weight:700;color:var(--accent);">📍 Partager ma position</p>' +
+      '<p style="margin:2px 0 0;font-size:11px;color:var(--muted);">' + m.text + '</p>' +
+      '</div></div></div>'
+    );
 
     // Assistant message (SafeGuard) — style spécial avec avatar
     if(m.isAssistant && m.from==='them') {
@@ -4199,6 +4212,12 @@ function openLocationModal(){
   openModal('loc-modal');
 }
 
+function closeLocModal() {
+  document.getElementById('loc-modal').classList.remove('open');
+}
+
+var selDur = 30;
+
 function renderLocContent(){
   // Si position déjà active — affiche option arrêter
   if (locActive) {
@@ -4242,22 +4261,45 @@ function renderLocContent(){
 }
 
 function activateLocation(){
-  locActive=true;
+  if (locActive) { closeLocModal(); return; } // déjà actif — évite le double
+  locActive = true;
   closeLocModal();
-  if(currentConv){
-    const now=new Date();
-    const t=now.getHours()+':'+(now.getMinutes()+'').padStart(2,'0');
-    currentConv.msgs.push({from:'me',type:'location',text:`Zone partagée · ${selDur<60?selDur+' min':selDur/60+'h'}`,time:t});
+  if (currentConv) {
+    const now = new Date();
+    const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
+    const durLabel = selDur < 60 ? selDur + ' min' : selDur/60 + 'h';
+    currentConv.msgs.push({ id:'msg-'+Date.now(), from:'me', type:'location', text:'Zone partagée · ' + durLabel, time });
     renderMsgs();
-    document.getElementById('loc-banner').style.display='flex';
+    // Met à jour la bannière avec la durée
+    const banner = document.getElementById('loc-banner');
+    const txt    = document.getElementById('loc-active-txt');
+    if (banner) banner.style.display = 'flex';
+    if (txt) txt.textContent = 'Partagé pour ' + durLabel + ' · Ta zone ±500m';
   }
-  // auto-stop after duration
-  setTimeout(()=>stopLocation(), selDur*60*1000);
+  // Auto-stop après la durée
+  setTimeout(function() { stopLocation(); }, selDur * 60 * 1000);
 }
 
 function stopLocation(){
-  locActive=false;
-  document.getElementById('loc-banner').style.display='none';
+  locActive = false;
+  const banner = document.getElementById('loc-banner');
+  if (banner) banner.style.display = 'none';
+}
+
+function stopLocationFromChat(){
+  // Ajoute un message système dans le chat
+  if (currentConv) {
+    const now = new Date();
+    const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
+    currentConv.msgs.push({
+      id: 'msg-' + Date.now(),
+      from: 'system',
+      text: '📍 Partage de position arrêté',
+      time
+    });
+    renderMsgs();
+  }
+  stopLocation();
 }
 
 // ════════════════════════════════════════════════════════════
