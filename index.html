@@ -152,7 +152,7 @@
     .screen { position: fixed; inset: 0; overflow: hidden; }
     #s-pay, #s-consent, #s-verify { overflow-y: auto !important; }
     #s-pay > div, #s-consent > div, #s-verify > div { min-height: 100%; }
-    #nav { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+    #nav { padding-bottom: max(8px, env(safe-area-inset-bottom)); }
   }
 
   @media (min-width: 481px) {
@@ -266,7 +266,7 @@
 
   /* ── BOTTOM NAV ── */
   #nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: rgba(253,245,240,0.96); backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; align-items: stretch; z-index: 100; }
-  .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; background: none; border: none; cursor: pointer; padding: 10px 4px 20px; color: var(--muted); font-size: 10px; font-family: 'DM Sans', sans-serif; font-weight: 600; transition: color .2s; position: relative; }
+  .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: none; border: none; cursor: pointer; padding: 6px 4px 8px; color: var(--muted); font-size: 9px; font-family: 'DM Sans', sans-serif; font-weight: 600; transition: color .2s; position: relative; }
   .nav-btn.active { color: var(--accent); }
   .nav-btn svg { transition: transform .2s; flex-shrink: 0; }
   .nav-btn.active svg { transform: scale(1.15); }
@@ -2294,6 +2294,9 @@ function updateVProgress(){
 let cardIdx=0, likeCount=0, locActive=false, currentConv=null;
 
 function initApp(){
+  // Charge le profil sauvegardé
+  loadProfileFromStorage();
+
   // Normalise les orientations des profils (texte → clé)
   const orientMap = {'Straight':'hetero','Gay':'gay','Lesbienne':'lesbienne','Bi':'bi','Pansexuel·le':'pan','Asexuel·le':'ace','Lesbiana':'lesbienne','Bisexual':'bi'};
   PROFILES.forEach(p => { if (orientMap[p.orient]) p.orient = orientMap[p.orient]; });
@@ -2305,6 +2308,8 @@ function initApp(){
   renderConvList();
   renderSafetyMenu();
   updateUnreadBadge();
+  // Affiche les infos du profil sauvegardé
+  saveObData();
 }
 
 // ════════════════════════════════════════════════════════════
@@ -2537,6 +2542,23 @@ function openMatchChat(){
 // ════════════════════════════════════════════════════════════
 
 // État du profil utilisateur
+// ── Chargement du profil depuis localStorage ──
+function loadProfileFromStorage() {
+  try {
+    const saved = localStorage.getItem('elpmis_profile');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      Object.assign(MY_PROFILE, parsed);
+    }
+  } catch(e) { console.warn('Profil localStorage:', e); }
+}
+
+function saveProfileToStorage() {
+  try {
+    localStorage.setItem('elpmis_profile', JSON.stringify(MY_PROFILE));
+  } catch(e) { console.warn('Sauvegarde profil:', e); }
+}
+
 const MY_PROFILE = {
   avatar: '🙂',
   name: 'Moi',
@@ -2545,7 +2567,8 @@ const MY_PROFILE = {
   bio: '',
   tags: [],
   orient: 'hetero',
-  searchType: -1, // index du type de recherche
+  searchType: -1,
+  photo: null,
 };
 
 const AVATARS = ['🙂','😊','😎','🥰','🤩','🧑','👩','👨','🧔','👱','🎤','🦰','🦱','🦳','🦲'];
@@ -2739,6 +2762,9 @@ function saveProfile() {
   ).join('');
 
   closeEditProfile();
+
+  // Sauvegarde dans localStorage
+  saveProfileToStorage();
 
   // Confirmation visuelle
   const btn = document.querySelector('#tab-profile .btn-primary') || document.querySelector('#tab-profile button');
@@ -4992,15 +5018,15 @@ function copyReferralCode() {
 }
 
 function shareReferral() {
-  var text = 'Rejoins-moi sur Elpmis \u2014 \u00c0 l\u2019envers des autres. ! Utilise mon code ' + myReferralCode + ' pour 1 mois offert 🎁';
+  var text = 'Rejoins-moi sur Elpmis — À l\'envers des autres. 🍑\nUtilise mon code ' + myReferralCode + ' pour 1 mois offert 🎁\n👉 https://elpmis.app';
   if (navigator.share) {
-    navigator.share({ title: 'Elpmis', text: text }).catch(function() {});
+    navigator.share({ title: 'Elpmis', text: text, url: 'https://elpmis.app' }).catch(function() {});
   } else if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(function() {
       showToast('✅ Message copié — partage-le !', 'var(--teal)');
     });
   } else {
-    showToast('📋 ' + myReferralCode, 'var(--teal)');
+    showToast('📋 ' + myReferralCode + ' — https://elpmis.app', 'var(--teal)');
   }
 }
 
@@ -5649,6 +5675,8 @@ function saveObData() {
   if (tagsEl) tagsEl.innerHTML = MY_PROFILE.tags.map(t =>
     '<span style="padding:4px 12px;border-radius:20px;background:var(--card2);border:1px solid var(--border);font-size:12px;color:var(--muted);font-weight:600;">#' + t + '</span>'
   ).join('');
+  // Sauvegarde dans localStorage
+  saveProfileToStorage();
 }
 
 function obToggleDark() {
